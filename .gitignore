@@ -1,0 +1,19 @@
+# Build outputs
+app/*/bin/
+app/*/obj/
+build/publish/
+
+# Installer artifact — keep FileFoxSetup.exe at root (that's the deliverable),
+# but ignore the copy in build/ which is a build artifact
+build/FileFoxSetup.exe
+
+# User-specific VS files
+*.user
+.vs/
+
+# dotnet
+*.suo
+
+# OS
+Thumbs.db
+.DS_Store
