@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- FileFox mark: fox-eared folder with a "filed" checkmark and a teal document tab -->
+
+  <!-- ears -->
+  <polygon points="118,150 150,26 222,146" fill="#A64A16"/>
+  <polygon points="132,138 154,62 196,134" fill="#F0AC5C"/>
+  <polygon points="394,150 362,26 290,146" fill="#A64A16"/>
+  <polygon points="380,138 358,62 316,134" fill="#F0AC5C"/>
+
+  <!-- folder tab (back) -->
+  <rect x="70" y="150" width="230" height="52" rx="18" fill="#A35814"/>
+
+  <!-- folder body (front) -->
+  <rect x="62" y="172" width="388" height="248" rx="26" fill="#DB7A1E"/>
+
+  <!-- checkmark: filed / done -->
+  <path d="M168 305 L226 363 L344 232" fill="none" stroke="#FFFFFF" stroke-width="28"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- small teal document tag - the "auto-filing" motif -->
+  <rect x="330" y="118" width="66" height="72" rx="10" fill="#1E7F72"/>
+  <rect x="344" y="132" width="38" height="10" rx="4" fill="#FFFFFF"/>
+  <rect x="344" y="150" width="38" height="10" rx="4" fill="#FFFFFF"/>
+</svg>

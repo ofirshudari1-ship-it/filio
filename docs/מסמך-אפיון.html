@@ -1,0 +1,453 @@
+<title>FileFox — מסמך אפיון</title>
+<meta name="description" content="מסמך אפיון והצעת יישום: תוכנת רקע ל-Windows בשם FileFox שמתייקת אוטומטית חשבוניות, חוזים ודוחות מתיקיית ההורדות לפי לקוח, שנה וסוג מסמך - דו-לשונית ועם עדכון-במקום.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;600;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f7f5;
+    --surface:#ffffff;
+    --surface-alt:#edf3f0;
+    --ink:#152524;
+    --ink-muted:#55655f;
+    --line:#dbe5e0;
+    --teal:#1e7f72;
+    --teal-deep:#0f5348;
+    --teal-soft:#e4f1ee;
+    --orange:#c97b1c;
+    --orange-soft:#fbead2;
+    --shadow: 0 1px 2px rgba(15,45,40,.04), 0 8px 24px -12px rgba(15,45,40,.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0e1614;
+      --surface:#132320;
+      --surface-alt:#182b27;
+      --ink:#e9f2ef;
+      --ink-muted:#9db3ac;
+      --line:#25403a;
+      --teal:#57bcac;
+      --teal-deep:#3a9385;
+      --teal-soft:#183630;
+      --orange:#f0ac57;
+      --orange-soft:#2e2413;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1614;
+    --surface:#132320;
+    --surface-alt:#182b27;
+    --ink:#e9f2ef;
+    --ink-muted:#9db3ac;
+    --line:#25403a;
+    --teal:#57bcac;
+    --teal-deep:#3a9385;
+    --teal-soft:#183630;
+    --orange:#f0ac57;
+    --orange-soft:#2e2413;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px -14px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Heebo",-apple-system,"Segoe UI",sans-serif;
+    direction:rtl;
+    line-height:1.65;
+  }
+  h1,h2,h3{
+    font-family:"Frank Ruhl Libre","Heebo",serif;
+    text-wrap:balance;
+    color:var(--ink);
+    margin:0;
+  }
+  p{margin:0;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 24px 96px;}
+
+  /* ---------- Header ---------- */
+  .hero{
+    background:linear-gradient(180deg,var(--teal-deep),var(--teal) 130%);
+    padding:56px 24px 44px;
+  }
+  .hero-inner{max-width:920px; margin:0 auto; display:flex; align-items:center; gap:22px; flex-wrap:wrap;}
+  .mark{flex:none; width:64px; height:64px;}
+  .hero-text{flex:1; min-width:240px;}
+  .hero-text .brand{
+    font-family:"Frank Ruhl Libre",serif;
+    font-weight:700;
+    font-size:2.6rem;
+    color:#fff;
+    line-height:1.1;
+  }
+  .hero-text .tagline{color:#d9efe9; font-size:1.05rem; margin-top:6px;}
+  .hero-meta{
+    display:flex; gap:10px; flex-wrap:wrap; margin-top:22px;
+    font-size:.82rem; color:#e7f5f1;
+  }
+  .hero-meta span{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.22);
+    padding:5px 12px; border-radius:100px;
+    white-space:nowrap;
+  }
+
+  /* ---------- Sections ---------- */
+  section{padding-top:52px;}
+  .eyebrow{
+    font-size:.78rem; color:var(--teal); font-weight:600;
+    letter-spacing:.04em; margin-bottom:8px; display:block;
+  }
+  h2{font-size:1.55rem; font-weight:700;}
+  h2 + .lede{margin-top:14px; font-size:1.05rem; color:var(--ink-muted); max-width:66ch;}
+  .prose{max-width:68ch; margin-top:16px; color:var(--ink);}
+  .prose + .prose{margin-top:12px;}
+
+  /* ---------- Stat tiles ---------- */
+  .stats{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:14px;
+    overflow:hidden; margin-top:26px; box-shadow:var(--shadow);
+  }
+  .stat{background:var(--surface); padding:20px 18px;}
+  .stat .k{font-size:.76rem; color:var(--ink-muted);}
+  .stat .v{font-family:"Frank Ruhl Libre",serif; font-size:1.5rem; font-weight:700; margin-top:6px; font-variant-numeric:tabular-nums;}
+  .stat .v small{font-family:"Heebo",sans-serif; font-size:.62em; font-weight:500; color:var(--ink-muted);}
+  @media (max-width:720px){ .stats{grid-template-columns:repeat(2,1fr);} }
+
+  /* ---------- Flow diagram ---------- */
+  .flow{margin-top:30px;}
+  .flow svg{width:100%; height:auto; display:block;}
+
+  /* ---------- Feature grid ---------- */
+  .features{
+    display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:26px;
+  }
+  @media (max-width:640px){ .features{grid-template-columns:1fr;} }
+  .feature{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:18px 20px; box-shadow:var(--shadow);
+  }
+  .feature .ftitle{font-weight:700; font-size:.98rem; display:flex; align-items:center; gap:9px;}
+  .feature .fdot{width:8px; height:8px; border-radius:50%; background:var(--orange); flex:none;}
+  .feature p{margin-top:8px; font-size:.9rem; color:var(--ink-muted);}
+
+  /* ---------- Path / folder tree ---------- */
+  .pathblock{
+    background:var(--surface-alt); border:1px solid var(--line); border-radius:12px;
+    padding:18px 22px; margin-top:20px; font-size:.92rem;
+  }
+  .pathblock .row{display:flex; align-items:center; gap:8px; padding:3px 0;}
+  .pathblock .row + .row{border-top:1px dashed var(--line);}
+  .chev{color:var(--teal); font-weight:700;}
+  .tag{
+    background:var(--teal-soft); color:var(--teal-deep); border-radius:6px;
+    padding:2px 9px; font-size:.82rem; font-weight:600;
+  }
+  :root[data-theme="dark"] .tag, @media (prefers-color-scheme:dark){ }
+
+  /* ---------- Tabs mockup ---------- */
+  .tabs-mock{display:flex; gap:8px; flex-wrap:wrap; margin-top:22px;}
+  .tabchip{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px 10px 0 0;
+    padding:10px 18px; font-size:.88rem; font-weight:600; color:var(--ink-muted);
+    border-bottom:3px solid transparent;
+  }
+  .tabchip.active{color:var(--teal-deep); border-bottom-color:var(--orange); background:var(--surface-alt);}
+
+  /* ---------- Table ---------- */
+  .tbl-wrap{overflow-x:auto; margin-top:22px; border:1px solid var(--line); border-radius:12px; background:var(--surface); box-shadow:var(--shadow);}
+  table{width:100%; border-collapse:collapse; font-size:.9rem; min-width:520px;}
+  th,td{padding:12px 16px; text-align:right; border-bottom:1px solid var(--line);}
+  th{color:var(--ink-muted); font-weight:600; font-size:.8rem;}
+  tr:last-child td{border-bottom:none;}
+  td:first-child, th:first-child{font-weight:600;}
+
+  /* ---------- Scope lists ---------- */
+  .scopecols{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px;}
+  @media (max-width:640px){ .scopecols{grid-template-columns:1fr;} }
+  .scopecard{border-radius:12px; padding:18px 20px; border:1px solid var(--line);}
+  .scopecard.in{background:var(--teal-soft);}
+  .scopecard.out{background:var(--surface-alt);}
+  .scopecard h3{font-family:"Heebo",sans-serif; font-size:.92rem; font-weight:700; margin-bottom:10px;}
+  .scopecard ul{margin:0; padding-inline-start:20px; font-size:.9rem; color:var(--ink);}
+  .scopecard li + li{margin-top:6px;}
+
+  /* ---------- Footer ---------- */
+  footer{
+    margin-top:60px; padding-top:26px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-size:.82rem; color:var(--ink-muted);
+  }
+
+  ::selection{background:var(--orange-soft); color:var(--ink);}
+</style>
+
+<div class="hero">
+  <div class="hero-inner">
+    <svg class="mark" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="118,150 150,26 222,146" fill="#A64A16"/>
+      <polygon points="132,138 154,62 196,134" fill="#F0AC5C"/>
+      <polygon points="394,150 362,26 290,146" fill="#A64A16"/>
+      <polygon points="380,138 358,62 316,134" fill="#F0AC5C"/>
+      <rect x="70" y="150" width="230" height="52" rx="18" fill="#A35814"/>
+      <rect x="62" y="172" width="388" height="248" rx="26" fill="#DB7A1E"/>
+      <path d="M168 305 L226 363 L344 232" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="330" y="118" width="66" height="72" rx="10" fill="#1E7F72"/>
+      <rect x="344" y="132" width="38" height="10" rx="4" fill="#FFFFFF"/>
+      <rect x="344" y="150" width="38" height="10" rx="4" fill="#FFFFFF"/>
+    </svg>
+    <div class="hero-text">
+      <div class="brand">FileFox</div>
+      <div class="tagline">Downloads that file themselves — local rules, no ongoing cost</div>
+    </div>
+  </div>
+  <div class="hero-inner" style="margin-top:0;">
+    <div class="hero-meta">
+      <span>מסמך אפיון + הצעת יישום</span>
+      <span>גרסה 2.7.0 · ספטמבר 2026</span>
+      <span>פלטפורמה: Windows 10/11 · English / עברית</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section style="padding-top:44px;">
+    <span class="eyebrow">תקציר מנהלים</span>
+    <h2>כלי רקע קטן שמתייק לבד את מה שנוחת בהורדות</h2>
+    <p class="lede">
+      "FileFox" יושב שקט ליד השעון, שם עין על תיקיית ההורדות, ובכל פעם שנופל בה קובץ —
+      חשבונית, חוזה או דוח — הוא מזהה את סוג המסמך ואת הלקוח שאליו הוא שייך, ומעביר אותו
+      לתיקייה מסודרת לפי <strong>לקוח ← שנה ← סוג מסמך</strong>. הזיהוי מבוסס על חוקים
+      ומנוע היוריסטי שרץ כולו על המחשב עצמו, כך שאין תלות בשירות AI חיצוני, אין חשיפת
+      מסמכים לרשת, ואין עלות תפעול חודשית.
+    </p>
+    <div class="stats">
+      <div class="stat"><div class="k">היקף עבודה</div><div class="v">בינוני</div></div>
+      <div class="stat"><div class="k">אופי ההתקשרות</div><div class="v">חד־פעמי</div></div>
+      <div class="stat"><div class="k">עלות</div><div class="v">$30 <small>USD</small></div></div>
+      <div class="stat"><div class="k">עלות תפעול שוטפת</div><div class="v">₪0</div></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">הבעיה</span>
+    <h2>תיקיית ההורדות הופכת ל"ביצה"</h2>
+    <p class="prose">
+      אצל כל בעל עסק שמנהל כמה לקוחות, תיקיית ההורדות היא תחנת המעבר של הכל: חשבונית
+      שהתקבלה במייל, חוזה חתום שחזר מלקוח, דוח חודשי שיוצא ממערכת CRM. תוך שבוע-שבועיים
+      נערמים בה עשרות קבצים בשמות כמו <em>Invoice_2384.pdf</em> או <em>document (3).pdf</em>,
+      בלי שום סדר לפי לקוח או תאריך.
+    </p>
+    <p class="prose">
+      התוצאה: כדי למצוא חשבונית ישנה של לקוח מסוים צריך לחפש ידנית, ולעיתים הקובץ פשוט
+      אובד בין מאות קבצים אחרים. תיוק ידני קבוע דורש משמעת שקשה לשמור עליה יום-יום.
+    </p>
+  </section>
+
+  <section>
+    <span class="eyebrow">הפתרון</span>
+    <h2>שלושה שלבים, לגמרי אוטומטיים</h2>
+    <p class="lede">מרגע שקובץ נשמר בהורדות ועד שהוא יושב במקומו הסופי, FileFox עובר שלוש תחנות:</p>
+
+    <div class="flow">
+      <svg viewBox="0 0 880 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="תרשים זרימה: מעקב, זיהוי, תיוק">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-muted)"/>
+          </marker>
+        </defs>
+
+        <!-- step 1 -->
+        <g>
+          <rect x="20" y="30" width="240" height="150" rx="16" fill="var(--surface)" stroke="var(--line)"/>
+          <circle cx="52" cy="62" r="14" fill="var(--teal-soft)"/>
+          <text x="52" y="67" text-anchor="middle" font-size="14" font-weight="700" fill="var(--teal-deep)" font-family="Heebo">1</text>
+          <text x="140" y="100" text-anchor="middle" font-size="16" font-weight="700" fill="var(--ink)" font-family="Heebo">מעקב אחרי הורדות</text>
+          <text x="140" y="126" text-anchor="middle" font-size="12.5" fill="var(--ink-muted)" font-family="Heebo">קובץ חדש נשמר בתיקייה</text>
+          <text x="140" y="145" text-anchor="middle" font-size="12.5" fill="var(--ink-muted)" font-family="Heebo">וממתין שההורדה תסתיים</text>
+        </g>
+
+        <!-- arrow 1 -->
+        <line x1="260" y1="105" x2="308" y2="105" stroke="var(--ink-muted)" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- step 2 -->
+        <g>
+          <rect x="320" y="30" width="240" height="150" rx="16" fill="var(--surface)" stroke="var(--line)"/>
+          <circle cx="352" cy="62" r="14" fill="var(--orange-soft)"/>
+          <text x="352" y="67" text-anchor="middle" font-size="14" font-weight="700" fill="var(--orange)" font-family="Heebo">2</text>
+          <text x="440" y="100" text-anchor="middle" font-size="16" font-weight="700" fill="var(--ink)" font-family="Heebo">זיהוי מקומי</text>
+          <text x="440" y="126" text-anchor="middle" font-size="12.5" fill="var(--ink-muted)" font-family="Heebo">חוקים + היוריסטיקה: סוג</text>
+          <text x="440" y="145" text-anchor="middle" font-size="12.5" fill="var(--ink-muted)" font-family="Heebo">מסמך, לקוח ותאריך</text>
+        </g>
+
+        <!-- arrow 2 -->
+        <line x1="560" y1="105" x2="608" y2="105" stroke="var(--ink-muted)" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- step 3 -->
+        <g>
+          <rect x="620" y="30" width="240" height="150" rx="16" fill="var(--surface)" stroke="var(--line)"/>
+          <circle cx="652" cy="62" r="14" fill="var(--teal-soft)"/>
+          <text x="652" y="67" text-anchor="middle" font-size="14" font-weight="700" fill="var(--teal-deep)" font-family="Heebo">3</text>
+          <text x="740" y="100" text-anchor="middle" font-size="16" font-weight="700" fill="var(--ink)" font-family="Heebo">תיוק במקום הנכון</text>
+          <text x="740" y="126" text-anchor="middle" font-size="12.5" fill="var(--ink-muted)" font-family="Heebo">העברה לתיקיית לקוח/שנה/</text>
+          <text x="740" y="145" text-anchor="middle" font-size="12.5" fill="var(--ink-muted)" font-family="Heebo">סוג + התראה + רישום ביומן</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="pathblock">
+      <div class="row"><span class="tag">לפני</span><span>הורדות/ Invoice_2384.pdf</span></div>
+      <div class="row"><span class="tag">אחרי</span><span>מסמכים/ לקוח בע״מ <span class="chev">‹</span> 2026 <span class="chev">‹</span> חשבוניות <span class="chev">‹</span> Invoice_2384.pdf</span></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">יכולות המוצר</span>
+    <h2>מה כלול בגרסה 2.5</h2>
+    <div class="features">
+      <div class="feature">
+        <div class="ftitle"><span class="fdot"></span>מעקב חי, עצמי-מחלים, כמה תיקיות במקביל</div>
+        <p>אזעוק מיידי (FileSystemWatcher) על כל קובץ חדש בכמה תיקיות מעקב בו-זמנית, עם בדיקת-בריאות אוטומטית כל 30 שניות שמתאוששת מכשלים בלי שהמשתמש ישים לב.</p>
+      </div>
+      <div class="feature">
+        <div class="ftitle"><span class="fdot"></span>מנוע סיווג מקומי שמסביר את עצמו</div>
+        <p>חילוץ טקסט מתוך PDF ומתמונות (OCR מקומי, אנגלית+עברית) וניתוח מול מילות מפתח - וכל החלטה מלווה בהסבר בשפה פשוטה (איזו מילה נמצאה, בתוכן או בשם הקובץ) שמוצג כ-tooltip ביומן הפעילות.</p>
+      </div>
+      <div class="feature">
+        <div class="ftitle"><span class="fdot"></span>זיהוי לקוח, תאריך וכפילויות</div>
+        <p>התאמה לרשימת לקוחות (כולל כינויים), איתור תאריך מתוך התוכן או שם הקובץ, וזיהוי קבצים כפולים לפי תוכן (SHA-256) שמנותב שקוף ל-"_Possible Duplicates" - אף פעם לא נדרס בשקט.</p>
+      </div>
+      <div class="feature">
+        <div class="ftitle"><span class="fdot"></span>מודעות לענן (OneDrive/Dropbox/Google Drive)</div>
+        <p>זיהוי תיקיות וקבצי placeholder של OneDrive Files On-Demand, והמתנה שיסתיימו להוריד לפני נגיעה - כדי לא ליצור "עותקי קונפליקט".</p>
+      </div>
+      <div class="feature">
+        <div class="ftitle"><span class="fdot"></span>אשף הגדרה + סריקה חכמה מקומית</div>
+        <p>אשף "ברוכים הבאים" בהפעלה ראשונה שמריץ סריקה חד-פעמית וחינמית על קבצים קיימים כדי להציע לקוחות - "AI" מקומי בלבד, בלי חשבון ובלי עלות שוטפת.</p>
+      </div>
+      <div class="feature">
+        <div class="ftitle"><span class="fdot"></span>הגדרות גמישות, מתקדמות מוסתרות כברירת מחדל</div>
+        <p>סדר תיקיות מותאם אישית (לקוח/שנה/סוג בכל סדר), רשימת "אף פעם אל תיגע" ורשימת סוגי קבצים למעקב - כל השדות הטכניים מאחורי חלונית "מתקדם" שנפתחת בלחיצה אחת.</p>
+      </div>
+      <div class="feature">
+        <div class="ftitle"><span class="fdot"></span>יומן פעילות + ביטול + נסה שוב</div>
+        <p>סיכום מספרי וכל פעולה נרשמת; טעות בזיהוי? קליק אחד מחזיר קובץ למקומו. קובץ שנכשל (למשל היה נעול)? כפתור "נסה שוב" בלי לגרור אותו מחדש.</p>
+      </div>
+      <div class="feature">
+        <div class="ftitle"><span class="fdot"></span>גיבוי/שחזור ועדכון-במקום מאובטח</div>
+        <p>ייצוא/ייבוא כל ההגדרות לקובץ אחד (עם הגנות נגד קובץ פגום/עצום). עדכון-במקום דורש HTTPS ומאמת חתימת SHA-256 של קובץ ההתקנה לפני הרצתו.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">מסך ההגדרות</span>
+    <h2>שליטה מלאה, בלי לפתוח קובץ קונפיגורציה</h2>
+    <p class="prose">כל מה שבתמונת הזרימה למעלה ניתן לעריכה חופשית דרך חלון הגדרות אחד, עם שישה טאבים - וברירת מחדל באנגלית שאפשר להחליף לעברית בלחיצה אחת, בלי הפעלה מחדש:</p>
+    <div class="tabs-mock">
+      <div class="tabchip active">General</div>
+      <div class="tabchip">Clients</div>
+      <div class="tabchip">Rules</div>
+      <div class="tabchip">Activity Log</div>
+      <div class="tabchip">Updates</div>
+      <div class="tabchip">Help &amp; About</div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">ארכיטקטורה וטכנולוגיה</span>
+    <h2>יישום ילידי ל-Windows, בלי תלויות בענן</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>שכבה</th><th>טכנולוגיה</th><th>תפקיד</th></tr></thead>
+        <tbody>
+          <tr><td>ממשק משתמש</td><td>C# / WPF, .NET 8</td><td>חלון הגדרות + אייקון מגש מערכת</td></tr>
+          <tr><td>שפה</td><td>מילוני משאבים (en/he)</td><td>מעבר שפה חי, כולל כיוון כתיבה</td></tr>
+          <tr><td>מעקב קבצים</td><td>FileSystemWatcher</td><td>זיהוי קובץ חדש בתיקיית ההורדות</td></tr>
+          <tr><td>קריאת מסמכים</td><td>PdfPig</td><td>חילוץ טקסט מ-PDF לצורך סיווג</td></tr>
+          <tr><td>סיווג</td><td>מנוע חוקים מקומי</td><td>קביעת סוג מסמך, לקוח ותאריך</td></tr>
+          <tr><td>עדכונים</td><td>HTTP + Inno Setup Silent</td><td>בדיקת גרסה, הורדה והתקנה שקטה</td></tr>
+          <tr><td>הגדרות ויומן</td><td>קובצי JSON מקומיים</td><td>שמירת תצורה ותיעוד פעולות</td></tr>
+          <tr><td>הפצה</td><td>Inno Setup</td><td>קובץ התקנה בודד עם אייקון ותמונות אשף, בלי הרשאות מנהל</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">היקף גרסה 2.6</span>
+    <h2>מה כלול, ומה נשאר לגרסה הבאה</h2>
+    <div class="scopecols">
+      <div class="scopecard in">
+        <h3>בפנים</h3>
+        <ul>
+          <li>סיווג PDF עם שכבת טקסט אמיתית + OCR מקומי לתמונות (jpg/png), עם הסבר לכל החלטה</li>
+          <li>ניהול לקוחות וחוקי סיווג מהממשק, כמה תיקיות מעקב במקביל</li>
+          <li>זיהוי כפילויות (SHA-256) ומודעות לתיקיות ענן מסתנכרנות</li>
+          <li>יומן פעילות עם ביטול, נסה-שוב, וגיבוי/שחזור הגדרות</li>
+          <li>אשף הגדרה ראשוני + סריקה חכמה מקומית חד-פעמית</li>
+          <li>ממשק דו-לשוני (אנגלית/עברית) עם מעבר חי, מסך הגדרות מבוסס-כרטיסים</li>
+          <li>עדכון-במקום מאובטח (HTTPS חובה + אימות חתימת SHA-256) דרך כתובת JSON שהמפתח מארח</li>
+          <li>התקנה מעוצבת ל-Windows + לוגו ומיתוג, 85 בדיקות אוטומטיות (כולל בדיקת OCR אמיתית)</li>
+        </ul>
+      </div>
+      <div class="scopecard out">
+        <h3>מחוץ להיקף (רעיון לגרסה הבאה)</h3>
+        <ul>
+          <li>OCR ל-PDF סרוק (עמוד שהוא בעצם תמונה בתוך PDF - היום נתמכות רק תמונות ישירות)</li>
+          <li>קריאת תוכן מקבצי Word / Excel / PowerPoint (כרגע מזוהים לפי שם קובץ בלבד)</li>
+          <li>חיבור ל-AI בענן לזיהוי מתקדם יותר (בתשלום נפרד, אופציונלי ומפורש)</li>
+          <li>שליפה ישירה מתיבת מייל / Outlook</li>
+          <li>"למידה" מתיקונים ידניים של המשתמש (הצעת כינוי/מילת מפתח אוטומטית)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">למה FileFox</span>
+    <h2>מה שונה כאן ממה שכבר קיים בשוק</h2>
+    <p class="prose">לפני סבב הפיצ'רים המרכזי נבדקו כלים מתחרים אמיתיים - DropIt, Hazel, File Juggler, וכלי
+    "AI file organizer" ענניים חדשים מ-2026 כמו Sparkle / The Drive AI / OneDrive+Copilot. כל שורה
+    בטבלה הבאה עונה על בעיה או מגבלה מתועדת שנמצאה אצל אחד מהם:</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>ממצא מהמחקר</th><th>מי סובל מזה</th><th>הפתרון ב-FileFox</th></tr></thead>
+        <tbody>
+          <tr><td>מעקב אחר תיקייה "מפסיק לעבוד" בשקט אחרי שינה/הפעלה מחדש/עדכון Windows</td><td>DropIt</td><td>בדיקת-בריאות אוטומטית כל 30 שניות + הקשבה לאירוע Error של FileSystemWatcher, עם בנייה מחדש אוטומטית</td></tr>
+          <tr><td>תמיכה בתיקיית מעקב אחת בלבד</td><td>רוב הכלים המקומיים</td><td>כמה תיקיות מעקב במקביל (הורדות + שולחן עבודה + כל תיקייה אחרת)</td></tr>
+          <tr><td>כלי "AI" תמיד בענן, בתשלום חודשי ($6-$30), ו"הסיווג לא תמיד מדויק"</td><td>Sparkle, The Drive AI, OneDrive+Copilot</td><td>הסיווג (כולל OCR לתמונות) רץ לגמרי מקומית, בחינם - בלי חשבון, בלי מפתח API, בלי לשלוח קובץ אחד לחוץ</td></tr>
+          <tr><td>ממשק "מיושן", חוסר presets למתחילים, עקומת למידה תלולה</td><td>Hazel, File Juggler, DropIt</td><td>אשף "ברוכים הבאים" מותאם + מסך הגדרות מבוסס-כרטיסים + סריקה חכמה שממלאת לקוחות מראש</td></tr>
+          <tr><td>הזזת/מחיקת קבצים כפולים "בעיוורון" בלי שקיפות למשתמש</td><td>כלי דה-דופליקציה כלליים</td><td>זיהוי כפילות לפי תוכן (SHA-256) שמפנה ל-"_Possible Duplicates" במקום לדרוס - אף פעם לא מוחק</td></tr>
+          <tr><td>קובץ שזז/שונה בזמן שהוא עדיין מסתנכרן ב-OneDrive/Dropbox יוצר "עותקי קונפליקט" כפולים</td><td>בעיה מתועדת בפורומי Microsoft/Dropbox</td><td>זיהוי תיקיות ענן + זיהוי קובצי placeholder של OneDrive Files On-Demand, והמתנה שיסתיימו להוריד לפני נגיעה</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="prose" style="margin-top:26px;"><strong>בשורה התחתונה:</strong> FileFox הוא לא עוד "מזיז קבצים" - הוא הכלי היחיד שבדקנו שמשלב
+    יכולת סיווג אמיתית (כולל OCR לתמונות) עם עלות תפעול אפסית, פרטיות מלאה (שום קובץ לא עוזב את המחשב),
+    ושקיפות מלאה על כל החלטה (כל שורה ביומן הפעילות מסבירה בדיוק למה הקובץ נחת איפה שנחת).</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">מסירה</span>
+    <h2>מה מקבלים בסוף התהליך</h2>
+    <div class="pathblock">
+      <div class="row"><span class="tag">קוד</span><span>קוד מקור מלא (C#/WPF) — ניתן לתחזוקה עצמאית</span></div>
+      <div class="row"><span class="tag">מיתוג</span><span>שם "FileFox", לוגו וקטורי (SVG) ואייקון אפליקציה</span></div>
+      <div class="row"><span class="tag">התקנה</span><span>FileFoxSetup.exe — אשף מותאם-מיתוג, זיהוי שפה אוטומטי, בלי הרשאות מנהל</span></div>
+      <div class="row"><span class="tag">עדכונים</span><span>מנגנון עדכון-במקום (הורדה + התקנה שקטה, בלי אשף חוזר)</span></div>
+      <div class="row"><span class="tag">תיעוד</span><span>מדריך הרצה, פרסום ובנייה מחדש</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>FileFox · מסמך אפיון v2.7.0 · עודכן לפי היסטוריית הגרסאות ב-CHANGELOG.md</span>
+    <span>הופק ספטמבר 2026</span>
+  </footer>
+
+</div>
