@@ -2,10 +2,20 @@
 app/*/bin/
 app/*/obj/
 build/publish/
+build/installer/bin/
+build/installer/obj/
+build/installer/payload.zip
 
-# Installer artifact — keep FileFoxSetup.exe at root (that's the deliverable),
-# but ignore the copy in build/ which is a build artifact
-build/FileFoxSetup.exe
+# Installer artifact — keep Filio-Setup-<version>.exe available locally at the repo root
+# (that's the GitHub Release deliverable, uploaded via `gh release create`), but never
+# commit it to git — it's a large generated binary, not source.
+/Filio-Setup-*.exe
+
+# ...and ignore the copy in build/ too, which is a build artifact
+build/Filio-Setup-*.exe
+
+# Local Claude Code tool state (lock files etc.) — not meaningful project config
+.claude/
 
 # User-specific VS files
 *.user

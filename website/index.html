@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="he" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FileFox</title>
-<meta name="description" content="FileFox מתייק אוטומטית חשבוניות, חוזים ודוחות מתיקיית ההורדות לפי לקוח, שנה וסוג — לגמרי מקומי, בלי AI בענן ובלי עלות חודשית.">
+<title>Filio</title>
+<meta name="description" id="meta-description" content="Filio automatically files invoices, contracts and reports from your Downloads folder by client, year and type — fully local, no cloud AI, no monthly cost.">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIESURBVFhH7Ve7SgNBFM0nWFpkdtIIFhaCjVhpZ2klVnaChRB2FXQjzKqNhUUKsdJCUFBEEMFWYiPBQsFCzEvjOxgxvtCNz5Ebybh7s0YTdwQhBw4sd87OOZm5k0k8ngokghp91QrT5ghTU0B4hhrWSQE1/D7CtCvF0LiVUIMxrHcdClOXsLkgU5ew3nU4fXrrKmC96yBMNbHxZwDVxHrXoTAthI0FmRbCetdBDX+90ypADcawXgqooTYSpoU/zbUw1LDOht1+6osFSHdcJ0NuEuaM6LQW+9kQH6TNMZ2Y8YDCZTGie9uwr0AsoITwC+Vyf7SBn0y28wSrsY/pJIx9BeIBksQTlcOj8Vb+at5wwNX6FBonSewr4EaAg7Em/nKbzpkDrjdmkEZigL2ROv6YTgjzp8xxLpBdJykA7LV5tCXMYQsOgy0FOmkB7qMhYf72nM01INZ8sMQAsKyp+Z7CbrYQ9tmKs9muAk3ZAR72w7lJnfdT4ZerQZv5xcpwgeZXAbJnO2JyHOJ8sddmnlmbcDDELDEAGIJxHnDE4JyfTnfazG82FxzMnFhiAKcQ0OHQaHlAAxbrkV8HAMJXq3U78oAaNCrWf80yAwDBCPcEBMO64iwS4CeXEYSAY3e3vex4Kr5l0ctowNsq+zqO6t4O7GtD0qBV8LtABpN99G/+lFTwr/AO3WIczZn4wkIAAAAASUVORK5CYII=">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;600;700;800;900&family=Heebo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -100,6 +101,19 @@
   .nav-links{ display:flex; align-items:center; gap:26px; font-size:.92rem; font-weight:600; color:var(--ink-muted); }
   .nav-links a:hover{color:var(--teal-deep);}
   @media (max-width:640px){ .nav-links{display:none;} }
+  .nav-right{ display:flex; align-items:center; gap:12px; }
+
+  .lang-toggle{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--font-mono); font-size:.78rem; font-weight:700;
+    background:var(--surface); border:1.5px solid var(--line); color:var(--ink-muted);
+    padding:7px 12px; border-radius:100px; cursor:pointer; flex:none;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .lang-toggle:hover{ border-color:var(--teal); color:var(--teal-deep); }
+  .lang-toggle .lang-opt{ padding:1px 3px; }
+  .lang-toggle .lang-opt.active{ color:var(--teal-deep); font-weight:800; }
+  .lang-toggle .lang-sep{ color:var(--ink-faint); }
 
   .btn{
     display:inline-flex; align-items:center; gap:8px; justify-content:center;
@@ -136,6 +150,11 @@
   }
   .demo-cols{ display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:start; }
   @media (max-width:520px){ .demo-cols{grid-template-columns:1fr;} .demo-sep{display:none;} }
+  /* סדר קבוע: "לפני" תמיד בצד ההתחלה (ימין ב-RTL / שמאל ב-LTR), "אחרי" תמיד בצד הסיום -
+     כך שסדר ה"לפני → אחרי" נשאר הגיוני בשתי השפות בלי תלות בסדר ה-DOM. */
+  .demo-panel.after{ order:3; }
+  .demo-sep{ order:2; }
+  .demo-panel.before{ order:1; }
   .demo-panel-label{
     font-family:var(--font-mono); font-size:.68rem; letter-spacing:.05em; color:var(--ink-faint);
     text-transform:uppercase; margin-bottom:10px; display:block;
@@ -193,6 +212,10 @@
     .step:not(:last-child)::after{
       content:"←"; position:absolute; top:38px; left:-30px; font-size:1.3rem; color:var(--ink-faint);
     }
+    /* ב-LTR סדר הכרטיסים לא מתהפך אוטומטית כמו ב-RTL, אז החץ המחבר עובר לצד הנגדי ומצביע ימינה */
+    [dir="ltr"] .step:not(:last-child)::after{
+      content:"→"; left:auto; right:-30px;
+    }
   }
 
   .path-demo{
@@ -241,9 +264,11 @@
     content:""; position:absolute; right:47px; top:30px; bottom:-4px; width:2px; background:var(--line);
   }
   .tl-item:last-child::before{ display:none; }
+  [dir="ltr"] .tl-item::before{ right:auto; left:47px; }
   @media (max-width:640px){
     .tl-item{grid-template-columns:70px 1fr; gap:14px;}
     .tl-item::before{right:34px;}
+    [dir="ltr"] .tl-item::before{ right:auto; left:34px; }
   }
   .tl-badge{
     font-family:var(--font-mono); font-weight:700; font-size:.82rem; color:var(--teal-deep);
@@ -292,78 +317,80 @@
   <div class="nav-inner">
     <div class="brand-mark">
       <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <polygon points="118,150 150,26 222,146" fill="#A64A16"/>
-        <polygon points="132,138 154,62 196,134" fill="#F0AC5C"/>
-        <polygon points="394,150 362,26 290,146" fill="#A64A16"/>
-        <polygon points="380,138 358,62 316,134" fill="#F0AC5C"/>
-        <rect x="70" y="150" width="230" height="52" rx="18" fill="#A35814"/>
-        <rect x="62" y="172" width="388" height="248" rx="26" fill="#DB7A1E"/>
-        <path d="M168 305 L226 363 L344 232" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
-        <rect x="330" y="118" width="66" height="72" rx="10" fill="#1E7F72"/>
-        <rect x="344" y="132" width="38" height="10" rx="4" fill="#FFFFFF"/>
-        <rect x="344" y="150" width="38" height="10" rx="4" fill="#FFFFFF"/>
+        <rect x="70" y="176" width="230" height="52" rx="18" fill="#A35814"/>
+        <rect x="62" y="198" width="388" height="222" rx="26" fill="#DB7A1E"/>
+        <path d="M162 312 L226 376 L352 236" fill="none" stroke="#FFFFFF" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="384" cy="112" r="58" fill="#1E7F72"/>
       </svg>
-      FileFox
+      Filio
     </div>
     <div class="nav-links">
-      <a href="#how">איך זה עובד</a>
-      <a href="#features">יכולות</a>
-      <a href="#security">אבטחה ופרטיות</a>
-      <a href="#versions">גרסאות</a>
+      <a href="#how" data-i18n="nav.how">How it works</a>
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#security" data-i18n="nav.security">Security &amp; Privacy</a>
+      <a href="#versions" data-i18n="nav.versions">Versions</a>
     </div>
-    <a href="#download" class="btn btn-primary btn-sm">הורדה</a>
+    <div class="nav-right">
+      <button type="button" class="lang-toggle" id="langToggle" aria-label="Switch language / החלפת שפה">
+        <span class="lang-opt" data-lang-opt="en">EN</span>
+        <span class="lang-sep">|</span>
+        <span class="lang-opt" data-lang-opt="he">עברית</span>
+      </button>
+      <a href="#download" class="btn btn-primary btn-sm" data-i18n="nav.download">Download</a>
+    </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">תוכנת רקע ל-Windows · v2.7.0</span>
-      <h1>ההורדות שלכם,<br><em>מתויקות לבד.</em></h1>
-      <p class="lede">
-        FileFox יושב שקט ליד השעון, שם עין על תיקיית ההורדות, ובכל פעם שנופל בה קובץ —
-        חשבונית, חוזה או דוח — הוא מזהה את סוג המסמך ואת הלקוח שלו, ומעביר אותו לתיקייה
-        המסודרת הנכונה. בלי לגעת בקבצים אחרים. בלי לשלוח שום דבר לענן.
+      <span class="eyebrow" data-i18n="hero.eyebrow">Background tool for Windows · v2.8.0</span>
+      <h1><span data-i18n="hero.title1">Your downloads,</span><br><em data-i18n="hero.title2">filed automatically.</em></h1>
+      <p class="lede" data-i18n="hero.lede">
+        Filio sits quietly by the clock, keeps an eye on your Downloads folder, and every time a
+        file lands there — an invoice, a contract, a report — it recognizes the document type and
+        the client it belongs to, and moves it to the right, organized folder. Without touching
+        any other files. Without sending anything to the cloud.
       </p>
       <div class="hero-ctas">
-        <a href="#download" class="btn btn-primary">⬇ הורדה ל-Windows</a>
-        <a href="#how" class="btn btn-ghost">איך זה עובד</a>
+        <a href="#download" class="btn btn-primary" data-i18n="hero.cta1">⬇ Download for Windows</a>
+        <a href="#how" class="btn btn-ghost" data-i18n="hero.cta2">How it works</a>
       </div>
       <div class="hero-meta">
-        <span class="meta-chip"><span class="dot"></span>100% מקומי — שום קובץ לא יוצא מהמחשב</span>
-        <span class="meta-chip"><span class="dot"></span>אפס עלות שוטפת</span>
-        <span class="meta-chip"><span class="dot"></span>עברית + English</span>
+        <span class="meta-chip"><span class="dot"></span><span data-i18n="hero.chip1">100% local — no file ever leaves your computer</span></span>
+        <span class="meta-chip"><span class="dot"></span><span data-i18n="hero.chip2">Zero ongoing cost</span></span>
+        <span class="meta-chip"><span class="dot"></span><span data-i18n="hero.chip3">Hebrew + English</span></span>
       </div>
     </div>
 
-    <div class="demo" aria-label="הדגמה: קבצים בהורדות מתויקים אוטומטית לפי לקוח, שנה וסוג">
+    <div class="demo" id="demoBox" aria-label="Demo: files in Downloads are automatically filed by client, year and type">
       <div class="demo-cols">
-        <div>
-          <span class="demo-panel-label">✅ אחרי FileFox</span>
+        <div class="demo-panel after">
+          <span class="demo-panel-label" data-i18n="demo.after.label">✅ After Filio</span>
           <div class="demo-after">
-            <div class="tree-client">📁 עיצוב אקמה</div>
+            <div class="tree-client">📁 <span data-i18n="demo.client1">Acme Design</span></div>
             <div class="tree-year">2026</div>
             <div class="tree-file">Invoice_2384.pdf</div>
             <div class="tree-file">document (3).pdf</div>
             <div class="tree-file">contract_final(2).docx</div>
-            <div class="tree-client">📁 סטודיו ורדי</div>
+            <div class="tree-client">📁 <span data-i18n="demo.client2">Vardi Studio</span></div>
             <div class="tree-year">2026</div>
             <div class="tree-file">report_Q3.pdf</div>
             <div class="tree-client">📁 _Installers</div>
             <div class="tree-year">2026</div>
-            <div class="tree-file" style="background:var(--amber-pale); color:var(--amber-deep);">📦 Firefox_Setup.exe</div>
+            <div class="tree-file" style="background:var(--amber-pale); color:var(--amber-deep);">📦 Zoom_Setup.exe</div>
           </div>
         </div>
-        <div class="demo-sep">←</div>
-        <div>
-          <span class="demo-panel-label">🗂 תיקיית הורדות</span>
+        <div class="demo-sep" data-i18n="demo.arrow">←</div>
+        <div class="demo-panel before">
+          <span class="demo-panel-label" data-i18n="demo.before.label">🗂 Downloads folder</span>
           <div class="demo-before">
             <div class="file-chip"><span class="dot-type" style="background:#1e7f72"></span>Invoice_2384.pdf</div>
             <div class="file-chip"><span class="dot-type" style="background:#c97b1c"></span>contract_final(2).docx</div>
-            <div class="file-chip ignored"><span class="dot-type" style="background:#8ba09a"></span>IMG_20260904.jpg<span class="tag-skip">לא נוגעים</span></div>
+            <div class="file-chip ignored"><span class="dot-type" style="background:#8ba09a"></span>IMG_20260904.jpg<span class="tag-skip" data-i18n="demo.skip">skipped</span></div>
             <div class="file-chip"><span class="dot-type" style="background:#5c8bd6"></span>report_Q3.pdf</div>
             <div class="file-chip"><span class="dot-type" style="background:#1e7f72"></span>document (3).pdf</div>
-            <div class="file-chip"><span class="dot-type" style="background:#c97b1c"></span>Firefox_Setup.exe<span class="tag-skip" style="color:var(--amber-deep)">📦 מתקין</span></div>
+            <div class="file-chip"><span class="dot-type" style="background:#c97b1c"></span>Zoom_Setup.exe<span class="tag-skip" style="color:var(--amber-deep)" data-i18n="demo.installer">📦 installer</span></div>
           </div>
         </div>
       </div>
@@ -375,36 +402,36 @@
 
   <section id="how">
     <div class="wrap">
-      <span class="eyebrow">שלושה שלבים</span>
-      <h2>מרגע שקובץ נחת, עד שהוא במקום הנכון</h2>
-      <p class="lede">בלי תיוק ידני, בלי לזכור איפה שמרתם מה — הכל קורה אוטומטית ברקע.</p>
+      <span class="eyebrow" data-i18n="how.eyebrow">Three steps</span>
+      <h2 data-i18n="how.title">From the moment a file lands, to the moment it's filed</h2>
+      <p class="lede" data-i18n="how.lede">No manual filing, no trying to remember what you saved where — it all happens automatically in the background.</p>
 
       <div class="steps">
         <div class="step">
           <div class="num">1</div>
-          <h3>מעקב אחרי הורדות</h3>
-          <p>קובץ חדש נשמר בתיקייה שאתם עוקבים אחריה. FileFox מזהה זאת מיד וממתין שההורדה תסתיים לגמרי — כולל קבצים שעדיין מסתנכרנים מ-OneDrive או Dropbox.</p>
+          <h3 data-i18n="step1.title">Watching your downloads</h3>
+          <p data-i18n="step1.body">A new file is saved to a folder you're watching. Filio notices immediately and waits for the download to fully finish — including files still syncing from OneDrive or Dropbox.</p>
         </div>
         <div class="step">
           <div class="num">2</div>
-          <h3>זיהוי מקומי, לא בענן</h3>
-          <p>קורא את תוכן ה-PDF ואת שם הקובץ, ומשווה מול החוקים והלקוחות שהגדרתם. כל החלטה מלווה בהסבר פשוט — איזו מילה נמצאה, ואיפה.</p>
+          <h3 data-i18n="step2.title">Local recognition, not the cloud</h3>
+          <p data-i18n="step2.body">Reads the PDF's content and the file name, and compares them against the rules and clients you've defined. Every decision comes with a plain explanation — which word was found, and where.</p>
         </div>
         <div class="step">
           <div class="num">3</div>
-          <h3>תיוק במקום הנכון</h3>
-          <p>מעביר את הקובץ לתיקיית לקוח ← שנה ← סוג, שולח התראה קטנה, ורושם הכל ביומן — עם ביטול בקליק אחד אם הזיהוי טעה.</p>
+          <h3 data-i18n="step3.title">Filed in the right place</h3>
+          <p data-i18n="step3.body">Moves the file into Client → Year → Type, sends a quick notification, and logs everything — with one-click undo if the detection got it wrong.</p>
         </div>
       </div>
 
       <div class="path-demo">
         <div class="path-row">
-          <span class="path-tag before">לפני</span>
-          <span class="seg">הורדות</span><span class="chev">/</span><span class="seg">Invoice_2384.pdf</span>
+          <span class="path-tag before" data-i18n="path.before.tag">Before</span>
+          <span class="seg" data-i18n="path.before.seg1">Downloads</span><span class="chev">/</span><span class="seg">Invoice_2384.pdf</span>
         </div>
         <div class="path-row">
-          <span class="path-tag after">אחרי</span>
-          <span class="seg">מסמכים</span><span class="chev">/</span><span class="seg hi">עיצוב אקמה</span><span class="chev">/</span><span class="seg hi">2026</span><span class="chev">/</span><span class="seg hi">חשבוניות</span><span class="chev">/</span><span class="seg">Invoice_2384.pdf</span>
+          <span class="path-tag after" data-i18n="path.after.tag">After</span>
+          <span class="seg" data-i18n="path.after.seg1">Documents</span><span class="chev">/</span><span class="seg hi" data-i18n="path.after.seg2">Acme Design</span><span class="chev">/</span><span class="seg hi">2026</span><span class="chev">/</span><span class="seg hi" data-i18n="path.after.seg4">Invoices</span><span class="chev">/</span><span class="seg">Invoice_2384.pdf</span>
         </div>
       </div>
     </div>
@@ -412,55 +439,60 @@
 
   <section id="features">
     <div class="wrap">
-      <span class="eyebrow">יכולות המוצר</span>
-      <h2>לא רק "מזיז קבצים"</h2>
-      <p class="lede">כל יכולת כאן נולדה מבעיה אמיתית — או שנתקלנו בה בעצמנו, או שכלים מתחרים משאירים אותה פתוחה.</p>
+      <span class="eyebrow" data-i18n="features.eyebrow">Product features</span>
+      <h2 data-i18n="features.title">Not just "moving files"</h2>
+      <p class="lede" data-i18n="features.lede">Every feature here came from a real problem — either we ran into it ourselves, or a competing tool leaves it unsolved.</p>
 
       <div class="features">
         <div class="fcard">
           <div class="ic">📷</div>
-          <h3>קורא גם צילום, לא רק PDF</h3>
-          <p>OCR מקומי (אנגלית + עברית) מזהה טקסט בתוך צילום או סריקה של חשבונית, ומסווג אותה בדיוק כמו PDF — לגמרי על המחשב שלכם.</p>
+          <h3 data-i18n="f1.title">Reads photos too, not just PDFs</h3>
+          <p data-i18n="f1.body">Local OCR (English + Hebrew) recognizes text inside a photo or scan of an invoice, and classifies it exactly like a PDF — entirely on your own computer.</p>
         </div>
         <div class="fcard">
           <div class="ic">🗂️</div>
-          <h3>כמה תיקיות מעקב במקביל</h3>
-          <p>הורדות, שולחן עבודה, תיקיית מייל — עוקב אחרי כולן בו-זמנית, לא רק אחת.</p>
+          <h3 data-i18n="f2.title">Multiple watch folders at once</h3>
+          <p data-i18n="f2.body">Downloads, Desktop, an email-attachments folder — it watches all of them at the same time, not just one.</p>
         </div>
         <div class="fcard">
           <div class="ic">💓</div>
-          <h3>עצמי-מחלים</h3>
-          <p>בדיקת בריאות כל 30 שניות מתאוששת לבד מתקלות שגורמות לכלים אחרים "להפסיק לעבוד" בשקט.</p>
+          <h3 data-i18n="f3.title">Self-healing</h3>
+          <p data-i18n="f3.body">A health check every 30 seconds recovers on its own from the glitches that make other tools quietly "stop working."</p>
         </div>
         <div class="fcard">
           <div class="ic">🧭</div>
-          <h3>מסביר את עצמו</h3>
-          <p>כל שורה ביומן הפעילות מקבלת הסבר: איזו מילה זוהתה, בתוכן או בשם הקובץ — לא קופסה שחורה.</p>
+          <h3 data-i18n="f4.title">Explains itself</h3>
+          <p data-i18n="f4.body">Every line in the activity log comes with an explanation: which word was matched, in the content or the file name — not a black box.</p>
         </div>
         <div class="fcard">
           <div class="ic">🧬</div>
-          <h3>זיהוי כפילויות</h3>
-          <p>קובץ שכבר תויק בעבר (לפי תוכן, לא רק שם) מנותב שקוף ל"כפילויות אפשריות" — אף פעם לא נדרס.</p>
+          <h3 data-i18n="f5.title">Duplicate detection</h3>
+          <p data-i18n="f5.body">A file already filed before (by content, not just name) is transparently routed to "possible duplicates" — never silently overwritten.</p>
         </div>
         <div class="fcard">
           <div class="ic">☁️</div>
-          <h3>מודע לענן</h3>
-          <p>מזהה תיקיות OneDrive/Dropbox/Google Drive וממתין שקובץ יסיים להוריד לפני שהוא נוגע בו.</p>
+          <h3 data-i18n="f6.title">Cloud-aware</h3>
+          <p data-i18n="f6.body">Recognizes OneDrive/Dropbox/Google Drive folders and waits for a file to finish downloading before touching it.</p>
         </div>
         <div class="fcard">
           <div class="ic">↩️</div>
-          <h3>תמיד אפשר לבטל</h3>
-          <p>זיהוי טעה? קליק אחד ביומן הפעילות מחזיר את הקובץ למקומו המקורי. שום דבר לא נמחק לעולם.</p>
+          <h3 data-i18n="f7.title">Always undoable</h3>
+          <p data-i18n="f7.body">Got the detection wrong? One click in the activity log puts the file back exactly where it was. Nothing is ever deleted.</p>
         </div>
         <div class="fcard">
           <div class="ic">🛡️</div>
-          <h3>בדיקת Defender לפני כל תיוק</h3>
-          <p>FileFox לא בונה מנוע אנטי-וירוס משלו — הוא שואל את Windows Defender שכבר מותקן ורץ אצלכם. קובץ שמזוהה כאיום נשאר בדיוק במקומו ולא מתויק בשום מקרה.</p>
+          <h3 data-i18n="f8.title">Defender check before every filing</h3>
+          <p data-i18n="f8.body">Filio doesn't build its own antivirus engine — it asks the Windows Defender already installed and running on your machine. A file flagged as a threat stays exactly where it is and is never filed.</p>
         </div>
         <div class="fcard">
           <div class="ic">📦</div>
-          <h3>סדר גם בקובצי התקנה</h3>
-          <p>אפשר להפעיל מיון של קובצי exe/msi לתיקייה נפרדת לפי שנה — לא מעורבים עם מסמכי לקוחות, כבוי כברירת מחדל כדי לא להפתיע.</p>
+          <h3 data-i18n="f9.title">Order for installer files too</h3>
+          <p data-i18n="f9.body">You can turn on sorting of exe/msi files into their own folder by year — kept separate from client documents, off by default so it never surprises you.</p>
+        </div>
+        <div class="fcard">
+          <div class="ic">🧐</div>
+          <h3 data-i18n="f10.title">Reviews what it isn't sure about, and learns</h3>
+          <p data-i18n="f10.body">Optional "ask before filing" mode leaves an unrecognized file for you to confirm instead of guessing. Fix it once in the "Fix / File…" dialog, and Filio can remember the correction for next time.</p>
         </div>
       </div>
     </div>
@@ -468,29 +500,34 @@
 
   <section id="security">
     <div class="wrap security">
-      <span class="eyebrow">אבטחה ופרטיות</span>
-      <h2>המסמכים שלכם לא עוזבים את המחשב</h2>
-      <p class="lede">בלי חשבון, בלי מפתח API, בלי חיוב חודשי — וגם מנגנון העדכונים בנוי כך שלא ניתן לנצל אותו.</p>
+      <span class="eyebrow" data-i18n="security.eyebrow">Security &amp; privacy</span>
+      <h2 data-i18n="security.title">Your documents never leave your computer</h2>
+      <p class="lede" data-i18n="security.lede">No account, no API key, no monthly charge — and even the update mechanism is built so it can't be exploited.</p>
       <div class="sec-grid" style="grid-template-columns:repeat(2,1fr);">
         <div class="sec-item">
           <div class="ic">🔒</div>
-          <h3>סיווג לגמרי מקומי</h3>
-          <p>מנוע החוקים רץ על המחשב שלכם בלבד. שום קובץ, שום טקסט מתוכו, לא נשלח לשום שרת חיצוני — אפילו לא לצורך "שיפור השירות".</p>
+          <h3 data-i18n="s1.title">Fully local classification</h3>
+          <p data-i18n="s1.body">The rules engine runs only on your computer. No file, and no text extracted from it, is ever sent to an external server — not even to "improve the service."</p>
         </div>
         <div class="sec-item">
           <div class="ic">🛡️</div>
-          <h3>עדכונים מאובטחים</h3>
-          <p>עדכון-במקום דורש HTTPS בלבד, ומאמת חתימת SHA-256 של קובץ ההתקנה לפני שהוא רץ — קובץ שלא תואם נמחק במקום להיפתח.</p>
+          <h3 data-i18n="s2.title">Secure updates</h3>
+          <p data-i18n="s2.body">In-place updates require HTTPS only, and verify the SHA-256 signature of the installer before it runs — a file that doesn't match is deleted instead of opened.</p>
         </div>
         <div class="sec-item">
           <div class="ic">🗑️</div>
-          <h3>אף פעם לא מוחק</h3>
-          <p>כפילויות מנותבות לתיקייה נפרדת, לא נדרסות. כל פעולת תיוק ניתנת לביטול. הגיבוי שלכם נשאר שלכם.</p>
+          <h3 data-i18n="s3.title">Never deletes anything</h3>
+          <p data-i18n="s3.body">Duplicates are routed to a separate folder, never overwritten. Every filing action can be undone. Your backups stay yours.</p>
         </div>
         <div class="sec-item">
           <div class="ic">🧪</div>
-          <h3>Defender בודק כל קובץ — לא אנחנו</h3>
-          <p>FileFox לא כותב לוגיקת אנטי-וירוס. הוא שואל את Windows Defender שכבר מותקן אצלכם. קובץ חשוד נשאר במקומו בלי שום געה — הכדור עובר לידיים שלכם.</p>
+          <h3 data-i18n="s4.title">Defender checks every file — not us</h3>
+          <p data-i18n="s4.body">Filio doesn't write antivirus logic. It asks the Windows Defender already installed on your machine. A suspicious file stays untouched — the decision stays in your hands.</p>
+        </div>
+        <div class="sec-item">
+          <div class="ic">🔔</div>
+          <h3 data-i18n="s5.title">Automatic updates</h3>
+          <p data-i18n="s5.body">Filio quietly checks the official GitHub release page once per session and only shows a notification if a newer version exists — it never downloads or installs anything without you clicking through.</p>
         </div>
       </div>
     </div>
@@ -498,108 +535,129 @@
 
   <section id="versions">
     <div class="wrap">
-      <span class="eyebrow">יומן גרסאות</span>
-      <h2>מה השתנה, גרסה אחר גרסה</h2>
-      <p class="lede">כל גרסה נענתה על בעיה אמיתית שנתפסה בשימוש בפועל — לא שינויים קוסמטיים. הרשימה המלאה נשמרת ב-CHANGELOG.md.</p>
+      <span class="eyebrow" data-i18n="versions.eyebrow">Changelog</span>
+      <h2 data-i18n="versions.title">What changed, version by version</h2>
+      <p class="lede" data-i18n="versions.lede">Every version answered a real problem caught in actual use — not cosmetic changes. The full list is kept in CHANGELOG.md.</p>
 
       <div class="timeline">
         <div class="tl-item current">
+          <div class="tl-badge">2.8.0</div>
+          <div class="tl-body">
+            <h3 data-i18n="tl280.title">Review-before-filing + OCR fix<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
+            <ul>
+              <li data-i18n="tl280.li1">Optional "ask before filing when no client is recognized" mode — an unmatched file waits in Activity as "Needs review" instead of landing under "Unknown Client."</li>
+              <li data-i18n="tl280.li2">New "Fix / File…" dialog in the Activity tab — pick the right client/type for a "Needs review" file, or correct one filed in the wrong place. An optional "remember this" toggle teaches Filio the correction for next time.</li>
+              <li data-i18n="tl280.li3">Fixed: an oversized scanned image could stall the shared OCR engine for every other watched folder, not just itself. Files over 15MB now skip OCR and fall back to filename-only classification.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-badge">2.7.1</div>
+          <div class="tl-body">
+            <h3 data-i18n="tl271.title">STANDARDS.md compliance sweep<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
+            <ul>
+              <li data-i18n="tl271.li1">Fixed a double-launch bug that could let two file watchers race on the same Downloads folder.</li>
+              <li data-i18n="tl271.li2">Installer now defaults to English regardless of Windows locale, and builds as <strong>Filio-Setup-&lt;version&gt;.exe</strong> instead of a generic name.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
           <div class="tl-badge">2.7.0</div>
           <div class="tl-body">
-            <h3>קובצי התקנה + בדיקת Windows Defender<span class="tl-date">ספטמבר 2026</span></h3>
+            <h3 data-i18n="tl270.title">Installer files + Windows Defender scan<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
             <ul>
-              <li>אפשר להפעיל תיוק של קובצי התקנה (exe/msi) - כבוי כברירת מחדל, ומקבלים תיקייה נפרדת משלהם, לא מעורבים עם מסמכי לקוחות.</li>
-              <li>כל קובץ נבדק מול Windows Defender (מופעל כברירת מחדל) לפני תיוק - קובץ שמזוהה כאיום נשאר בדיוק במקומו ולעולם לא מתויק.</li>
-              <li>93 בדיקות בסך הכל - כולל בדיקה אמיתית עם קובץ הבדיקה התקני של תעשיית האנטי-וירוס (EICAR).</li>
+              <li data-i18n="tl270.li1">You can now enable filing of installer files (exe/msi) — off by default, and they get their own separate folder, not mixed with client documents.</li>
+              <li data-i18n="tl270.li2">Every file is checked against Windows Defender (on by default) before filing — a file flagged as a threat stays exactly where it is and is never filed.</li>
+              <li data-i18n="tl270.li3">93 tests in total — including a real check using the antivirus industry's standard test file (EICAR).</li>
             </ul>
           </div>
         </div>
         <div class="tl-item">
           <div class="tl-badge">2.6.2</div>
           <div class="tl-body">
-            <h3>סבב בדיקת תקינות נוסף<span class="tl-date">ספטמבר 2026</span></h3>
+            <h3 data-i18n="tl262.title">Another integrity check pass<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
             <ul>
-              <li>תיקון קריטי: סנכרון ההפעלה האוטומטית עם Windows יכול היה לגרום לקריסה במחשבים עם מדיניות ארגונית נעולה - תוקן לפני שהגיע למשתמשי קצה.</li>
+              <li data-i18n="tl262.li1">Critical fix: syncing Windows auto-start could crash the app on machines with a locked-down corporate policy — fixed before it reached end users.</li>
             </ul>
           </div>
         </div>
         <div class="tl-item">
           <div class="tl-badge">2.6.1</div>
           <div class="tl-body">
-            <h3>"הפעלה אוטומטית" שלא תמיד עבדה בפועל<span class="tl-date">ספטמבר 2026</span></h3>
+            <h3 data-i18n="tl261.title">"Start with Windows" didn't always actually work<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
             <ul>
-              <li>נתפס בבדיקת מכונה חיה: ההגדרה אמרה "כן" אבל הרישום בפועל ב-Windows היה ריק. FileFox מסנכרן עכשיו את הרישום בכל הפעלה, ומציג את המצב האמיתי במסך ההגדרות.</li>
+              <li data-i18n="tl261.li1">Caught on a live machine: the setting said "on" but the actual Windows registry entry was empty. Filio now syncs the registry on every launch, and shows the real state in the settings screen.</li>
             </ul>
           </div>
         </div>
         <div class="tl-item">
           <div class="tl-badge">2.6.0</div>
           <div class="tl-body">
-            <h3>זיהוי טקסט בתמונות (OCR מקומי)<span class="tl-date">ספטמבר 2026</span></h3>
+            <h3 data-i18n="tl260.title">Text recognition in images (local OCR)<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
             <ul>
-              <li>מנוע OCR מקומי (אנגלית + עברית) קורא טקסט מתוך צילום/סריקה של חשבונית (jpg/png) ומסווג אותו בדיוק כמו PDF — שום תמונה לא נשלחת לשום שרת.</li>
-              <li>רשימת הסיומות הנצפות כברירת מחדל הורחבה בזהירות: תמונות ו-PowerPoint, לא "לתייק הכל".</li>
-              <li>85 בדיקות בסך הכל — כולל בדיקת OCR אמיתית על תמונה שנוצרת בזמן הבדיקה, לא מדומה.</li>
+              <li data-i18n="tl260.li1">A local OCR engine (English + Hebrew) reads text out of a photo/scan of an invoice (jpg/png) and classifies it exactly like a PDF — no image is ever sent to a server.</li>
+              <li data-i18n="tl260.li2">The default watched-extensions list was carefully expanded: images and PowerPoint — not "file everything."</li>
+              <li data-i18n="tl260.li3">85 tests in total — including a real OCR test on an image generated at test time, not mocked.</li>
             </ul>
           </div>
         </div>
         <div class="tl-item">
           <div class="tl-badge">2.5.1</div>
           <div class="tl-body">
-            <h3>סבב תיקוני יציבות ותאימות<span class="tl-date">ספטמבר 2026</span></h3>
+            <h3 data-i18n="tl251.title">Stability and compatibility fix round<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
             <ul>
-              <li>נמצאו ותוקנו 10 באגים אמיתיים בבדיקת קוד יזומה — כולל מרוץ תזמון שיכול היה לאבד רשומות ביומן הפעילות, וקיפאון אפשרי בשמירת הגדרות עם כמה תיקיות מעקב.</li>
-              <li>תוקנה תקלה שיכלה להפיל את כל האפליקציה בלחיצה על "ייצוא הגדרות" ליעד לא-כתיב.</li>
+              <li data-i18n="tl251.li1">10 real bugs found and fixed in a proactive code review — including a timing race that could lose activity-log entries, and a possible freeze when saving settings with several watch folders.</li>
+              <li data-i18n="tl251.li2">Fixed an issue that could crash the entire app when clicking "Export Settings" to a non-writable destination.</li>
             </ul>
           </div>
         </div>
         <div class="tl-item">
           <div class="tl-badge">2.5.0</div>
           <div class="tl-body">
-            <h3>שדרוג עיצוב ו-UX<span class="tl-date">ספטמבר 2026</span></h3>
+            <h3 data-i18n="tl250.title">Design and UX upgrade<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
             <ul>
-              <li>מסך ההגדרות בנוי מ"כרטיסים" ויזואליים עם מתגי הפעלה/כיבוי גרפיים במקום תיבות סימון.</li>
-              <li>הגדרות מתקדמות (סיומות, רשימת התעלמות, סדר תיקיות) מוסתרות כברירת מחדל מאחורי חלונית אחת.</li>
+              <li data-i18n="tl250.li1">The settings screen is now built from visual "cards" with graphical on/off toggles instead of checkboxes.</li>
+              <li data-i18n="tl250.li2">Advanced settings (extensions, ignore list, folder order) are hidden by default behind a single panel.</li>
             </ul>
           </div>
         </div>
         <div class="tl-item">
           <div class="tl-badge">2.4.0</div>
           <div class="tl-body">
-            <h3>בהירות, UX ואבטחה<span class="tl-date">אוגוסט 2026</span></h3>
+            <h3 data-i18n="tl240.title">Clarity, UX and security<span class="tl-date" data-i18n="tl.date.aug2026">August 2026</span></h3>
             <ul>
-              <li>כל שורה ביומן הפעילות מסבירה למה הקובץ סווג כפי שסווג.</li>
-              <li>עדכון-במקום מחייב HTTPS ומאמת חתימת SHA-256 של קובץ ההתקנה.</li>
+              <li data-i18n="tl240.li1">Every line in the activity log explains why the file was classified the way it was.</li>
+              <li data-i18n="tl240.li2">In-place updates now require HTTPS and verify the installer's SHA-256 signature.</li>
             </ul>
           </div>
         </div>
 
         <details class="tl-older">
-          <summary>עוד 6 גרסאות קודמות (2.3.0 ← 1.0.0)</summary>
+          <summary data-i18n="tl.older.summary">6 more earlier versions (2.3.0 ← 1.0.0)</summary>
           <div class="timeline" style="margin-top:18px;">
             <div class="tl-item">
               <div class="tl-badge">2.3.0</div>
-              <div class="tl-body"><h3>נוחות תפעול</h3><ul><li>סדר תיקיות מותאם אישית, רשימת התעלמות, כפתור "נסה שוב", וגיבוי/שחזור הגדרות.</li></ul></div>
+              <div class="tl-body"><h3 data-i18n="tl230.title">Operational convenience</h3><ul><li data-i18n="tl230.li1">Custom folder order, ignore list, "try again" button, and settings backup/restore.</li></ul></div>
             </div>
             <div class="tl-item">
               <div class="tl-badge">2.2.1</div>
-              <div class="tl-body"><h3>תיקוני יציבות</h3><ul><li>הפסקת תיוק קבצים לא-רלוונטיים (תמונות, ZIP) שלא קשורים למסמכים עסקיים.</li></ul></div>
+              <div class="tl-body"><h3 data-i18n="tl221.title">Stability fixes</h3><ul><li data-i18n="tl221.li1">Stopped filing irrelevant files (images, ZIPs) unrelated to business documents.</li></ul></div>
             </div>
             <div class="tl-item">
               <div class="tl-badge">2.2.0</div>
-              <div class="tl-body"><h3>מחקר תחרותי</h3><ul><li>כמה תיקיות מעקב, מעקב עצמי-מחלים, זיהוי כפילויות, מודעות לענן.</li></ul></div>
+              <div class="tl-body"><h3 data-i18n="tl220.title">Competitive research</h3><ul><li data-i18n="tl220.li1">Multiple watch folders, self-healing watcher, duplicate detection, cloud awareness.</li></ul></div>
             </div>
             <div class="tl-item">
               <div class="tl-badge">2.1.0</div>
-              <div class="tl-body"><h3>אשף ראשוני</h3><ul><li>אשף "ברוכים הבאים" בהפעלה ראשונה + סריקה חכמה מקומית.</li></ul></div>
+              <div class="tl-body"><h3 data-i18n="tl210.title">Initial wizard</h3><ul><li data-i18n="tl210.li1">A "welcome" wizard on first launch, plus a local smart scan.</li></ul></div>
             </div>
             <div class="tl-item">
               <div class="tl-badge">2.0.0</div>
-              <div class="tl-body"><h3>מיתוג מחדש</h3><ul><li>שם ולוגו חדשים, ממשק דו-לשוני, מנגנון עדכון-במקום.</li></ul></div>
+              <div class="tl-body"><h3 data-i18n="tl200.title">Rebrand</h3><ul><li data-i18n="tl200.li1">New name and logo, bilingual interface, in-place update mechanism.</li></ul></div>
             </div>
             <div class="tl-item">
               <div class="tl-badge">1.0.0</div>
-              <div class="tl-body"><h3>גרסה ראשונה</h3><ul><li>הכלי נולד בשם "תייקן".</li></ul></div>
+              <div class="tl-body"><h3 data-i18n="tl100.title">First version</h3><ul><li data-i18n="tl100.li1">The tool was born under the name "Tayakan."</li></ul></div>
             </div>
           </div>
         </details>
@@ -610,13 +668,13 @@
   <section id="download">
     <div class="wrap">
       <div class="download-band">
-        <span class="eyebrow">להתחיל</span>
-        <h2>חמש דקות, ותיקיית ההורדות מפסיקה להיות ביצה</h2>
-        <p class="lede">אשף הגדרה קצר שואל היכן לעקוב ולאן לתייק, ומציע לקוחות מתוך הקבצים שכבר יש לכם — בלי מסך ריק.</p>
-        <div class="file-fact">📦 <span>קובץ ההתקנה: <strong>FileFoxSetup.exe</strong> · גרסה 2.7.0 · לא דורש הרשאות מנהל</span></div>
+        <span class="eyebrow" data-i18n="download.eyebrow">Get started</span>
+        <h2 data-i18n="download.title">Five minutes, and your Downloads folder stops being a swamp</h2>
+        <p class="lede" data-i18n="download.lede">A short setup wizard asks where to watch and where to file, and suggests clients from the files you already have — no blank screen.</p>
+        <div class="file-fact">📦 <span data-i18n="download.filefact">Installer file: <strong>Filio-Setup-2.8.0.exe</strong> · version 2.8.0 · no admin rights required</span></div>
         <div class="hero-ctas" style="justify-content:center; margin-top:24px;">
-          <a href="../FileFoxSetup.exe" class="btn btn-primary">⬇ הורדה ל-Windows 10/11</a>
-          <a href="#how" class="btn btn-ghost">חזרה לאיך זה עובד</a>
+          <a href="../Filio-Setup-2.8.0.exe" class="btn btn-primary" data-i18n="download.cta1">⬇ Download for Windows 10/11</a>
+          <a href="#how" class="btn btn-ghost" data-i18n="download.cta2">Back to how it works</a>
         </div>
       </div>
     </div>
@@ -625,9 +683,335 @@
 </main>
 
 <footer class="wrap">
-  <span>FileFox — downloads that file themselves.</span>
-  <span><a href="../docs/מסמך-אפיון.html">מסמך אפיון</a> · <a href="../CHANGELOG.md">יומן גרסאות מלא</a> · <a href="../README.md">תיעוד טכני</a></span>
+  <span data-i18n="footer.tagline">Filio — downloads that file themselves.</span>
+  <span><a href="../SPEC.md" data-i18n="footer.spec">Spec document</a> · <a href="../CHANGELOG.md" data-i18n="footer.changelog">Full changelog</a> · <a href="../README.md" data-i18n="footer.readme">Technical docs</a></span>
 </footer>
+
+<script>
+(function(){
+  var translations = {
+    en: {
+      "nav.how": "How it works",
+      "nav.features": "Features",
+      "nav.security": "Security & Privacy",
+      "nav.versions": "Versions",
+      "nav.download": "Download",
+      "hero.eyebrow": "Background tool for Windows · v2.8.0",
+      "hero.title1": "Your downloads,",
+      "hero.title2": "filed automatically.",
+      "hero.lede": "Filio sits quietly by the clock, keeps an eye on your Downloads folder, and every time a file lands there — an invoice, a contract, a report — it recognizes the document type and the client it belongs to, and moves it to the right, organized folder. Without touching any other files. Without sending anything to the cloud.",
+      "hero.cta1": "⬇ Download for Windows",
+      "hero.cta2": "How it works",
+      "hero.chip1": "100% local — no file ever leaves your computer",
+      "hero.chip2": "Zero ongoing cost",
+      "hero.chip3": "Hebrew + English",
+      "demo.after.label": "✅ After Filio",
+      "demo.before.label": "🗂 Downloads folder",
+      "demo.client1": "Acme Design",
+      "demo.client2": "Vardi Studio",
+      "demo.skip": "skipped",
+      "demo.installer": "📦 installer",
+      "demo.arrow": "→",
+      "demo.aria": "Demo: files in Downloads are automatically filed by client, year and type",
+      "how.eyebrow": "Three steps",
+      "how.title": "From the moment a file lands, to the moment it's filed",
+      "how.lede": "No manual filing, no trying to remember what you saved where — it all happens automatically in the background.",
+      "step1.title": "Watching your downloads",
+      "step1.body": "A new file is saved to a folder you're watching. Filio notices immediately and waits for the download to fully finish — including files still syncing from OneDrive or Dropbox.",
+      "step2.title": "Local recognition, not the cloud",
+      "step2.body": "Reads the PDF's content and the file name, and compares them against the rules and clients you've defined. Every decision comes with a plain explanation — which word was found, and where.",
+      "step3.title": "Filed in the right place",
+      "step3.body": "Moves the file into Client → Year → Type, sends a quick notification, and logs everything — with one-click undo if the detection got it wrong.",
+      "path.before.tag": "Before",
+      "path.before.seg1": "Downloads",
+      "path.after.tag": "After",
+      "path.after.seg1": "Documents",
+      "path.after.seg2": "Acme Design",
+      "path.after.seg4": "Invoices",
+      "features.eyebrow": "Product features",
+      "features.title": "Not just \"moving files\"",
+      "features.lede": "Every feature here came from a real problem — either we ran into it ourselves, or a competing tool leaves it unsolved.",
+      "f1.title": "Reads photos too, not just PDFs",
+      "f1.body": "Local OCR (English + Hebrew) recognizes text inside a photo or scan of an invoice, and classifies it exactly like a PDF — entirely on your own computer.",
+      "f2.title": "Multiple watch folders at once",
+      "f2.body": "Downloads, Desktop, an email-attachments folder — it watches all of them at the same time, not just one.",
+      "f3.title": "Self-healing",
+      "f3.body": "A health check every 30 seconds recovers on its own from the glitches that make other tools quietly \"stop working.\"",
+      "f4.title": "Explains itself",
+      "f4.body": "Every line in the activity log comes with an explanation: which word was matched, in the content or the file name — not a black box.",
+      "f5.title": "Duplicate detection",
+      "f5.body": "A file already filed before (by content, not just name) is transparently routed to \"possible duplicates\" — never silently overwritten.",
+      "f6.title": "Cloud-aware",
+      "f6.body": "Recognizes OneDrive/Dropbox/Google Drive folders and waits for a file to finish downloading before touching it.",
+      "f7.title": "Always undoable",
+      "f7.body": "Got the detection wrong? One click in the activity log puts the file back exactly where it was. Nothing is ever deleted.",
+      "f8.title": "Defender check before every filing",
+      "f8.body": "Filio doesn't build its own antivirus engine — it asks the Windows Defender already installed and running on your machine. A file flagged as a threat stays exactly where it is and is never filed.",
+      "f9.title": "Order for installer files too",
+      "f9.body": "You can turn on sorting of exe/msi files into their own folder by year — kept separate from client documents, off by default so it never surprises you.",
+      "f10.title": "Reviews what it isn't sure about, and learns",
+      "f10.body": "Optional \"ask before filing\" mode leaves an unrecognized file for you to confirm instead of guessing. Fix it once in the \"Fix / File…\" dialog, and Filio can remember the correction for next time.",
+      "security.eyebrow": "Security & privacy",
+      "security.title": "Your documents never leave your computer",
+      "security.lede": "No account, no API key, no monthly charge — and even the update mechanism is built so it can't be exploited.",
+      "s1.title": "Fully local classification",
+      "s1.body": "The rules engine runs only on your computer. No file, and no text extracted from it, is ever sent to an external server — not even to \"improve the service.\"",
+      "s2.title": "Secure updates",
+      "s2.body": "In-place updates require HTTPS only, and verify the SHA-256 signature of the installer before it runs — a file that doesn't match is deleted instead of opened.",
+      "s3.title": "Never deletes anything",
+      "s3.body": "Duplicates are routed to a separate folder, never overwritten. Every filing action can be undone. Your backups stay yours.",
+      "s4.title": "Defender checks every file — not us",
+      "s4.body": "Filio doesn't write antivirus logic. It asks the Windows Defender already installed on your machine. A suspicious file stays untouched — the decision stays in your hands.",
+      "s5.title": "Automatic updates",
+      "s5.body": "Filio quietly checks the official GitHub release page once per session and only shows a notification if a newer version exists — it never downloads or installs anything without you clicking through.",
+      "versions.eyebrow": "Changelog",
+      "versions.title": "What changed, version by version",
+      "versions.lede": "Every version answered a real problem caught in actual use — not cosmetic changes. The full list is kept in CHANGELOG.md.",
+      "tl.date.sep2026": "September 2026",
+      "tl.date.aug2026": "August 2026",
+      "tl280.title": "Review-before-filing + OCR fix",
+      "tl280.li1": "Optional \"ask before filing when no client is recognized\" mode — an unmatched file waits in Activity as \"Needs review\" instead of landing under \"Unknown Client.\"",
+      "tl280.li2": "New \"Fix / File…\" dialog in the Activity tab — pick the right client/type for a \"Needs review\" file, or correct one filed in the wrong place. An optional \"remember this\" toggle teaches Filio the correction for next time.",
+      "tl280.li3": "Fixed: an oversized scanned image could stall the shared OCR engine for every other watched folder, not just itself. Files over 15MB now skip OCR and fall back to filename-only classification.",
+      "tl271.title": "STANDARDS.md compliance sweep",
+      "tl271.li1": "Fixed a double-launch bug that could let two file watchers race on the same Downloads folder.",
+      "tl271.li2": "Installer now defaults to English regardless of Windows locale, and builds as <strong>Filio-Setup-&lt;version&gt;.exe</strong> instead of a generic name.",
+      "tl270.title": "Installer files + Windows Defender scan",
+      "tl270.li1": "You can now enable filing of installer files (exe/msi) — off by default, and they get their own separate folder, not mixed with client documents.",
+      "tl270.li2": "Every file is checked against Windows Defender (on by default) before filing — a file flagged as a threat stays exactly where it is and is never filed.",
+      "tl270.li3": "93 tests in total — including a real check using the antivirus industry's standard test file (EICAR).",
+      "tl262.title": "Another integrity check pass",
+      "tl262.li1": "Critical fix: syncing Windows auto-start could crash the app on machines with a locked-down corporate policy — fixed before it reached end users.",
+      "tl261.title": "\"Start with Windows\" didn't always actually work",
+      "tl261.li1": "Caught on a live machine: the setting said \"on\" but the actual Windows registry entry was empty. Filio now syncs the registry on every launch, and shows the real state in the settings screen.",
+      "tl260.title": "Text recognition in images (local OCR)",
+      "tl260.li1": "A local OCR engine (English + Hebrew) reads text out of a photo/scan of an invoice (jpg/png) and classifies it exactly like a PDF — no image is ever sent to a server.",
+      "tl260.li2": "The default watched-extensions list was carefully expanded: images and PowerPoint — not \"file everything.\"",
+      "tl260.li3": "85 tests in total — including a real OCR test on an image generated at test time, not mocked.",
+      "tl251.title": "Stability and compatibility fix round",
+      "tl251.li1": "10 real bugs found and fixed in a proactive code review — including a timing race that could lose activity-log entries, and a possible freeze when saving settings with several watch folders.",
+      "tl251.li2": "Fixed an issue that could crash the entire app when clicking \"Export Settings\" to a non-writable destination.",
+      "tl250.title": "Design and UX upgrade",
+      "tl250.li1": "The settings screen is now built from visual \"cards\" with graphical on/off toggles instead of checkboxes.",
+      "tl250.li2": "Advanced settings (extensions, ignore list, folder order) are hidden by default behind a single panel.",
+      "tl240.title": "Clarity, UX and security",
+      "tl240.li1": "Every line in the activity log explains why the file was classified the way it was.",
+      "tl240.li2": "In-place updates now require HTTPS and verify the installer's SHA-256 signature.",
+      "tl.older.summary": "6 more earlier versions (2.3.0 ← 1.0.0)",
+      "tl230.title": "Operational convenience",
+      "tl230.li1": "Custom folder order, ignore list, \"try again\" button, and settings backup/restore.",
+      "tl221.title": "Stability fixes",
+      "tl221.li1": "Stopped filing irrelevant files (images, ZIPs) unrelated to business documents.",
+      "tl220.title": "Competitive research",
+      "tl220.li1": "Multiple watch folders, self-healing watcher, duplicate detection, cloud awareness.",
+      "tl210.title": "Initial wizard",
+      "tl210.li1": "A \"welcome\" wizard on first launch, plus a local smart scan.",
+      "tl200.title": "Rebrand",
+      "tl200.li1": "New name and logo, bilingual interface, in-place update mechanism.",
+      "tl100.title": "First version",
+      "tl100.li1": "The tool was born under the name \"Tayakan.\"",
+      "download.eyebrow": "Get started",
+      "download.title": "Five minutes, and your Downloads folder stops being a swamp",
+      "download.lede": "A short setup wizard asks where to watch and where to file, and suggests clients from the files you already have — no blank screen.",
+      "download.filefact": "Installer file: <strong>Filio-Setup-2.8.0.exe</strong> · version 2.8.0 · no admin rights required",
+      "download.cta1": "⬇ Download for Windows 10/11",
+      "download.cta2": "Back to how it works",
+      "footer.tagline": "Filio — downloads that file themselves.",
+      "footer.spec": "Spec document",
+      "footer.changelog": "Full changelog",
+      "footer.readme": "Technical docs",
+      "meta.description": "Filio automatically files invoices, contracts and reports from your Downloads folder by client, year and type — fully local, no cloud AI, no monthly cost."
+    },
+    he: {
+      "nav.how": "איך זה עובד",
+      "nav.features": "יכולות",
+      "nav.security": "אבטחה ופרטיות",
+      "nav.versions": "גרסאות",
+      "nav.download": "הורדה",
+      "hero.eyebrow": "תוכנת רקע ל-Windows · v2.8.0",
+      "hero.title1": "ההורדות שלכם,",
+      "hero.title2": "מתויקות לבד.",
+      "hero.lede": "Filio יושב שקט ליד השעון, שם עין על תיקיית ההורדות, ובכל פעם שנופל בה קובץ — חשבונית, חוזה או דוח — הוא מזהה את סוג המסמך ואת הלקוח שלו, ומעביר אותו לתיקייה המסודרת הנכונה. בלי לגעת בקבצים אחרים. בלי לשלוח שום דבר לענן.",
+      "hero.cta1": "⬇ הורדה ל-Windows",
+      "hero.cta2": "איך זה עובד",
+      "hero.chip1": "100% מקומי — שום קובץ לא יוצא מהמחשב",
+      "hero.chip2": "אפס עלות שוטפת",
+      "hero.chip3": "עברית + English",
+      "demo.after.label": "✅ אחרי Filio",
+      "demo.before.label": "🗂 תיקיית הורדות",
+      "demo.client1": "עיצוב אקמה",
+      "demo.client2": "סטודיו ורדי",
+      "demo.skip": "לא נוגעים",
+      "demo.installer": "📦 מתקין",
+      "demo.arrow": "←",
+      "demo.aria": "הדגמה: קבצים בהורדות מתויקים אוטומטית לפי לקוח, שנה וסוג",
+      "how.eyebrow": "שלושה שלבים",
+      "how.title": "מרגע שקובץ נחת, עד שהוא במקום הנכון",
+      "how.lede": "בלי תיוק ידני, בלי לזכור איפה שמרתם מה — הכל קורה אוטומטית ברקע.",
+      "step1.title": "מעקב אחרי הורדות",
+      "step1.body": "קובץ חדש נשמר בתיקייה שאתם עוקבים אחריה. Filio מזהה זאת מיד וממתין שההורדה תסתיים לגמרי — כולל קבצים שעדיין מסתנכרנים מ-OneDrive או Dropbox.",
+      "step2.title": "זיהוי מקומי, לא בענן",
+      "step2.body": "קורא את תוכן ה-PDF ואת שם הקובץ, ומשווה מול החוקים והלקוחות שהגדרתם. כל החלטה מלווה בהסבר פשוט — איזו מילה נמצאה, ואיפה.",
+      "step3.title": "תיוק במקום הנכון",
+      "step3.body": "מעביר את הקובץ לתיקיית לקוח ← שנה ← סוג, שולח התראה קטנה, ורושם הכל ביומן — עם ביטול בקליק אחד אם הזיהוי טעה.",
+      "path.before.tag": "לפני",
+      "path.before.seg1": "הורדות",
+      "path.after.tag": "אחרי",
+      "path.after.seg1": "מסמכים",
+      "path.after.seg2": "עיצוב אקמה",
+      "path.after.seg4": "חשבוניות",
+      "features.eyebrow": "יכולות המוצר",
+      "features.title": "לא רק \"מזיז קבצים\"",
+      "features.lede": "כל יכולת כאן נולדה מבעיה אמיתית — או שנתקלנו בה בעצמנו, או שכלים מתחרים משאירים אותה פתוחה.",
+      "f1.title": "קורא גם צילום, לא רק PDF",
+      "f1.body": "OCR מקומי (אנגלית + עברית) מזהה טקסט בתוך צילום או סריקה של חשבונית, ומסווג אותה בדיוק כמו PDF — לגמרי על המחשב שלכם.",
+      "f2.title": "כמה תיקיות מעקב במקביל",
+      "f2.body": "הורדות, שולחן עבודה, תיקיית מייל — עוקב אחרי כולן בו-זמנית, לא רק אחת.",
+      "f3.title": "עצמי-מחלים",
+      "f3.body": "בדיקת בריאות כל 30 שניות מתאוששת לבד מתקלות שגורמות לכלים אחרים \"להפסיק לעבוד\" בשקט.",
+      "f4.title": "מסביר את עצמו",
+      "f4.body": "כל שורה ביומן הפעילות מקבלת הסבר: איזו מילה זוהתה, בתוכן או בשם הקובץ — לא קופסה שחורה.",
+      "f5.title": "זיהוי כפילויות",
+      "f5.body": "קובץ שכבר תויק בעבר (לפי תוכן, לא רק שם) מנותב שקוף ל\"כפילויות אפשריות\" — אף פעם לא נדרס.",
+      "f6.title": "מודע לענן",
+      "f6.body": "מזהה תיקיות OneDrive/Dropbox/Google Drive וממתין שקובץ יסיים להוריד לפני שהוא נוגע בו.",
+      "f7.title": "תמיד אפשר לבטל",
+      "f7.body": "זיהוי טעה? קליק אחד ביומן הפעילות מחזיר את הקובץ למקומו המקורי. שום דבר לא נמחק לעולם.",
+      "f8.title": "בדיקת Defender לפני כל תיוק",
+      "f8.body": "Filio לא בונה מנוע אנטי-וירוס משלו — הוא שואל את Windows Defender שכבר מותקן ורץ אצלכם. קובץ שמזוהה כאיום נשאר בדיוק במקומו ולא מתויק בשום מקרה.",
+      "f9.title": "סדר גם בקובצי התקנה",
+      "f9.body": "אפשר להפעיל מיון של קובצי exe/msi לתיקייה נפרדת לפי שנה — לא מעורבים עם מסמכי לקוחות, כבוי כברירת מחדל כדי לא להפתיע.",
+      "f10.title": "בודק את מה שהוא לא בטוח בו, ולומד",
+      "f10.body": "מצב אופציונלי \"לשאול לפני תיוק\" משאיר קובץ לא מזוהה לאישורכם במקום לנחש. מתקנים פעם אחת בדיאלוג \"תיקון / תיוק…\", ו-Filio יכול לזכור את התיקון לפעם הבאה.",
+      "security.eyebrow": "אבטחה ופרטיות",
+      "security.title": "המסמכים שלכם לא עוזבים את המחשב",
+      "security.lede": "בלי חשבון, בלי מפתח API, בלי חיוב חודשי — וגם מנגנון העדכונים בנוי כך שלא ניתן לנצל אותו.",
+      "s1.title": "סיווג לגמרי מקומי",
+      "s1.body": "מנוע החוקים רץ על המחשב שלכם בלבד. שום קובץ, שום טקסט מתוכו, לא נשלח לשום שרת חיצוני — אפילו לא לצורך \"שיפור השירות\".",
+      "s2.title": "עדכונים מאובטחים",
+      "s2.body": "עדכון-במקום דורש HTTPS בלבד, ומאמת חתימת SHA-256 של קובץ ההתקנה לפני שהוא רץ — קובץ שלא תואם נמחק במקום להיפתח.",
+      "s3.title": "אף פעם לא מוחק",
+      "s3.body": "כפילויות מנותבות לתיקייה נפרדת, לא נדרסות. כל פעולת תיוק ניתנת לביטול. הגיבוי שלכם נשאר שלכם.",
+      "s4.title": "Defender בודק כל קובץ — לא אנחנו",
+      "s4.body": "Filio לא כותב לוגיקת אנטי-וירוס. הוא שואל את Windows Defender שכבר מותקן אצלכם. קובץ חשוד נשאר במקומו בלי שום געה — הכדור עובר לידיים שלכם.",
+      "s5.title": "עדכונים אוטומטיים",
+      "s5.body": "Filio בודק בשקט מול עמוד ה-Release הרשמי ב-GitHub פעם אחת בכל הפעלה, ומציג התראה רק אם יש גרסה חדשה יותר — הוא לעולם לא מוריד או מתקין שום דבר בלי שתלחצו בעצמכם.",
+      "versions.eyebrow": "יומן גרסאות",
+      "versions.title": "מה השתנה, גרסה אחר גרסה",
+      "versions.lede": "כל גרסה נענתה על בעיה אמיתית שנתפסה בשימוש בפועל — לא שינויים קוסמטיים. הרשימה המלאה נשמרת ב-CHANGELOG.md.",
+      "tl.date.sep2026": "ספטמבר 2026",
+      "tl.date.aug2026": "אוגוסט 2026",
+      "tl280.title": "בדיקה לפני תיוק + תיקון OCR",
+      "tl280.li1": "מצב אופציונלי \"לשאול לפני תיוק כשלא זוהה לקוח\" — קובץ שלא הותאם ממתין בפעילות כ\"דורש בדיקה\" במקום לנחות תחת \"לקוח לא ידוע\".",
+      "tl280.li2": "דיאלוג \"תיקון / תיוק…\" חדש בטאב הפעילות — בוחרים את הלקוח/הסוג הנכון לקובץ \"דורש בדיקה\", או מתקנים קובץ שתויק במקום הלא נכון. מתג \"זכור לפעם הבאה\" אופציונלי מלמד את Filio את התיקון.",
+      "tl280.li3": "תוקן: תמונה סרוקה גדולה מדי יכלה לתקוע את מנוע ה-OCR המשותף עבור כל תיקיות המעקב האחרות, לא רק עבור עצמה. קבצים מעל 15MB מדלגים כעת על OCR ונופלים לסיווג לפי שם קובץ בלבד.",
+      "tl271.title": "סבב תאימות ל-STANDARDS.md",
+      "tl271.li1": "תוקן באג של הפעלה כפולה שיכול היה לגרום לשני צופי-קבצים להתחרות על אותה תיקיית הורדות.",
+      "tl271.li2": "המתקין ברירת המחדל שלו כעת אנגלית ללא תלות בשפת Windows, ונבנה כ-<strong>Filio-Setup-&lt;גרסה&gt;.exe</strong> במקום שם גנרי.",
+      "tl270.title": "קובצי התקנה + בדיקת Windows Defender",
+      "tl270.li1": "אפשר להפעיל תיוק של קובצי התקנה (exe/msi) - כבוי כברירת מחדל, ומקבלים תיקייה נפרדת משלהם, לא מעורבים עם מסמכי לקוחות.",
+      "tl270.li2": "כל קובץ נבדק מול Windows Defender (מופעל כברירת מחדל) לפני תיוק - קובץ שמזוהה כאיום נשאר בדיוק במקומו ולעולם לא מתויק.",
+      "tl270.li3": "93 בדיקות בסך הכל - כולל בדיקה אמיתית עם קובץ הבדיקה התקני של תעשיית האנטי-וירוס (EICAR).",
+      "tl262.title": "סבב בדיקת תקינות נוסף",
+      "tl262.li1": "תיקון קריטי: סנכרון ההפעלה האוטומטית עם Windows יכול היה לגרום לקריסה במחשבים עם מדיניות ארגונית נעולה - תוקן לפני שהגיע למשתמשי קצה.",
+      "tl261.title": "\"הפעלה אוטומטית\" שלא תמיד עבדה בפועל",
+      "tl261.li1": "נתפס בבדיקת מכונה חיה: ההגדרה אמרה \"כן\" אבל הרישום בפועל ב-Windows היה ריק. Filio מסנכרן עכשיו את הרישום בכל הפעלה, ומציג את המצב האמיתי במסך ההגדרות.",
+      "tl260.title": "זיהוי טקסט בתמונות (OCR מקומי)",
+      "tl260.li1": "מנוע OCR מקומי (אנגלית + עברית) קורא טקסט מתוך צילום/סריקה של חשבונית (jpg/png) ומסווג אותו בדיוק כמו PDF — שום תמונה לא נשלחת לשום שרת.",
+      "tl260.li2": "רשימת הסיומות הנצפות כברירת מחדל הורחבה בזהירות: תמונות ו-PowerPoint, לא \"לתייק הכל\".",
+      "tl260.li3": "85 בדיקות בסך הכל — כולל בדיקת OCR אמיתית על תמונה שנוצרת בזמן הבדיקה, לא מדומה.",
+      "tl251.title": "סבב תיקוני יציבות ותאימות",
+      "tl251.li1": "נמצאו ותוקנו 10 באגים אמיתיים בבדיקת קוד יזומה — כולל מרוץ תזמון שיכול היה לאבד רשומות ביומן הפעילות, וקיפאון אפשרי בשמירת הגדרות עם כמה תיקיות מעקב.",
+      "tl251.li2": "תוקנה תקלה שיכלה להפיל את כל האפליקציה בלחיצה על \"ייצוא הגדרות\" ליעד לא-כתיב.",
+      "tl250.title": "שדרוג עיצוב ו-UX",
+      "tl250.li1": "מסך ההגדרות בנוי מ\"כרטיסים\" ויזואליים עם מתגי הפעלה/כיבוי גרפיים במקום תיבות סימון.",
+      "tl250.li2": "הגדרות מתקדמות (סיומות, רשימת התעלמות, סדר תיקיות) מוסתרות כברירת מחדל מאחורי חלונית אחת.",
+      "tl240.title": "בהירות, UX ואבטחה",
+      "tl240.li1": "כל שורה ביומן הפעילות מסבירה למה הקובץ סווג כפי שסווג.",
+      "tl240.li2": "עדכון-במקום מחייב HTTPS ומאמת חתימת SHA-256 של קובץ ההתקנה.",
+      "tl.older.summary": "עוד 6 גרסאות קודמות (2.3.0 ← 1.0.0)",
+      "tl230.title": "נוחות תפעול",
+      "tl230.li1": "סדר תיקיות מותאם אישית, רשימת התעלמות, כפתור \"נסה שוב\", וגיבוי/שחזור הגדרות.",
+      "tl221.title": "תיקוני יציבות",
+      "tl221.li1": "הפסקת תיוק קבצים לא-רלוונטיים (תמונות, ZIP) שלא קשורים למסמכים עסקיים.",
+      "tl220.title": "מחקר תחרותי",
+      "tl220.li1": "כמה תיקיות מעקב, מעקב עצמי-מחלים, זיהוי כפילויות, מודעות לענן.",
+      "tl210.title": "אשף ראשוני",
+      "tl210.li1": "אשף \"ברוכים הבאים\" בהפעלה ראשונה + סריקה חכמה מקומית.",
+      "tl200.title": "מיתוג מחדש",
+      "tl200.li1": "שם ולוגו חדשים, ממשק דו-לשוני, מנגנון עדכון-במקום.",
+      "tl100.title": "גרסה ראשונה",
+      "tl100.li1": "הכלי נולד בשם \"תייקן\".",
+      "download.eyebrow": "להתחיל",
+      "download.title": "חמש דקות, ותיקיית ההורדות מפסיקה להיות ביצה",
+      "download.lede": "אשף הגדרה קצר שואל היכן לעקוב ולאן לתייק, ומציע לקוחות מתוך הקבצים שכבר יש לכם — בלי מסך ריק.",
+      "download.filefact": "קובץ ההתקנה: <strong>Filio-Setup-2.8.0.exe</strong> · גרסה 2.8.0 · לא דורש הרשאות מנהל",
+      "download.cta1": "⬇ הורדה ל-Windows 10/11",
+      "download.cta2": "חזרה לאיך זה עובד",
+      "footer.tagline": "Filio — ההורדות מתייקות את עצמן.",
+      "footer.spec": "מסמך אפיון",
+      "footer.changelog": "יומן גרסאות מלא",
+      "footer.readme": "תיעוד טכני",
+      "meta.description": "Filio מתייק אוטומטית חשבוניות, חוזים ודוחות מתיקיית ההורדות לפי לקוח, שנה וסוג — לגמרי מקומי, בלי AI בענן ובלי עלות חודשית."
+    }
+  };
+
+  var STORAGE_KEY = "filio-site-lang";
+
+  function applyLang(lang){
+    var dict = translations[lang] || translations.en;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "he" ? "rtl" : "ltr";
+
+    var nodes = document.querySelectorAll("[data-i18n]");
+    for (var i = 0; i < nodes.length; i++){
+      var key = nodes[i].getAttribute("data-i18n");
+      if (Object.prototype.hasOwnProperty.call(dict, key)){
+        // תוכן שכולל תגית <strong> (למשל שם הקובץ בפס ההורדה) - צריך innerHTML,
+        // כל השאר טקסט רגיל בלבד למניעת החדרת HTML לא מכוון.
+        if (dict[key].indexOf("<strong>") !== -1) {
+          nodes[i].innerHTML = dict[key];
+        } else {
+          nodes[i].textContent = dict[key];
+        }
+      }
+    }
+
+    var metaDesc = document.getElementById("meta-description");
+    if (metaDesc) metaDesc.setAttribute("content", dict["meta.description"]);
+
+    var demoBox = document.getElementById("demoBox");
+    if (demoBox) demoBox.setAttribute("aria-label", dict["demo.aria"]);
+
+    var opts = document.querySelectorAll(".lang-opt");
+    for (var j = 0; j < opts.length; j++){
+      opts[j].classList.toggle("active", opts[j].getAttribute("data-lang-opt") === lang);
+    }
+
+    try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) { /* private mode etc. - ignore */ }
+  }
+
+  function getInitialLang(){
+    try {
+      var stored = localStorage.getItem(STORAGE_KEY);
+      if (stored === "en" || stored === "he") return stored;
+    } catch (e) { /* ignore */ }
+    return "en"; // ברירת המחדל היא אנגלית, לא זיהוי אוטומטי משפת הדפדפן
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    applyLang(getInitialLang());
+
+    var toggle = document.getElementById("langToggle");
+    if (toggle){
+      toggle.addEventListener("click", function(){
+        var current = document.documentElement.lang === "he" ? "he" : "en";
+        applyLang(current === "en" ? "he" : "en");
+      });
+    }
+  });
+})();
+</script>
 
 </body>
 </html>

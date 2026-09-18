@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Filio mark: an auto-filing folder with a bold "filed" checkmark, topped by a
+       teal accent dot that echoes the dot over the "i" in Filio. This is the full
+       (large-size) rendering; app icons at 16/24px use a further-simplified variant
+       (see build script) per icon-legibility best practice — small sizes drop the
+       back-tab layer and enlarge the checkmark, rather than just shrinking this file. -->
+
+  <!-- folder tab (back) -->
+  <rect x="70" y="176" width="230" height="52" rx="18" fill="#A35814"/>
+
+  <!-- folder body (front) -->
+  <rect x="62" y="198" width="388" height="222" rx="26" fill="#DB7A1E"/>
+
+  <!-- checkmark: bold, filed/done -->
+  <path d="M162 312 L226 376 L352 236" fill="none" stroke="#FFFFFF" stroke-width="34"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- "i" dot accent — signature mark, echoes Filio's wordmark dot -->
+  <circle cx="384" cy="112" r="58" fill="#1E7F72"/>
+</svg>

@@ -1,4 +1,42 @@
-# FileFox
+# Filio
+
+**[עברית](#עברית) | [English](#english)**
+
+---
+
+## English
+
+Filio is a Windows background tool that automatically files documents from your Downloads folder (or any watched folder) into a Client / Year / Document-Type structure.
+
+### Key features
+- Automatic filing by client, year, and document type (PDF, DOCX, images with OCR)
+- Local OCR (Tesseract) — English + Hebrew, no cloud
+- SHA-256 duplicate detection
+- Optional installer (exe/msi) sorting into `_Installers\Year`
+- Windows Defender scan before every file move
+- Full Hebrew/English localization with RTL support
+- **Filio never deletes files** — only moves/copies and logs
+
+### Installation
+1. Download `Filio-Setup-<version>.exe` from the project root.
+2. Run it — choose your install language (English/Hebrew), then follow the wizard.
+3. On first launch, a short setup wizard asks which folder to watch and where to file.
+
+### Requirements
+- Windows 10 (1809+) or Windows 11, x64
+- ~150 MB free disk space
+- Windows Defender active (recommended, not required)
+
+### Troubleshooting
+- **Filio won't start / "already running" message:** only one instance can run at a time — check the system tray for an existing icon.
+- **Files aren't being filed:** check the Activity tab for errors; make sure the watched folder still exists and Filio isn't paused (tray icon menu).
+- **Update fails silently:** check `%APPDATA%\Filio\logs\` for diagnostic logs.
+
+See the [Hebrew section](#עברית) below for full details, or `SPEC.md` for the complete specification.
+
+---
+
+## עברית
 
 תוכנת רקע קטנה ל-Windows: יושבת באזור ההתראות (ליד השעון), עוקבת אחרי תיקיית ההורדות,
 ובכל פעם שנוחת בה קובץ חדש (חשבונית, חוזה, דוח, ואפילו צילום/סריקה) — מזהה אוטומטית **איזה
@@ -15,16 +53,16 @@ Destination \ Client \ Year \ Type \ file.pdf
 ## 🗂️ מסמכי הפרויקט — קובץ הראשי לניווט
 
 זה **קובץ ה-README** — נקודת הכניסה שמחזיקה את כל מה שצריך כדי להבין, להציג, להתקין
-ולתחזק את FileFox. הטבלה הזו היא המפה של כל המסמכים בפרויקט: מה כל קובץ הוא, ולמה לפתוח
+ולתחזק את Filio. הטבלה הזו היא המפה של כל המסמכים בפרויקט: מה כל קובץ הוא, ולמה לפתוח
 אותו.
 
 | קובץ | מה זה | מתי לפתוח |
 |---|---|---|
 | **README.md** (הקובץ הזה) | קובץ ראשי: סקירה טכנית מלאה, איך זה עובד, איך בונים/מריצים/בודקים/מפרסמים | נקודת ההתחלה לכל מי שנוגע בפרויקט - מפתח, לקוח, או מי שממשיך את העבודה |
-| [**docs/מסמך-אפיון.html**](docs/מסמך-אפיון.html) | מסמך אפיון מורחב: הבעיה, הפתרון, הארכיטקטורה, ההיקף, ולמה כדאי להשתמש ב-FileFox על פני חלופות | לפני הצגה ללקוח/משקיע, או כשצריך תיעוד "רשמי" של המוצר |
+| [**SPEC.md**](SPEC.md) | מסמך אפיון: מה הכלי עושה, למי, יכולות עיקריות, מה חסר | לפני הצגה ללקוח/משקיע, או כשצריך תיעוד "רשמי" של המוצר |
 | [**website/index.html**](website/index.html) | דף נחיתה שיווקי - אותו מסר, בשפה של אתר מכירה: הדגמת לפני/אחרי, יכולות, אבטחה, גרסאות | כשרוצים לשתף קישור/דף שמסביר את המוצר למשתמש קצה שלא טכני |
 | [**CHANGELOG.md**](CHANGELOG.md) | יומן גרסאות מלא: מה נוסף/תוקן בכל גרסה, ולמה | לבדוק מה השתנה, או לפני שמתקינים עדכון |
-| [**FileFoxSetup.exe**](FileFoxSetup.exe) | קובץ ההתקנה עצמו - הגרסה הכי עדכנית תמיד יושבת כאן, ברמת התיקייה הראשית, כדי שיהיה קל למצוא | כשרוצים להתקין את FileFox בפועל על מחשב Windows |
+| [**Filio-Setup-2.8.0.exe**](Filio-Setup-2.8.0.exe) | קובץ ההתקנה עצמו - הגרסה הכי עדכנית תמיד יושבת כאן, ברמת התיקייה הראשית, כדי שיהיה קל למצוא | כשרוצים להתקין את Filio בפועל על מחשב Windows |
 
 ברירת המחדל של הממשק היא **אנגלית**, עם אפשרות מעבר מיידי (בלי הפעלה מחדש) ל**עברית**
 מתוך טאב "כללי".
@@ -35,30 +73,29 @@ Destination \ Client \ Year \ Type \ file.pdf
 
 ```
 app/                       ← קוד המקור (פתרון C# / WPF, .NET 8)
-  FileFox.sln
-  FileFox.App/
+  Filio.sln
+  Filio.App/
     Models/                ← מבני הנתונים (הגדרות, לקוח, חוק סיווג, רשומת יומן, manifest עדכון)
     Services/               ← הלוגיקה: מעקב תיקיות (עצמי-מחלים), PDF, OCR לתמונות, סיווג,
                                 תיוק, כפילויות, זיהוי ענן, הפעלה אוטומטית, שפה, עדכונים
   tessdata/                ← נתוני שפה ל-OCR מקומי (eng.traineddata, heb.traineddata)
     Resources/               ← מילוני טקסט לממשק: Strings.en.xaml / Strings.he.xaml
-    Assets/                   ← אייקון האפליקציה (filefox.ico)
+    Assets/                   ← אייקון האפליקציה (filio.ico)
     App.xaml(.cs)             ← נקודת הכניסה + אייקון מגש המערכת (Tray)
     MainWindow.xaml(.cs)      ← מסך ההגדרות (6 טאבים: כללי/לקוחות/חוקים/יומן/עדכונים/עזרה)
-  FileFox.Tests/            ← בדיקות יחידה + אינטגרציה (xUnit, 93 בדיקות)
+  Filio.Tests/            ← בדיקות יחידה + אינטגרציה (xUnit, 93 בדיקות)
 design-source/               ← לוגו מאסטר וקטורי (SVG) + PNG בהגדרה גבוהה
-installer/                   ← סקריפט Inno Setup + תמונות אשף ההתקנה (wizard_*.bmp)
-build/                       ← קובץ ה-exe שפורסם וההתקנה הסופית (FileFoxSetup.exe)
-docs/                        ← מסמך אפיון מלא (docs/מסמך-אפיון.html)
+build/installer/             ← סקריפט Inno Setup + תמונות אשף ההתקנה + EULA (wizard_*.bmp, EULA_*.txt)
+build/                       ← קובץ ה-exe שפורסם וההתקנה הסופית (Filio-Setup-<version>.exe)
 website/                     ← דף נחיתה שיווקי (website/index.html) - להסביר את המוצר למשתמש קצה
 CHANGELOG.md                 ← היסטוריית כל הגרסאות
 ```
 
 ## איך זה עובד (זרימה)
 
-1. FileFox רץ ברקע (אייקון שועל קטן ליד השעון) ומאזין לתיקיית ההורדות.
+1. Filio רץ ברקע (אייקון שועל קטן ליד השעון) ומאזין לתיקיית ההורדות.
 2. קובץ חדש נשמר בתיקייה (למשל PDF שהורדתם ממייל).
-3. FileFox ממתין שההורדה תסתיים לגמרי (כדי לא לתפוס קובץ חלקי), מתעלם מתיקיות שנוצרות
+3. Filio ממתין שההורדה תסתיים לגמרי (כדי לא לתפוס קובץ חלקי), מתעלם מתיקיות שנוצרות
    בתיקיית המעקב, ומוודא שאותו קובץ לא מטופל פעמיים אם המערכת יורה עליו כמה אירועים. ואז:
    - שולף טקסט מתוך ה-PDF (מקומית, בלי לשלוח אותו לשום מקום).
    - משווה את התוכן ואת שם הקובץ מול **חוקי הסיווג** שהגדרתם (Invoices/Contracts/Reports/...).
@@ -84,33 +121,33 @@ CHANGELOG.md                 ← היסטוריית כל הגרסאות
 ```json
 {
   "version": "2.4.0",
-  "installerUrl": "https://example.com/downloads/FileFoxSetup.exe",
+  "installerUrl": "https://example.com/downloads/Filio-Setup-<version>.exe",
   "notes": "מה חדש בגרסה הזו...",
-  "sha256": "אופציונלי - גיבוב SHA-256 (hex) של FileFoxSetup.exe, ראו הערת אבטחה למטה"
+  "sha256": "אופציונלי - גיבוב SHA-256 (hex) של Filio-Setup-<version>.exe, ראו הערת אבטחה למטה"
 }
 ```
 
 לחיצה על **Check for Updates** משווה את הגרסה המקומית לגרסה בקובץ; אם יש גרסה חדשה יותר,
 כפתור **Download & Install Update** מוריד את קובץ ההתקנה החדש ומריץ אותו בשקט
-(`/VERYSILENT /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS`) — Inno Setup סוגר את FileFox
+(`/VERYSILENT /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS`) — Inno Setup סוגר את Filio
 הרץ, מחליף את הקבצים באותה תיקיית התקנה, ומפעיל אותו מחדש אוטומטית. אין אשף, אין שאלות,
 אין צורך שהמשתמש יוריד קובץ בעצמו. ניתן גם להפעיל בדיקה אוטומטית בכל הפעלה (מסומן כברירת
 מחדל) דרך תיבת הסימון בטאב.
 
-**חשוב להפעלה בפועל:** צריך לארח את `FileFoxSetup.exe` וקובץ ה-JSON איפשהו (GitHub Releases,
+**חשוב להפעלה בפועל:** צריך לארח את `Filio-Setup-<version>.exe` וקובץ ה-JSON איפשהו (GitHub Releases,
 S3, כל שרת סטטי) ולעדכן את הכתובת בקובץ ה-JSON בכל גרסה חדשה. בלי כתובת מוגדרת, בדיקת
 העדכונים פשוט כבויה.
 
 **הערת אבטחה:** מאחר שהזרימה הזו מורידה ומריצה קובץ הפעלה בלי שהמשתמש רואה כל שלב, שתי
 כתובות ה-URL (כתובת ה-feed וגם `installerUrl` שבתוכו) **חייבות** להיות `https://` — כתובת
 `http://` נדחית עם הודעת שגיאה ברורה בטאב Updates, במקום שהעדכון ירוץ על כתובת שניתן לזייף
-בדרך. אם שדה `sha256` קיים ב-manifest, FileFox מחשב את הגיבוב של הקובץ שהתקבל בפועל ומשווה
+בדרך. אם שדה `sha256` קיים ב-manifest, Filio מחשב את הגיבוב של הקובץ שהתקבל בפועל ומשווה
 - קובץ שלא תואם נמחק במקום להיפתח. השדה אופציונלי (בלעדיו רק ה-HTTPS מגן), אבל מומלץ בחום
 לכל שרת עדכונים אמיתי.
 
 ## זיהוי טקסט בתמונות (OCR מקומי)
 
-FileFox קורא גם צילום/סריקה של חשבונית או קבלה (jpg/png), לא רק PDF: מנוע OCR מקומי
+Filio קורא גם צילום/סריקה של חשבונית או קבלה (jpg/png), לא רק PDF: מנוע OCR מקומי
 (Tesseract, אנגלית + עברית) שרץ לגמרי על המחשב מחלץ את הטקסט מהתמונה, ואז אותו מנוע
 סיווג בדיוק כמו PDF קובע סוג מסמך, לקוח ותאריך. שום תמונה לא נשלחת לשום שרת - בדיוק
 כמו שאר הסיווג. ניתן לכבות בטאב כללי ← הגדרות מתקדמות (`EnableImageOcr`) למי שמעדיף
@@ -124,7 +161,7 @@ FileFox קורא גם צילום/סריקה של חשבונית או קבלה (j
   לתיקיית `_Installers\שנה` נפרדת, בלי לעבור דרך מנוע הסיווג (אין להם "לקוח" משמעותי).
   כבוי כברירת מחדל כי לפעמים רוצים להריץ קובץ התקנה מיד אחרי ההורדה.
 - **בדיקת Windows Defender** (`EnableDefenderScan`, מופעל כברירת מחדל) — כל קובץ נבדק מול
-  Windows Defender לפני תיוק, דרך `MpCmdRun.exe` (כלי שורת הפקודה של Defender). FileFox
+  Windows Defender לפני תיוק, דרך `MpCmdRun.exe` (כלי שורת הפקודה של Defender). Filio
   לא בונה מנוע אבטחה משל עצמו - הוא רק שואל את מה שכבר מותקן וחינמי בכל Windows. קובץ
   שמזוהה כאיום נשאר בדיוק במקומו ולעולם לא מתויק; מופיע ביומן הפעילות עם סימון אדום ברור.
   אם Defender לא זמין, הקובץ מתויק כרגיל עם הערה שהוא לא נבדק - שקיפות מלאה, בלי הבטחת
@@ -145,7 +182,7 @@ FileFox קורא גם צילום/סריקה של חשבונית או קבלה (j
 
 ## אשף "ברוכים הבאים" (הפעלה ראשונה)
 
-בהתקנה ראשונה FileFox לא קופץ ישר למסך ההגדרות עם 6 טאבים ריקים — הוא פותח אשף ממותג
+בהתקנה ראשונה Filio לא קופץ ישר למסך ההגדרות עם 6 טאבים ריקים — הוא פותח אשף ממותג
 בן 5 צעדים (עיצוב ייעודי, לא חלון ההגדרות הרגיל): ברוכים הבאים ← שפה ← תיקיות ← **סריקה
 חכמה מקומית** ← סיום. אפשר להריץ אותו שוב בכל רגע מטאב **Help** ← "Run Setup Wizard Again".
 
@@ -160,7 +197,7 @@ FileFox קורא גם צילום/סריקה של חשבונית או קבלה (j
 וכלי "AI file organizer" ענניים חדשים מ-2026 כמו Sparkle / The Drive AI / OneDrive+Copilot).
 כל שדרוג להלן עונה על תקלה או מגבלה מתועדת שנמצאה שם:
 
-| ממצא מהמחקר | מי סובל מזה | הפתרון ב-FileFox |
+| ממצא מהמחקר | מי סובל מזה | הפתרון ב-Filio |
 |---|---|---|
 | מעקב אחר תיקייה "מפסיק לעבוד" בשקט אחרי שינה/הפעלה מחדש/עדכון Windows | DropIt | בדיקת-בריאות אוטומטית כל 30 שניות + הקשבה לאירוע Error של FileSystemWatcher, עם בנייה מחדש אוטומטית |
 | תמיכה בתיקיית מעקב אחת בלבד | רוב הכלים המקומיים | `WatchFolders` - כמה תיקיות מעקב במקביל (הורדות + שולחן עבודה + כל תיקייה אחרת) |
@@ -171,10 +208,10 @@ FileFox קורא גם צילום/סריקה של חשבונית או קבלה (j
 
 ## גרסאות
 
-הגרסה הנוכחית: **2.7.0**. ההיסטוריה המלאה של כל גרסה (מה נוסף, מה תוקן, ולמה) נמצאת
+הגרסה הנוכחית: **2.8.0**. ההיסטוריה המלאה של כל גרסה (מה נוסף, מה תוקן, ולמה) נמצאת
 במסמך נפרד — [CHANGELOG.md](CHANGELOG.md) — כדי שלא יהיו שני מקומות עם אותו מידע
-שעלולים להתבדר. שינוי אחרון: זיהוי טקסט בתמונות (OCR מקומי) - FileFox מסווג עכשיו גם
-צילום/סריקה של חשבונית, לא רק PDF — ראו CHANGELOG.md לפירוט המלא.
+שעלולים להתבדר. שינוי אחרון: מסך "תקן / תייק…" ביומן הפעילות (סקירה לפני תיוק, למידה
+מתיקונים) ותיקון OCR לתמונות גדולות — ראו CHANGELOG.md לפירוט המלא.
 
 ---
 
@@ -183,7 +220,7 @@ FileFox קורא גם צילום/סריקה של חשבונית או קבלה (j
 דורש [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) מותקן.
 
 ```bash
-cd app/FileFox.App
+cd app/Filio.App
 dotnet restore
 dotnet run
 ```
@@ -191,7 +228,7 @@ dotnet run
 ## הרצת הבדיקות האוטומטיות
 
 ```bash
-cd app/FileFox.Tests
+cd app/Filio.Tests
 dotnet test
 ```
 
@@ -206,17 +243,17 @@ dotnet test
 ## פרסום קובץ ההרצה (exe) להתקנה
 
 ```bash
-cd app/FileFox.App
+cd app/Filio.App
 dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ../../build/publish
 ```
 
-זה יוצר `build/publish/FileFox.exe` — קובץ הרצה בודד שלא דורש מהמשתמש להתקין .NET בנפרד.
+זה יוצר `build/publish/Filio.exe` — קובץ הרצה בודד שלא דורש מהמשתמש להתקין .NET בנפרד.
 
-## בניית קובץ ההתקנה (FileFoxSetup.exe)
+## בניית קובץ ההתקנה (Filio-Setup-<version>.exe)
 
 1. התקינו [Inno Setup 6](https://jrsoftware.org/isinfo.php) (חינמי).
-2. פתחו את `installer/setup.iss` ב-Inno Setup Compiler ולחצו **Build** (או הריצו `ISCC.exe installer\setup.iss` משורת הפקודה).
-3. קובץ ההתקנה ייווצר ב-`build/FileFoxSetup.exe`.
+2. פתחו את `build/installer/setup.iss` ב-Inno Setup Compiler ולחצו **Build** (או הריצו `ISCC.exe build\installer\setup.iss` משורת הפקודה).
+3. קובץ ההתקנה ייווצר ב-`build/Filio-Setup-<version>.exe`.
 
 ההתקנה כוללת: אשף עם אייקון ותמונת מותג (השועל), בחירת שפה אוטומטית לפי שפת Windows,
 בחירה אם ליצור קיצור דרך בשולחן העבודה, בחירה אם להפעיל אוטומטית עם הפעלת המחשב, והפעלת
@@ -228,7 +265,7 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 
 ## הגדרה ראשונית (למשתמש הקצה)
 
-1. הריצו את `FileFoxSetup.exe` ועברו את האשף.
+1. הריצו את `Filio-Setup-<version>.exe` ועברו את האשף.
 2. בפתיחה הראשונה ייפתח חלון ההגדרות — קבעו:
    - תיקיית מעקב (ברירת מחדל: Downloads)
    - תיקיית יעד לתיוק
@@ -241,4 +278,4 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 
 ---
 
-*FileFox* — downloads that file themselves.
+*Filio* — downloads that file themselves.

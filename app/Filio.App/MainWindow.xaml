@@ -1,0 +1,507 @@
+<Window x:Class="Filio.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource WindowTitle}" Height="700" Width="960" MinHeight="560" MinWidth="820"
+        FontFamily="Segoe UI" FontSize="14"
+        Background="{StaticResource BrandBackgroundBrush}"
+        WindowStartupLocation="CenterScreen">
+
+    <DockPanel Margin="0" x:Name="RootPanel">
+        <DockPanel.Triggers>
+            <!-- כניסה עדינה (fade-in, 250ms - motion.normal בdesign-tokens.json) בעליית החלון,
+                 כמו שSTANDARDS.md מבקש ל-splash - כאן על תוכן החלון הראשי, לא רק המסך הראשון -->
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.25"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </DockPanel.Triggers>
+        <!-- כותרת עליונה עם מיתוג + מצב פעילות -->
+        <Border DockPanel.Dock="Top" Padding="18,12">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#0F5348" Offset="0"/>
+                    <GradientStop Color="#1E7F72" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/Assets/filio-32.png" Width="26" Height="26" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{DynamicResource AppName}" FontSize="19" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="{DynamicResource AppTagline}" FontSize="11" Foreground="#DFF3EF"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Language quick toggle -->
+                    <Button x:Name="QuickLangButton" Width="46" Height="30" Margin="0,0,8,0"
+                            ToolTip="{DynamicResource LanguageLabel}" Click="QuickLangToggle_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="lb" Background="Transparent" BorderBrush="#4DFFFFFF"
+                                        BorderThickness="1" CornerRadius="6" Padding="6,4">
+                                    <TextBlock x:Name="LangLabel" Text="EN" Foreground="White" FontWeight="Bold"
+                                               FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               FontFamily="Segoe UI"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="lb" Property="Background" Value="#20FFFFFF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Theme toggle -->
+                    <Button x:Name="ThemeToggleButton" Width="30" Height="30" Margin="0,0,10,0"
+                            ToolTip="{DynamicResource ThemeLabel}" Click="ThemeToggle_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="tb" Background="Transparent" CornerRadius="6" Padding="4">
+                                    <TextBlock x:Name="ThemeIcon" Text="🌙" FontSize="14"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="tb" Property="Background" Value="#20FFFFFF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <!-- Status pill -->
+                    <Border x:Name="StatusPill" CornerRadius="100" Padding="12,5" Margin="0,0,10,0" Background="#2E8B57">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot" Width="8" Height="8" Fill="White" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="StatusTextBlock" Text="Active" Foreground="White" FontWeight="SemiBold" FontSize="12"/>
+                        </StackPanel>
+                    </Border>
+                    <Button x:Name="TogglePauseButton" Content="Pause" Padding="12,6" Click="TogglePause_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <TabControl Margin="12" x:Name="MainTabControl">
+            <TabItem Header="{DynamicResource TabGeneral}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="16">
+
+                        <!-- כרטיס: מאיפה לאסוף קבצים -->
+                        <Border Style="{StaticResource SettingsCard}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📥" FontSize="18" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{DynamicResource WatchFoldersLabel}" Style="{StaticResource CardTitle}"/>
+                                </StackPanel>
+                                <TextBlock Text="{DynamicResource WatchFoldersSubtitle}" Style="{StaticResource CardSubtitle}"/>
+                                <ListBox x:Name="WatchFoldersListBox" Height="90" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Button Content="{DynamicResource AddWatchFolderButton}" Margin="0,0,8,0" Click="AddWatchFolder_Click"/>
+                                    <Button Content="{DynamicResource RemoveWatchFolderButton}" Style="{StaticResource DangerButton}" Click="RemoveWatchFolder_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- כרטיס: לאן לתייק -->
+                        <Border Style="{StaticResource SettingsCard}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📁" FontSize="18" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{DynamicResource OutputFolderLabel}" Style="{StaticResource CardTitle}"/>
+                                </StackPanel>
+                                <TextBlock Text="{DynamicResource OutputFolderSubtitle}" Style="{StaticResource CardSubtitle}"/>
+                                <DockPanel>
+                                    <Button x:Name="BrowseOutputFolderButton" Content="{DynamicResource BrowseButton}" DockPanel.Dock="Left" Click="BrowseOutputFolder_Click"/>
+                                    <TextBox x:Name="OutputFolderTextBox" Margin="0,0,8,0" IsReadOnly="True"/>
+                                </DockPanel>
+                                <TextBlock Text="{DynamicResource OutputFolderWarning}" FontSize="11.5"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                                <TextBlock x:Name="CloudSyncInfoText" FontSize="11.5" TextWrapping="Wrap"
+                                           Foreground="{StaticResource BrandPrimaryBrush}" Margin="0,6,0,0" Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- כרטיס: איך Filio יתנהג (מתגים גרפיים במקום checkboxes) -->
+                        <Border Style="{StaticResource SettingsCard}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                    <TextBlock Text="🔔" FontSize="18" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{DynamicResource BehaviorCardTitle}" Style="{StaticResource CardTitle}"/>
+                                </StackPanel>
+
+                                <!-- Group: הפעלה ומעקב -->
+                                <TextBlock Text="{DynamicResource BehaviorGroupMonitor}" FontSize="11" FontWeight="Bold"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                <CheckBox x:Name="StartWithWindowsCheckBox" Content="{DynamicResource StartWithWindowsCheck}" Style="{StaticResource ToggleSwitch}"
+                                          ToolTip="{DynamicResource StartWithWindowsTooltip}"/>
+                                <CheckBox x:Name="ShowNotificationsCheckBox" Content="{DynamicResource ShowNotificationsCheck}" Style="{StaticResource ToggleSwitch}"/>
+                                <CheckBox x:Name="IsPausedCheckBox" Content="{DynamicResource PauseCheck}" Style="{StaticResource ToggleSwitch}"/>
+
+                                <Separator Margin="0,12,0,12" Background="{StaticResource BorderBrush2}"/>
+
+                                <!-- Group: אבטחה -->
+                                <TextBlock Text="{DynamicResource BehaviorGroupSecurity}" FontSize="11" FontWeight="Bold"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                <CheckBox x:Name="EnableDefenderScanCheckBox" Content="{DynamicResource EnableDefenderScanCheck}" Style="{StaticResource ToggleSwitch}"
+                                          ToolTip="{DynamicResource EnableDefenderScanTooltip}"/>
+                                <TextBlock Text="{DynamicResource EnableDefenderScanSubtitle}" FontSize="11.5" TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="56,0,0,4"/>
+
+                                <Separator Margin="0,12,0,12" Background="{StaticResource BorderBrush2}"/>
+
+                                <!-- Group: ארגון קבצים -->
+                                <TextBlock Text="{DynamicResource BehaviorGroupOrganize}" FontSize="11" FontWeight="Bold"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                <CheckBox x:Name="DetectDuplicatesCheckBox" Content="{DynamicResource DetectDuplicatesCheck}" Style="{StaticResource ToggleSwitch}"
+                                          ToolTip="{DynamicResource DetectDuplicatesTooltip}"/>
+                                <CheckBox x:Name="OrganizeInstallersCheckBox" Content="{DynamicResource OrganizeInstallersCheck}" Style="{StaticResource ToggleSwitch}"
+                                          ToolTip="{DynamicResource OrganizeInstallersTooltip}"/>
+                                <TextBlock Text="{DynamicResource OrganizeInstallersSubtitle}" FontSize="11.5" TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="56,0,0,4"/>
+                                <CheckBox x:Name="ReviewLowConfidenceCheckBox" Content="{DynamicResource ReviewLowConfidenceCheck}" Style="{StaticResource ToggleSwitch}"
+                                          ToolTip="{DynamicResource ReviewLowConfidenceTooltip}"/>
+                                <TextBlock Text="{DynamicResource ReviewLowConfidenceSubtitle}" FontSize="11.5" TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="56,0,0,4"/>
+
+                                <Separator Margin="0,12,0,12" Background="{StaticResource BorderBrush2}"/>
+
+                                <!-- Group: פעולת קובץ -->
+                                <TextBlock Text="{DynamicResource FileActionLabel}" FontSize="11" FontWeight="Bold"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                <RadioButton x:Name="MoveRadioButton" Content="{DynamicResource MoveOption}" GroupName="MoveCopy" Margin="0,0,0,4"/>
+                                <RadioButton x:Name="CopyRadioButton" Content="{DynamicResource CopyOption}" GroupName="MoveCopy"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- כרטיס: שפה -->
+                        <Border Style="{StaticResource SettingsCard}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🌐" FontSize="18" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{DynamicResource LanguageLabel}" Style="{StaticResource CardTitle}"/>
+                                </StackPanel>
+                                <ComboBox x:Name="LanguageComboBox" Width="220" HorizontalAlignment="Left" SelectionChanged="LanguageComboBox_SelectionChanged">
+                                    <ComboBoxItem x:Name="LanguageEnglishItem" Tag="en" Content="{DynamicResource LanguageEnglish}"/>
+                                    <ComboBoxItem x:Name="LanguageHebrewItem" Tag="he" Content="{DynamicResource LanguageHebrew}"/>
+                                </ComboBox>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- כרטיס: מראה ואפליקציה -->
+                        <Border Style="{StaticResource SettingsCard}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                    <TextBlock Text="🎨" FontSize="18" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{DynamicResource DisplayCardTitle}" Style="{StaticResource CardTitle}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{DynamicResource ThemeLabel}" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <RadioButton x:Name="ThemeLightRadio" Content="{DynamicResource ThemeLight}" GroupName="ThemeGroup" Margin="0,0,20,0"/>
+                                    <RadioButton x:Name="ThemeDarkRadio" Content="{DynamicResource ThemeDark}" GroupName="ThemeGroup"/>
+                                </StackPanel>
+
+                                <CheckBox x:Name="MinimizeToTrayCheckBox" Content="{DynamicResource MinimizeToTrayCheck}"
+                                          Style="{StaticResource ToggleSwitch}" Margin="0,16,0,0"
+                                          ToolTip="{DynamicResource MinimizeToTrayTooltip}"/>
+                                <TextBlock Text="{DynamicResource MinimizeToTraySubtitle}" FontSize="11.5" TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="56,0,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- הגדרות מתקדמות - סגור כברירת מחדל כדי לא להציף משתמש לא-טכני -->
+                        <Expander Header="{DynamicResource AdvancedSettingsHeader}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource AdvancedSettingsIntro}" Style="{StaticResource CardSubtitle}" Margin="0,0,0,16"/>
+
+                                <TextBlock Text="{DynamicResource WatchedExtensionsLabel}" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <TextBox x:Name="WatchedExtensionsTextBox" ToolTip="{DynamicResource WatchedExtensionsTooltip}"/>
+                                <TextBlock Text="{DynamicResource WatchedExtensionsSubtitle}" FontSize="11.5" TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
+
+                                <CheckBox x:Name="EnableImageOcrCheckBox" Content="{DynamicResource EnableImageOcrCheck}"
+                                          Style="{StaticResource ToggleSwitch}" Margin="0,16,0,0"
+                                          ToolTip="{DynamicResource EnableImageOcrTooltip}"/>
+                                <TextBlock Text="{DynamicResource EnableImageOcrSubtitle}" FontSize="11.5" TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,2,0,0"/>
+
+                                <TextBlock Text="{DynamicResource IgnorePatternsLabel}" FontWeight="SemiBold" Margin="0,18,0,4"/>
+                                <TextBox x:Name="IgnorePatternsTextBox" ToolTip="{DynamicResource IgnorePatternsTooltip}"/>
+                                <TextBlock Text="{DynamicResource IgnorePatternsSubtitle}" FontSize="11.5" TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
+
+                                <TextBlock Text="{DynamicResource FolderOrderLabel}" FontWeight="SemiBold" Margin="0,18,0,4"/>
+                                <ComboBox x:Name="FolderOrderComboBox" Width="320" HorizontalAlignment="Left" ToolTip="{DynamicResource FolderOrderTooltip}">
+                                    <ComboBoxItem Tag="ClientYearType" Content="{DynamicResource FolderOrderClientYearType}"/>
+                                    <ComboBoxItem Tag="YearClientType" Content="{DynamicResource FolderOrderYearClientType}"/>
+                                    <ComboBoxItem Tag="TypeClientYear" Content="{DynamicResource FolderOrderTypeClientYear}"/>
+                                </ComboBox>
+
+                                <TextBlock Text="{DynamicResource LogRetentionLabel}" FontWeight="SemiBold" Margin="0,18,0,4"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBox x:Name="LogRetentionDaysTextBox" Width="80" HorizontalAlignment="Left"/>
+                                    <TextBlock Text="{DynamicResource LogRetentionDaysUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
+                                               Foreground="{StaticResource TextMutedBrush}"/>
+                                </StackPanel>
+                                <TextBlock Text="{DynamicResource LogRetentionSubtitle}" FontSize="11.5" TextWrapping="Wrap"
+                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Expander>
+
+                        <Button Content="{DynamicResource SaveButton}" Style="{StaticResource PrimaryButton}"
+                                HorizontalAlignment="Left" FontSize="14" Padding="24,10" Click="SaveGeneral_Click"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource TabClients}">
+                <Grid Margin="16">
+                    <DockPanel>
+                        <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceAltBrush}" CornerRadius="12" Padding="16" Margin="0,0,0,14">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="👥" FontSize="18" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{DynamicResource ClientsIntroTitle}" Style="{StaticResource CardTitle}" Margin="0"/>
+                                </StackPanel>
+                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="{DynamicResource ClientsIntro}"/>
+                                <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" FontStyle="Italic" Foreground="{StaticResource TextMutedBrush}"
+                                           FontSize="12" Text="{DynamicResource ClientsExample}"/>
+                            </StackPanel>
+                        </Border>
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0">
+                            <Button Content="{DynamicResource AddClientButton}" Margin="0,0,8,0" Click="AddClient_Click"/>
+                            <Button Content="{DynamicResource RemoveClientButton}" Style="{StaticResource DangerButton}" Margin="0,0,8,0" Click="RemoveClient_Click"/>
+                            <Button Content="{DynamicResource SaveClientsButton}" Style="{StaticResource PrimaryButton}" Click="SaveClients_Click"/>
+                        </StackPanel>
+                        <DataGrid x:Name="ClientsGrid" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{DynamicResource ClientNameColumn}" Binding="{Binding Name}" Width="220"/>
+                                <DataGridTextColumn Header="{DynamicResource ClientKeywordsColumn}" Binding="{Binding Keywords}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+
+                    <StackPanel x:Name="ClientsEmptyHint" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Visibility="Collapsed" IsHitTestVisible="False" Margin="0,40,0,0">
+                        <TextBlock Text="👥" FontSize="28" HorizontalAlignment="Center" Opacity="0.5"/>
+                        <TextBlock Text="{DynamicResource ClientsEmptyTitle}" Foreground="{StaticResource TextMutedBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource ClientsEmptySubtitle}" FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource TabRules}">
+                <Grid Margin="16">
+                    <DockPanel>
+                        <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceAltBrush}" CornerRadius="12" Padding="16" Margin="0,0,0,14">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🧭" FontSize="18" Margin="0,0,8,0"/>
+                                    <TextBlock Text="{DynamicResource RulesIntroTitle}" Style="{StaticResource CardTitle}" Margin="0"/>
+                                </StackPanel>
+                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="{DynamicResource RulesIntro}"/>
+                                <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" FontStyle="Italic" Foreground="{StaticResource TextMutedBrush}"
+                                           FontSize="12" Text="{DynamicResource RulesExample}"/>
+                            </StackPanel>
+                        </Border>
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0">
+                            <Button Content="{DynamicResource AddRuleButton}" Margin="0,0,8,0" Click="AddDocType_Click"/>
+                            <Button Content="{DynamicResource RemoveRuleButton}" Style="{StaticResource DangerButton}" Margin="0,0,8,0" Click="RemoveDocType_Click"/>
+                            <Button Content="{DynamicResource SaveRulesButton}" Style="{StaticResource PrimaryButton}" Click="SaveDocTypes_Click"/>
+                        </StackPanel>
+                        <DataGrid x:Name="DocTypesGrid" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{DynamicResource TypeColumn}" Binding="{Binding TypeName}" Width="140"/>
+                                <DataGridTextColumn Header="{DynamicResource ContentKeywordsColumn}" Binding="{Binding Keywords}" Width="*"/>
+                                <DataGridTextColumn Header="{DynamicResource FileNamePatternColumn}" Binding="{Binding FileNamePatterns}" Width="*"/>
+                                <DataGridCheckBoxColumn Header="{DynamicResource FallbackColumn}" Binding="{Binding IsFallback}" Width="90"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource TabActivity}">
+                <DockPanel Margin="16">
+                    <Grid DockPanel.Dock="Top" Margin="0,0,0,14">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                                    CornerRadius="8" Padding="14,8" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource TotalFiledLabel}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,4,0"/>
+                                    <TextBlock x:Name="LogTotalText" Text="0" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                                    CornerRadius="8" Padding="14,8" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource SucceededLabel}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,4,0"/>
+                                    <TextBlock x:Name="LogSuccessText" Text="0" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                                    CornerRadius="8" Padding="14,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{DynamicResource FailedLabel}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,4,0"/>
+                                    <TextBlock x:Name="LogFailedText" Text="0" FontWeight="Bold" Foreground="{StaticResource DangerBrush}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock DockPanel.Dock="Top" Text="{DynamicResource ActivityHoverHint}" FontSize="11.5" FontStyle="Italic"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,10" TextWrapping="Wrap"/>
+
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0">
+                        <Button Content="{DynamicResource RefreshButton}" Margin="0,0,8,0" Click="RefreshLog_Click"/>
+                        <Button Content="{DynamicResource UndoButton}" Margin="0,0,8,0" Click="UndoLogEntry_Click"/>
+                        <Button Content="{DynamicResource RetryButton}" Margin="0,0,8,0" Click="RetryLogEntry_Click"/>
+                        <Button Content="{DynamicResource FixClientButton}" Margin="0,0,8,0" Click="FixClientLogEntry_Click"/>
+                        <Button Content="{DynamicResource IgnoreFileButton}" Style="{StaticResource DangerButton}" Click="IgnoreLogEntryFile_Click"/>
+                    </StackPanel>
+
+                    <Grid>
+                        <DataGrid x:Name="LogGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column"
+                                  ToolTipService.ShowDuration="30000">
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="ToolTip" Value="{Binding MatchExplanation}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ThreatDetected}" Value="True">
+                                            <Setter Property="Background" Value="#F6E3E0"/>
+                                            <Setter Property="ToolTip" Value="{Binding ErrorMessage}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding NeedsReview}" Value="True">
+                                            <Setter Property="Background" Value="#FBEED9"/>
+                                            <Setter Property="ToolTip" Value="{DynamicResource ExplainNeedsReview}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{DynamicResource TimeColumn}" Binding="{Binding Timestamp}" Width="140"/>
+                                <DataGridTextColumn Header="{DynamicResource SourceFileColumn}" Binding="{Binding OriginalPath}" Width="*"/>
+                                <DataGridTextColumn Header="{DynamicResource DetectedTypeColumn}" Binding="{Binding DetectedType}" Width="100"/>
+                                <DataGridTextColumn Header="{DynamicResource DetectedClientColumn}" Binding="{Binding DetectedClient}" Width="150"/>
+                                <DataGridTextColumn Header="{DynamicResource DetectedDateColumn}" Binding="{Binding DetectedDate}" Width="100"/>
+                                <DataGridTextColumn Header="{DynamicResource StatusColumn}" Binding="{Binding StatusText}" Width="180">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Success}" Value="False">
+                                                    <Setter Property="Foreground" Value="{StaticResource DangerBrush}"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Success}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel x:Name="LogEmptyHint" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                    Visibility="Collapsed" IsHitTestVisible="False" Margin="0,40,0,0">
+                            <TextBlock Text="📭" FontSize="28" HorizontalAlignment="Center" Opacity="0.5"/>
+                            <TextBlock Text="{DynamicResource LogEmptyTitle}" Foreground="{StaticResource TextMutedBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource LogEmptySubtitle}" FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </DockPanel>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource TabUpdates}">
+                <StackPanel Margin="20">
+                    <TextBlock Text="{DynamicResource UpdatesIntro}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                            CornerRadius="10" Padding="18">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{DynamicResource CurrentVersionLabel}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,6,0"/>
+                                <TextBlock x:Name="CurrentVersionText" FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <TextBlock x:Name="UpdateStatusText" Margin="0,14,0,0" TextWrapping="Wrap" Foreground="{StaticResource TextMutedBrush}"/>
+
+                            <Border x:Name="ChangelogBox" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="12" Margin="0,10,0,0" Visibility="Collapsed">
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource ChangelogLabel}" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                    <TextBlock x:Name="ChangelogText" TextWrapping="Wrap" FontSize="12.5"/>
+                                </StackPanel>
+                            </Border>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                                <Button x:Name="CheckForUpdatesButton" Content="{DynamicResource CheckForUpdatesButton}" Margin="0,0,8,0" Click="CheckForUpdates_Click"/>
+                                <Button x:Name="DownloadAndInstallButton" Content="{DynamicResource DownloadAndInstallButton}" Style="{StaticResource PrimaryButton}"
+                                        Visibility="Collapsed" Click="DownloadAndInstall_Click"/>
+                                <Button x:Name="OpenReleasePageButton" Content="{DynamicResource OpenReleasePageButton}" Style="{StaticResource PrimaryButton}"
+                                        Visibility="Collapsed" Click="OpenReleasePage_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <CheckBox x:Name="AutoCheckUpdatesCheckBox" Content="{DynamicResource AutoCheckOnStartupCheck}" Style="{StaticResource ToggleSwitch}" Margin="0,20,0,0"/>
+
+                    <TextBlock Text="{DynamicResource UpdateFeedUrlLabel}" FontWeight="SemiBold" Margin="0,20,0,4"/>
+                    <TextBox x:Name="UpdateFeedUrlTextBox" ToolTip="{DynamicResource UpdateFeedUrlTooltip}"/>
+                    <TextBlock Text="{DynamicResource UpdateFeedUrlHelp}" FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
+                    <TextBlock Text="{DynamicResource UpdateSecurityNote}" FontSize="11.5" TextWrapping="Wrap"
+                               Foreground="{StaticResource TextMutedBrush}" Margin="0,6,0,0"/>
+
+                    <Button Content="{DynamicResource SaveButton}" Style="{StaticResource PrimaryButton}"
+                            HorizontalAlignment="Left" Margin="0,20,0,0" Click="SaveUpdatesSettings_Click"/>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource TabHelp}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="24">
+                        <TextBlock Text="{DynamicResource AppName}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource BrandPrimaryBrush}"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,16">
+                            <TextBlock Text="{DynamicResource HelpVersionPrefix}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,4,0"/>
+                            <TextBlock x:Name="HelpVersionText" Foreground="{StaticResource TextMutedBrush}"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{DynamicResource HelpCopyright}" FontSize="11.5"
+                                   Foreground="{StaticResource TextMutedBrush}" Margin="0,10,0,0"/>
+
+                        <TextBlock TextWrapping="Wrap" Text="{DynamicResource HelpDescription}"/>
+                        <TextBlock Margin="0,16,0,0" TextWrapping="Wrap" Text="{DynamicResource HelpClosingNote}"/>
+
+                        <TextBlock Text="{DynamicResource HelpHowItWorksTitle}" FontWeight="Bold" FontSize="15" Margin="0,24,0,8"/>
+                        <TextBlock TextWrapping="Wrap" Text="{DynamicResource HelpHowItWorksBody}" LineHeight="22"/>
+
+                        <TextBlock Text="{DynamicResource HelpTipsTitle}" FontWeight="Bold" FontSize="15" Margin="0,24,0,8"/>
+                        <TextBlock TextWrapping="Wrap" Text="{DynamicResource HelpTipsBody}" LineHeight="22"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
+                            <Button Content="{DynamicResource OpenOutputFolderButton}" Margin="0,0,8,0" Click="OpenOutputFolder_Click"/>
+                            <Button Content="{DynamicResource OpenLogsFolderButton}" Margin="0,0,8,0" Click="OpenLogsFolder_Click"/>
+                            <Button Content="{DynamicResource RerunSetupWizardButton}" Click="RerunSetupWizard_Click"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{DynamicResource BackupSettingsTitle}" FontWeight="Bold" FontSize="15" Margin="0,24,0,8"/>
+                        <TextBlock TextWrapping="Wrap" Text="{DynamicResource BackupSettingsBody}" Margin="0,0,0,10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="{DynamicResource ExportSettingsButton}" Margin="0,0,8,0" Click="ExportSettings_Click"/>
+                            <Button Content="{DynamicResource ImportSettingsButton}" Click="ImportSettings_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

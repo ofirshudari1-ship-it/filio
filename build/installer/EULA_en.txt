@@ -1,0 +1,42 @@
+FILIO - END USER LICENSE AGREEMENT
+
+Filio is provided free of charge for personal and business use.
+
+By installing or using Filio, you agree to the following:
+
+1. LICENSE GRANT
+   You are granted a free, non-exclusive, non-transferable license to install
+   and use Filio on your own computer(s).
+
+2. WHAT YOU MAY NOT DO
+   You may not resell, sublicense, reverse engineer, decompile, or
+   redistribute Filio as your own product. You may not remove or alter any
+   copyright or branding notices.
+
+3. NO WARRANTY
+   Filio is provided "AS IS", without warranty of any kind, express or
+   implied, including but not limited to warranties of merchantability,
+   fitness for a particular purpose, and non-infringement. Use it at your
+   own risk.
+
+4. LIMITATION OF LIABILITY
+   In no event shall the author be liable for any claim, damages, data loss,
+   or other liability arising from the use of Filio, even if advised of the
+   possibility of such damage.
+
+5. WHAT FILIO DOES WITH YOUR FILES
+   Filio moves and copies files on your own computer according to the rules
+   you configure. It never deletes files outright, and it never sends your
+   files or their contents to any external server - all processing (file
+   classification, OCR, duplicate detection) happens locally on your machine.
+   The only network calls Filio makes are optional update checks against the
+   update feed URL you configure.
+
+6. TERMINATION
+   This license is effective until terminated. It terminates automatically
+   if you fail to comply with any of its terms. Upon termination, you must
+   stop using Filio and uninstall it.
+
+If you do not agree to these terms, do not install or use Filio.
+
+(c) 2026 Filio. All rights reserved.
