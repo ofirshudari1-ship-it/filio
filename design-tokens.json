@@ -1,0 +1,50 @@
+{
+  "_comment": "Filio design tokens — shared across app and any future web components",
+  "spacing": {
+    "xs": 4, "sm": 8, "md": 12, "lg": 16, "xl": 24, "xxl": 32
+  },
+  "radius": {
+    "sm": 6, "md": 10, "lg": 14, "pill": 100
+  },
+  "shadow": {
+    "card": "0 2px 12px rgba(0,0,0,0.06)",
+    "dropdown": "0 4px 20px rgba(0,0,0,0.12)"
+  },
+  "motion": {
+    "fast": 150, "normal": 250, "slow": 400
+  },
+  "type_scale": {
+    "caption": 11, "body_sm": 12, "body": 13, "body_lg": 14,
+    "subtitle": 16, "title": 19, "hero": 26
+  },
+  "colors": {
+    "light": {
+      "primary": "#1E7F72",
+      "primary_dark": "#0F5348",
+      "accent": "#DB8A1F",
+      "background": "#F7F9F8",
+      "surface": "#FFFFFF",
+      "surface_alt": "#F2F6F4",
+      "border": "#DCE5E2",
+      "text": "#1B2B28",
+      "text_muted": "#5E6E69",
+      "success": "#2E8B57",
+      "warning": "#C97B1C",
+      "error": "#C0392B"
+    },
+    "dark": {
+      "primary": "#1E7F72",
+      "primary_dark": "#0F5348",
+      "accent": "#DB8A1F",
+      "background": "#0D1A18",
+      "surface": "#152420",
+      "surface_alt": "#1C302B",
+      "border": "#2A4040",
+      "text": "#D0EDE8",
+      "text_muted": "#8ABDB5",
+      "success": "#3DAD72",
+      "warning": "#E8A030",
+      "error": "#E05555"
+    }
+  }
+}

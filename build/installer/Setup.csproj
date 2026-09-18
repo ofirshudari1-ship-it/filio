@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Custom WinForms installer (Setup.cs, namespace FilioSetup) — replaces the Inno Setup
+    setup.iss (kept alongside as unused legacy; see build.ps1 and CHANGELOG.md 2.9.0 for why).
+    net48 to match the sibling OptiGuard/AutoProcessTwin installers in this portfolio and keep
+    a single, proven toolchain (no extra runtime to bundle just for the installer itself).
+
+    Build order: dotnet publish app\Filio.App (see build.ps1 / README below) must run BEFORE
+    this project builds, because EnsurePublishOutput zips build\publish\* into payload.zip and
+    embeds it as a resource. Building this project directly without publishing first fails fast
+    with a clear error instead of silently producing an installer with a stale/missing payload.
+  -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>Filio-Setup</AssemblyName>
+    <RootNamespace>FilioSetup</RootNamespace>
+    <ApplicationIcon>..\..\app\Filio.App\Assets\filio.ico</ApplicationIcon>
+    <Product>Filio Setup</Product>
+    <Company>Filio</Company>
+    <AssemblyTitle>Filio Setup</AssemblyTitle>
+    <Description>Installer for Filio - automatic file organizer.</Description>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version Condition="'$(Version)'==''">2.9.0</Version>
+    <FileVersion Condition="'$(FileVersion)'==''">$(Version)</FileVersion>
+    <AssemblyVersion Condition="'$(AssemblyVersion)'==''">$(Version)</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ZipArchive/ZipArchiveEntry (unpack the bundled payload during setup). -->
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PublishOutputDir>$(MSBuildProjectDirectory)\..\publish</PublishOutputDir>
+    <PayloadZipPath>$(MSBuildProjectDirectory)\payload.zip</PayloadZipPath>
+  </PropertyGroup>
+
+  <Target Name="EnsurePublishOutput" BeforeTargets="BeforeBuild">
+    <Error Condition="!Exists('$(PublishOutputDir)\Filio.exe')"
+           Text="$(PublishOutputDir)\Filio.exe not found. Run 'dotnet publish app\Filio.App\Filio.App.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o build\publish' first (or run build.ps1, which does this in the right order)." />
+  </Target>
+
+  <!-- Zips the freshly-published app (Filio.exe + x64\*.dll + tessdata\*.traineddata) into
+       payload.zip so Setup.cs can embed and extract it as a single resource, same pattern as
+       AutoProcessTwin's build\installer project. Re-zips on every build so the payload can
+       never silently go stale relative to build\publish. -->
+  <Target Name="BuildPayloadZip" AfterTargets="EnsurePublishOutput" BeforeTargets="BeforeBuild">
+    <Delete Files="$(PayloadZipPath)" Condition="Exists('$(PayloadZipPath)')" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -Command &quot;Compress-Archive -Path '$(PublishOutputDir)\*' -DestinationPath '$(PayloadZipPath)' -CompressionLevel Optimal&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <EmbeddedResource Include="payload.zip">
+      <LogicalName>FilioSetup.payload.zip</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EULA_en.txt">
+      <LogicalName>FilioSetup.EULA_en.txt</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EULA_he.txt">
+      <LogicalName>FilioSetup.EULA_he.txt</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

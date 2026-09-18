@@ -1,0 +1,281 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Brand -->
+    <sys:String x:Key="AppName">Filio</sys:String>
+    <sys:String x:Key="AppTagline">Downloads that file themselves</sys:String>
+    <sys:String x:Key="WindowTitle">Filio — Settings</sys:String>
+
+    <!-- Status pill -->
+    <sys:String x:Key="StatusActive">Active</sys:String>
+    <sys:String x:Key="StatusPaused">Paused</sys:String>
+    <sys:String x:Key="PauseButton">Pause</sys:String>
+    <sys:String x:Key="ResumeButton">Resume</sys:String>
+
+    <!-- Tabs -->
+    <sys:String x:Key="TabGeneral">⚙️ Settings</sys:String>
+    <sys:String x:Key="TabClients">👥 Clients</sys:String>
+    <sys:String x:Key="TabRules">🧭 Rules</sys:String>
+    <sys:String x:Key="TabActivity">📋 Activity</sys:String>
+    <sys:String x:Key="TabUpdates">🔄 Updates</sys:String>
+    <sys:String x:Key="TabHelp">❓ Help</sys:String>
+
+    <!-- General tab -->
+    <sys:String x:Key="WatchFolderLabel">Watch folder (usually Downloads)</sys:String>
+    <sys:String x:Key="WatchFoldersLabel">Watch folders</sys:String>
+    <sys:String x:Key="WatchFoldersSubtitle">Filio watches all of these at once — add Desktop, an email-attachments folder, or anywhere else files land.</sys:String>
+    <sys:String x:Key="AddWatchFolderButton">+ Add Folder</sys:String>
+    <sys:String x:Key="RemoveWatchFolderButton">Remove Selected</sys:String>
+    <sys:String x:Key="BrowseButton">Browse…</sys:String>
+    <sys:String x:Key="OutputFolderLabel">Where to file things</sys:String>
+    <sys:String x:Key="OutputFolderSubtitle">Filio creates tidy subfolders here automatically, sorted by client, year and document type.</sys:String>
+    <sys:String x:Key="OutputFolderWarning">⚠ The destination folder can't be the same as, or inside, any watch folder</sys:String>
+    <sys:String x:Key="CloudSyncInfoFormat">☁ This folder syncs with {0} — Filio waits for files to finish syncing before touching them.</sys:String>
+    <sys:String x:Key="DetectDuplicatesCheck">Catch duplicate files automatically</sys:String>
+    <sys:String x:Key="OrganizeInstallersCheck">Also file away software installers (.exe, .msi)</sys:String>
+    <sys:String x:Key="OrganizeInstallersSubtitle">Off by default — installers sometimes need to run right away. When on, they go to their own "_Installers" folder, separate from client documents.</sys:String>
+    <sys:String x:Key="OrganizeInstallersTooltip">Installers don't have a "client" or "document type" the way invoices do, so they get a simple dedicated folder instead of going through document classification.</sys:String>
+    <sys:String x:Key="EnableDefenderScanCheck">Check every file with Windows Defender first</sys:String>
+    <sys:String x:Key="EnableDefenderScanSubtitle">Uses Windows' own free, built-in antivirus — not a security engine Filio invents itself. A file Defender flags as a threat is left exactly where it is and never filed.</sys:String>
+    <sys:String x:Key="EnableDefenderScanTooltip">Runs a one-time Defender scan on each new file before filing it. If Defender isn't available, the file is filed as usual with a note in the log — this is an extra check, not a replacement for real-time protection.</sys:String>
+    <sys:String x:Key="ReviewLowConfidenceCheck">Ask before filing when no client is recognized</sys:String>
+    <sys:String x:Key="ReviewLowConfidenceSubtitle">If Filio can't match a file to any client at all, it leaves it in place and waits for you to pick the right client from the Activity tab instead of filing it under "Unknown Client".</sys:String>
+    <sys:String x:Key="ReviewLowConfidenceTooltip">Off by default so existing behavior doesn't change under you. Turn this on if you'd rather review uncertain files once and teach Filio, instead of finding them later under "Unknown Client".</sys:String>
+    <sys:String x:Key="WatchedExtensionsLabel">File types to watch</sys:String>
+    <sys:String x:Key="WatchedExtensionsSubtitle">Only these file types are ever touched — everything else (photos, zips, videos, installers…) is left alone in the watch folder.</sys:String>
+    <sys:String x:Key="WatchedExtensionsRequired">Please list at least one file extension to watch (e.g. .pdf).</sys:String>
+    <sys:String x:Key="EnableImageOcrCheck">Read text inside photos and screenshots (local OCR)</sys:String>
+    <sys:String x:Key="EnableImageOcrSubtitle">Lets Filio classify a photographed invoice or receipt by its actual content, not just its file name. Runs entirely on your PC — a few seconds slower per image, nothing is ever uploaded.</sys:String>
+    <sys:String x:Key="EnableImageOcrTooltip">Uses a local text-recognition engine (Tesseract) bundled with Filio — no account, no internet connection, no cost. Turn this off if you'd rather classify photos by file name only, for speed.</sys:String>
+    <sys:String x:Key="IgnorePatternsLabel">Never touch files containing (optional)</sys:String>
+    <sys:String x:Key="IgnorePatternsSubtitle">Comma-separated text — any file whose name contains one of these is always skipped, even if its extension is watched.</sys:String>
+    <sys:String x:Key="FolderOrderLabel">Folder structure</sys:String>
+    <sys:String x:Key="FolderOrderClientYearType">Client → Year → Type (default)</sys:String>
+    <sys:String x:Key="FolderOrderYearClientType">Year → Client → Type</sys:String>
+    <sys:String x:Key="FolderOrderTypeClientYear">Type → Client → Year</sys:String>
+    <sys:String x:Key="WatchedExtensionsTooltip">Comma-separated file extensions, e.g. ".pdf, .docx". Anything not listed here is left alone in the watch folder, no matter what it is.</sys:String>
+    <sys:String x:Key="IgnorePatternsTooltip">Comma-separated text. A file is skipped forever if its name contains any of these — useful for drafts, templates or files you never want auto-filed.</sys:String>
+    <sys:String x:Key="FolderOrderTooltip">Controls the folder structure under your destination folder — which of Client / Year / Type comes first, second and third.</sys:String>
+    <sys:String x:Key="DetectDuplicatesTooltip">Compares the actual file content (not just the name) against everything filed before. An exact match is routed to "_Possible Duplicates" instead of silently overwriting anything.</sys:String>
+    <sys:String x:Key="StartWithWindowsCheck">Start automatically with Windows</sys:String>
+    <sys:String x:Key="StartWithWindowsTooltip">Shows the real current state of Windows' own startup registration (not just a saved preference) — if this ever looks wrong, saving this screen re-applies it immediately.</sys:String>
+    <sys:String x:Key="ShowNotificationsCheck">Show a notification for every file filed</sys:String>
+    <sys:String x:Key="PauseCheck">Pause automatic filing</sys:String>
+    <sys:String x:Key="FileActionLabel">When filing a file</sys:String>
+    <sys:String x:Key="MoveOption">Move it (it disappears from Downloads)</sys:String>
+    <sys:String x:Key="CopyOption">Copy it (the original stays in Downloads)</sys:String>
+    <sys:String x:Key="SaveButton">💾 Save Settings</sys:String>
+    <sys:String x:Key="LanguageLabel">Language</sys:String>
+    <sys:String x:Key="LanguageEnglish">English</sys:String>
+    <sys:String x:Key="LanguageHebrew">עברית (Hebrew)</sys:String>
+    <sys:String x:Key="BehaviorCardTitle">How Filio behaves</sys:String>
+    <sys:String x:Key="BehaviorCardSubtitle">Flip these on or off — no need to understand what's behind them.</sys:String>
+    <sys:String x:Key="BehaviorGroupMonitor">Monitoring &amp; Startup</sys:String>
+    <sys:String x:Key="BehaviorGroupSecurity">Security</sys:String>
+    <sys:String x:Key="BehaviorGroupOrganize">File Organization</sys:String>
+    <sys:String x:Key="ThemeLabel">Appearance Theme</sys:String>
+    <sys:String x:Key="ThemeLight">☀️ Light</sys:String>
+    <sys:String x:Key="ThemeDark">🌙 Dark</sys:String>
+    <sys:String x:Key="DisplayCardTitle">Display &amp; App</sys:String>
+    <sys:String x:Key="MinimizeToTrayCheck">Minimize to system tray when closing the window</sys:String>
+    <sys:String x:Key="MinimizeToTrayTooltip">When enabled, pressing X hides Filio to the tray instead of quitting. Filio continues filing in the background.</sys:String>
+    <sys:String x:Key="MinimizeToTraySubtitle">Filio keeps running in the background when you close this window.</sys:String>
+    <sys:String x:Key="LogRetentionLabel">Activity Log Retention</sys:String>
+    <sys:String x:Key="LogRetentionDaysUnit">days (0 = keep forever)</sys:String>
+    <sys:String x:Key="LogRetentionSubtitle">Entries older than this are removed automatically when Filio starts.</sys:String>
+    <sys:String x:Key="OnboardStartupTitle">Run on Windows startup?</sys:String>
+    <sys:String x:Key="OnboardStartupSubtitle">Filio works best when it starts with Windows — that way it never misses a file.</sys:String>
+    <sys:String x:Key="AdvancedSettingsHeader">⚙️ Advanced settings (optional)</sys:String>
+    <sys:String x:Key="AdvancedSettingsIntro">You don't need to touch anything here — the defaults work well for most people. Open this only if you want to fine-tune exactly which files Filio looks at.</sys:String>
+
+    <!-- Clients tab -->
+    <sys:String x:Key="ClientsIntroTitle">Your clients</sys:String>
+    <sys:String x:Key="ClientsIntro">Add the clients you file documents for. In "aliases", list every way their name might show up in a document — the more you add, the better Filio recognizes them.</sys:String>
+    <sys:String x:Key="ClientsExample">Example: Name "Acme Design", aliases "Acme, Acme Ltd, Acme Corp"</sys:String>
+    <sys:String x:Key="AddClientButton">+ Add Client</sys:String>
+    <sys:String x:Key="RemoveClientButton">Remove Selected</sys:String>
+    <sys:String x:Key="SaveClientsButton">Save</sys:String>
+    <sys:String x:Key="ClientNameColumn">Client Name / Folder</sys:String>
+    <sys:String x:Key="ClientKeywordsColumn">Extra aliases (comma-separated)</sys:String>
+    <sys:String x:Key="ClientsEmptyTitle">No clients set up yet</sys:String>
+    <sys:String x:Key="ClientsEmptySubtitle">Unmatched documents will be filed under "Unknown Client"</sys:String>
+    <sys:String x:Key="ConfirmDeleteClient">Delete client "{0}"?</sys:String>
+
+    <!-- Rules tab -->
+    <sys:String x:Key="RulesIntroTitle">How Filio tells document types apart</sys:String>
+    <sys:String x:Key="RulesIntro">For each document type, list words that identify it — either inside the file (content keywords) or in its file name. One row marked "Fallback" is the catch-all for anything that doesn't match.</sys:String>
+    <sys:String x:Key="RulesExample">Example: Type "Invoices", content keywords "invoice, tax invoice", file name patterns "inv, invoice"</sys:String>
+    <sys:String x:Key="AddRuleButton">+ Add Document Type</sys:String>
+    <sys:String x:Key="RemoveRuleButton">Remove Selected</sys:String>
+    <sys:String x:Key="SaveRulesButton">Save</sys:String>
+    <sys:String x:Key="TypeColumn">Document Type</sys:String>
+    <sys:String x:Key="ContentKeywordsColumn">Content keywords</sys:String>
+    <sys:String x:Key="FileNamePatternColumn">File name patterns</sys:String>
+    <sys:String x:Key="FallbackColumn">Fallback</sys:String>
+    <sys:String x:Key="ConfirmDeleteRule">Delete document type "{0}"?</sys:String>
+
+    <!-- Activity tab -->
+    <sys:String x:Key="TotalFiledLabel">Total filed:</sys:String>
+    <sys:String x:Key="SucceededLabel">Succeeded:</sys:String>
+    <sys:String x:Key="FailedLabel">Failed:</sys:String>
+    <sys:String x:Key="RefreshButton">Refresh</sys:String>
+    <sys:String x:Key="UndoButton">↩ Undo Selected</sys:String>
+    <sys:String x:Key="RetryButton">⟳ Retry Selected</sys:String>
+    <sys:String x:Key="IgnoreFileButton">🚫 Never File This Again</sys:String>
+    <sys:String x:Key="FixClientButton">✏ Fix / File…</sys:String>
+    <sys:String x:Key="RetryFileMissing">Can't retry — the original file no longer exists at its source location.</sys:String>
+    <sys:String x:Key="ReassignFileMissing">Can't fix this entry — the file no longer exists (it may already have been moved, undone or deleted).</sys:String>
+    <sys:String x:Key="ReassignWindowTitle">Fix / File</sys:String>
+    <sys:String x:Key="ReassignWindowHeading">Choose the right client &amp; type</sys:String>
+    <sys:String x:Key="ReassignClientLabel">Client</sys:String>
+    <sys:String x:Key="ReassignDocTypeLabel">Document type</sys:String>
+    <sys:String x:Key="ReassignLearnLabel">Remember this for next time</sys:String>
+    <sys:String x:Key="ReassignLearnHintFormat">Filio will add "{0}" as an alias for this client, so similar files are recognized automatically from now on.</sys:String>
+    <sys:String x:Key="ReassignConfirmButton">File It</sys:String>
+    <sys:String x:Key="ReassignSuccessMessage">Filed correctly — thanks, Filio will recognize this pattern next time.</sys:String>
+    <sys:String x:Key="ReassignFailureMessage">Couldn't file this — check that the destination folder is available and try again.</sys:String>
+    <sys:String x:Key="ReassignClientRequired">Please choose or type a client name.</sys:String>
+    <sys:String x:Key="CancelButton">Cancel</sys:String>
+    <sys:String x:Key="ConfirmIgnoreFile">Add "{0}" to the ignore list? Files with this name will never be filed automatically.</sys:String>
+    <sys:String x:Key="TimeColumn">Time</sys:String>
+    <sys:String x:Key="SourceFileColumn">Source File</sys:String>
+    <sys:String x:Key="DetectedTypeColumn">Type</sys:String>
+    <sys:String x:Key="DetectedClientColumn">Client</sys:String>
+    <sys:String x:Key="DetectedDateColumn">Detected Date</sys:String>
+    <sys:String x:Key="StatusColumn">Status</sys:String>
+    <sys:String x:Key="LogEmptyTitle">No files filed yet</sys:String>
+    <sys:String x:Key="LogEmptySubtitle">Once a file lands in the watch folder it will show up here</sys:String>
+    <sys:String x:Key="UndoSuccessMessage">The file was restored to its original location.</sys:String>
+    <sys:String x:Key="UndoFailureMessage">Couldn't undo — the file may already have been moved or deleted.</sys:String>
+    <sys:String x:Key="LogStatusFiled">Filed</sys:String>
+    <sys:String x:Key="LogStatusDuplicate">Possible duplicate</sys:String>
+    <sys:String x:Key="LogStatusErrorFormat">Error: {0}</sys:String>
+    <sys:String x:Key="LogStatusThreatDetected">🛑 Threat detected — left untouched</sys:String>
+    <sys:String x:Key="LogStatusNeedsReview">⏸ Needs review — no client recognized</sys:String>
+    <sys:String x:Key="ExplainNeedsReview">Filio couldn't match this file to any known client, so it's waiting here instead of being filed under "Unknown Client". Use "Fix / File…" to choose the right client and type.</sys:String>
+    <sys:String x:Key="DefenderThreatDetected">Windows Defender flagged this file as a threat. Filio left it exactly where it was and did not file it — review it yourself (Windows Security → Protection history) before doing anything with it.</sys:String>
+    <sys:String x:Key="ExplainInstaller">Filed as a software installer (.exe/.msi) — these go to their own folder instead of being matched to a client or document type.</sys:String>
+    <sys:String x:Key="ActivityHoverHint">💡 Hover over a row to see exactly why Filio classified it that way.</sys:String>
+
+    <!-- Classification explanations (shown as a tooltip on each Activity Log row) -->
+    <sys:String x:Key="ExplainDocTypeContent">Type "{0}" matched because "{1}" was found in the document content.</sys:String>
+    <sys:String x:Key="ExplainDocTypeFileName">Type "{0}" matched because "{1}" was found in the file name.</sys:String>
+    <sys:String x:Key="ExplainDocTypeFallback">No rule matched the content or file name, so the fallback type "{0}" was used.</sys:String>
+    <sys:String x:Key="ExplainDocTypeNone">No rule matched, and no fallback type is configured.</sys:String>
+    <sys:String x:Key="ExplainClientAlias">Client "{0}" matched because "{1}" was found.</sys:String>
+    <sys:String x:Key="ExplainClientGuessed">Client name "{0}" was guessed from a hint in the document (e.g. "To:" or "Customer:").</sys:String>
+    <sys:String x:Key="ExplainClientUnknown">No client name could be found in the file name or content.</sys:String>
+    <sys:String x:Key="ExplainDateContent">Date was read from the document content.</sys:String>
+    <sys:String x:Key="ExplainDateFileName">Date was read from the file name.</sys:String>
+    <sys:String x:Key="ExplainDateFallback">No date was found in the file, so its creation date was used instead.</sys:String>
+
+    <!-- Updates tab -->
+    <sys:String x:Key="UpdatesIntro">Filio can check for new versions and install them in place — no need to download or run a setup file yourself.</sys:String>
+    <sys:String x:Key="CurrentVersionLabel">Current version:</sys:String>
+    <sys:String x:Key="CheckForUpdatesButton">Check for Updates</sys:String>
+    <sys:String x:Key="CheckingStatus">Checking…</sys:String>
+    <sys:String x:Key="UpToDateStatus">You're up to date.</sys:String>
+    <sys:String x:Key="UpdateAvailableStatus">Version {0} is available.</sys:String>
+    <sys:String x:Key="UpdateErrorStatus">Couldn't check for updates. Verify the update feed URL and your internet connection.</sys:String>
+    <sys:String x:Key="UpdateInsecureUrlStatus">🔒 Blocked for your safety: the update address must start with https:// — a plain http:// link could let someone tamper with the installer in transit.</sys:String>
+    <sys:String x:Key="UpdateIntegrityFailedStatus">🔒 Blocked for your safety: the downloaded file doesn't match the signature published for this version, so it was deleted instead of run. Try again later, or check the update feed.</sys:String>
+    <sys:String x:Key="DownloadAndInstallButton">Download &amp; Install Update</sys:String>
+    <sys:String x:Key="OpenReleasePageButton">Open Release Page</sys:String>
+    <sys:String x:Key="DownloadingStatus">Downloading update…</sys:String>
+    <sys:String x:Key="InstallingStatus">Installing — Filio will restart automatically.</sys:String>
+    <sys:String x:Key="AutoCheckOnStartupCheck">Check for updates automatically on startup</sys:String>
+    <sys:String x:Key="UpdateFeedUrlLabel">Update feed URL (advanced)</sys:String>
+    <sys:String x:Key="UpdateFeedUrlHelp">A JSON file describing the latest version. Leave empty to disable update checks.</sys:String>
+    <sys:String x:Key="UpdateFeedUrlTooltip">Must be an https:// address. Filio refuses plain http:// links and, when the feed publishes a sha256 hash, verifies the downloaded installer against it before running anything.</sys:String>
+    <sys:String x:Key="UpdateSecurityNote">🔒 For safety, both this address and the installer link it points to must be https://. If the feed includes a "sha256" field, Filio verifies the downloaded file's checksum before installing — and deletes it instead of running it if the checksum doesn't match.</sys:String>
+    <sys:String x:Key="ChangelogLabel">What's new:</sys:String>
+
+    <!-- Help tab -->
+    <sys:String x:Key="HelpVersionPrefix">Version</sys:String>
+    <sys:String x:Key="HelpDescription">Filio watches your Downloads folder, automatically recognizes whether a file is an invoice, a contract or a report, matches it to the right client, and moves it into a tidy Client → Year → Type folder structure. Everything runs locally on your PC — no file is ever sent to an external server.</sys:String>
+    <sys:String x:Key="HelpClosingNote">Closing this window doesn't quit Filio — it keeps running in the notification area (near the clock). You can pause and resume any time from the button in the header or from the tray icon menu.</sys:String>
+    <sys:String x:Key="HelpHowItWorksTitle">How it works</sys:String>
+    <sys:String x:Key="HelpHowItWorksBody">1.  A new file lands in the watch folder.
+2.  Filio waits until the download is fully finished.
+3.  It reads the file name (and PDF text, when available) and matches it against your Rules and Clients.
+4.  The file moves to Destination \ Client \ Year \ Type \.
+5.  You get a quick notification, and the action is logged — with one-click Undo if the match was wrong.</sys:String>
+    <sys:String x:Key="HelpTipsTitle">Tips</sys:String>
+    <sys:String x:Key="HelpTipsBody">• Add every client's common name variations as aliases — the more variations, the better the match.
+• A scanned PDF (image-only, no text layer) can only be matched by its file name.
+• If a file lands in "Unknown Client" or "Unrecognized" often, tweak the Rules or Clients tab — no need to reinstall anything.</sys:String>
+    <sys:String x:Key="OpenOutputFolderButton">Open Destination Folder</sys:String>
+    <sys:String x:Key="OpenLogsFolderButton">Open Settings &amp; Logs Folder</sys:String>
+    <sys:String x:Key="RerunSetupWizardButton">Run Setup Wizard Again</sys:String>
+    <sys:String x:Key="BackupSettingsTitle">Backup &amp; Restore</sys:String>
+    <sys:String x:Key="BackupSettingsBody">Save your clients, rules and preferences to a file — useful before reinstalling Filio, or to copy your setup to another PC.</sys:String>
+    <sys:String x:Key="ExportSettingsButton">Export Settings…</sys:String>
+    <sys:String x:Key="ImportSettingsButton">Import Settings…</sys:String>
+    <sys:String x:Key="ExportSettingsSuccess">✅ Settings exported successfully.</sys:String>
+    <sys:String x:Key="ExportSettingsFailed">Couldn't save the file there — check that the location isn't read-only and that there's enough free space, then try again.</sys:String>
+    <sys:String x:Key="ImportSettingsSuccess">✅ Settings imported successfully.</sys:String>
+    <sys:String x:Key="ImportSettingsFailed">Couldn't read that file — it may not be a valid Filio settings export.</sys:String>
+
+    <!-- Onboarding wizard -->
+    <sys:String x:Key="OnboardWindowTitle">Welcome to Filio</sys:String>
+    <sys:String x:Key="OnboardWelcomeTitle">Your downloads, filed automatically</sys:String>
+    <sys:String x:Key="OnboardWelcomeTagline">Filio watches your Downloads folder and sorts invoices, contracts and reports by client, year and type — while you keep doing everything else.</sys:String>
+    <sys:String x:Key="OnboardWelcomeBullet1">🔒  Runs 100% locally — nothing ever leaves your PC</sys:String>
+    <sys:String x:Key="OnboardWelcomeBullet2">🗂️  Sorts by client, year and document type automatically</sys:String>
+    <sys:String x:Key="OnboardWelcomeBullet3">💸  Zero ongoing cost — no subscription, no cloud AI</sys:String>
+    <sys:String x:Key="OnboardGetStartedButton">Get Started</sys:String>
+
+    <sys:String x:Key="OnboardLanguageTitle">Choose your language</sys:String>
+    <sys:String x:Key="OnboardLanguageSubtitle">You can switch anytime later from the General tab — instantly, no restart needed.</sys:String>
+
+    <sys:String x:Key="OnboardFoldersTitle">Where should Filio look, and where should it file?</sys:String>
+    <sys:String x:Key="OnboardFoldersSubtitle">These sensible defaults work for most people — change them if you'd like.</sys:String>
+    <sys:String x:Key="OnboardWhatElseTitle">Anything else to file?</sys:String>
+
+    <sys:String x:Key="OnboardScanTitle">Want a head start? Let's take a quick local look</sys:String>
+    <sys:String x:Key="OnboardScanSubtitle">Filio can scan the PDFs already sitting in your watch folder to suggest clients and check how well the default rules already recognize your documents. This runs entirely on your PC — nothing is uploaded anywhere.</sys:String>
+    <sys:String x:Key="OnboardScanButton">Scan My Downloads Folder</sys:String>
+    <sys:String x:Key="OnboardScanningStatus">Scanning locally…</sys:String>
+    <sys:String x:Key="OnboardScanSkip">Skip — I'll set this up myself</sys:String>
+    <sys:String x:Key="OnboardScanNoFilesFound">No PDF files found in that folder yet — no problem, you can add clients and rules any time.</sys:String>
+    <sys:String x:Key="OnboardScanSummaryFormat">Looked at {0} PDF file(s): {1} already matched a document type, {2} didn't. Nothing was moved or changed.</sys:String>
+    <sys:String x:Key="OnboardSuggestedClientsTitle">Clients Filio spotted in your documents</sys:String>
+    <sys:String x:Key="OnboardSuggestedClientsSubtitle">Checked items will be added to your Clients list — uncheck any you don't want.</sys:String>
+    <sys:String x:Key="OnboardScanMatchCountFormat">{0} document(s)</sys:String>
+
+    <sys:String x:Key="OnboardFinishTitle">You're all set</sys:String>
+    <sys:String x:Key="OnboardFinishSubtitle">Filio is already watching in the background. You can fine-tune everything anytime from the tray icon.</sys:String>
+    <sys:String x:Key="OnboardFinishWatchFormat">Watching: {0}</sys:String>
+    <sys:String x:Key="OnboardFinishOutputFormat">Filing to: {0}</sys:String>
+    <sys:String x:Key="OnboardFinishClientsFormat">Clients added: {0}</sys:String>
+    <sys:String x:Key="OnboardStartButton">Start Using Filio</sys:String>
+
+    <sys:String x:Key="OnboardBackButton">Back</sys:String>
+    <sys:String x:Key="OnboardNextButton">Next</sys:String>
+
+    <!-- Shared dialog title -->
+    <sys:String x:Key="DialogTitle">Filio</sys:String>
+    <sys:String x:Key="SettingsSavedMessage">✅ Settings saved!</sys:String>
+    <sys:String x:Key="ClientsSavedMessage">✅ Client list saved!</sys:String>
+    <sys:String x:Key="RulesSavedMessage">✅ Rules saved!</sys:String>
+    <sys:String x:Key="MissingFoldersWarning">Please choose both a watch folder and a destination folder.</sys:String>
+    <sys:String x:Key="AtLeastOneWatchFolderRequired">You need at least one watch folder — add another before removing this one.</sys:String>
+    <sys:String x:Key="NestedFoldersWarning">The destination folder can't be the same as, or inside, the watch folder — that can cause a mess. Choose a separate destination folder.</sys:String>
+
+    <!-- Tray menu -->
+    <sys:String x:Key="TrayOpenSettings">Open Settings</sys:String>
+    <sys:String x:Key="TrayPause">Pause Filing</sys:String>
+    <sys:String x:Key="TrayResume">Resume Filing</sys:String>
+    <sys:String x:Key="TrayOpenOutputFolder">Open Destination Folder</sys:String>
+    <sys:String x:Key="TrayCheckForUpdates">Check for Updates</sys:String>
+    <sys:String x:Key="TrayExit">Exit</sys:String>
+    <sys:String x:Key="TrayTooltip">Filio — files your downloads automatically</sys:String>
+    <sys:String x:Key="TrayMinimizeHintMessage">Filio keeps running in the background. Click the tray icon to open it, or right-click it to exit.</sys:String>
+    <sys:String x:Key="NotificationPausedTitle">Filing paused</sys:String>
+    <sys:String x:Key="NotificationResumedTitle">Filing resumed</sys:String>
+    <sys:String x:Key="NotificationFiledTypeClientFormat">Type: {0} | Client: {1}</sys:String>
+    <sys:String x:Key="NotificationFailedFormat">Filing failed: {0}</sys:String>
+    <sys:String x:Key="HelpCopyright">© 2026 Filio. All rights reserved.</sys:String>
+
+</ResourceDictionary>
