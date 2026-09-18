@@ -1,282 +1,41 @@
 # Filio
 
-**[עברית](#עברית) | [English](#english)**
+Automatic file organizing for Windows — Filio watches your Downloads folder and files every document away by itself.
 
----
+## What it does
 
-## English
+Filio is a small background tool that sits in your Windows system tray and watches your Downloads folder (or any other folder you choose). Every time a new file lands there — an invoice, a contract, a report, or even a scanned photo of a receipt — Filio automatically figures out what kind of document it is and which client it belongs to, then moves it into a clean `Client \ Year \ Document Type` folder structure. Recognition uses local content rules plus OCR for images and scanned photos, so handwritten or scanned invoices get sorted just like PDFs. Every file is checked against Windows Defender before it's filed, duplicate files are detected by content (not just name) and routed to a separate folder for review, and every single move is logged so it can be undone with one click. Filio never deletes a file — it only organizes what's already there.
 
-Filio is a Windows background tool that automatically files documents from your Downloads folder (or any watched folder) into a Client / Year / Document-Type structure.
+## Download & install
 
-### Key features
-- Automatic filing by client, year, and document type (PDF, DOCX, images with OCR)
-- Local OCR (Tesseract) — English + Hebrew, no cloud
-- SHA-256 duplicate detection
-- Optional installer (exe/msi) sorting into `_Installers\Year`
-- Windows Defender scan before every file move
-- Full Hebrew/English localization with RTL support
-- **Filio never deletes files** — only moves/copies and logs
+**[⬇️ Download the latest version](https://github.com/ofirshudari1-ship-it/filio/releases/latest)**
 
-### Installation
-1. Download `Filio-Setup-<version>.exe` from the project root.
-2. Run it — choose your install language (English/Hebrew), then follow the wizard.
-3. On first launch, a short setup wizard asks which folder to watch and where to file.
+1. Go to the [latest release](https://github.com/ofirshudari1-ship-it/filio/releases/latest) and download the `Filio-Setup-<version>.exe` installer.
+2. Run the installer and choose your language (English or Hebrew).
+3. Follow the installation wizard — pick an install location, review the license, and choose your shortcuts.
+4. On first launch, a short setup wizard asks which folder to watch and where filed documents should go.
+5. Done — Filio now runs quietly in the system tray and files new downloads automatically.
 
-### Requirements
-- Windows 10 (1809+) or Windows 11, x64
-- ~150 MB free disk space
-- Windows Defender active (recommended, not required)
+**System requirements:** Windows 10 (version 1809 or later) or Windows 11, 64-bit, ~150 MB free disk space. Windows Defender should be active for the pre-filing security scan (recommended, not required). Administrator rights may be needed only if you choose to install into `Program Files`.
 
-### Troubleshooting
-- **Filio won't start / "already running" message:** only one instance can run at a time — check the system tray for an existing icon.
-- **Files aren't being filed:** check the Activity tab for errors; make sure the watched folder still exists and Filio isn't paused (tray icon menu).
-- **Update fails silently:** check `%APPDATA%\Filio\logs\` for diagnostic logs.
+## Key features
 
-See the [Hebrew section](#עברית) below for full details, or `SPEC.md` for the complete specification.
+- Automatic filing by client, year, and document type — for PDFs, Word documents, and images
+- Local OCR (Tesseract) for scanned images and photos, in English and Hebrew, entirely on your machine
+- Content-based duplicate detection (SHA-256), routed to a review folder instead of being overwritten
+- Pre-filing Windows Defender scan on every file
+- One-click undo for the last filed file
+- Optional "ask before filing" mode for files that don't match any known client
+- "Fix / File…" correction tool that also teaches Filio new client aliases for next time
+- Optional sorting of installer files (`.exe`/`.msi`) into their own `_Installers\Year` folder
+- Full Hebrew and English interface with RTL support, switchable instantly without restarting
+- Self-healing folder watcher that recovers automatically if Windows interrupts it (sleep, restart, updates)
+- Support for watching multiple folders at once
 
----
+## Automatic updates
 
-## עברית
+Filio checks GitHub for a newer release once per session, a few seconds after startup. This check is notify-only — it never downloads or installs anything on its own. If a newer version is available, you'll get a tray notification with a link to grab it yourself. See all releases at [github.com/ofirshudari1-ship-it/filio/releases](https://github.com/ofirshudari1-ship-it/filio/releases).
 
-תוכנת רקע קטנה ל-Windows: יושבת באזור ההתראות (ליד השעון), עוקבת אחרי תיקיית ההורדות,
-ובכל פעם שנוחת בה קובץ חדש (חשבונית, חוזה, דוח, ואפילו צילום/סריקה) — מזהה אוטומטית **איזה
-סוג מסמך זה** ו**לאיזה לקוח הוא שייך**, ומעבירה אותו לתיקייה מסודרת:
+## Privacy
 
-```
-Destination \ Client \ Year \ Type \ file.pdf
-```
-
-הזיהוי מבוסס על **חוקים + מנוע היוריסטי מקומי + OCR מקומי לתמונות** (מילות מפתח בתוכן
-הקובץ ובשם שלו, וזיהוי תאריכים/שמות לקוח). הכל רץ על המחשב עצמו — **אין קריאה לשירות AI
-חיצוני ואין עלות שוטפת**.
-
-## 🗂️ מסמכי הפרויקט — קובץ הראשי לניווט
-
-זה **קובץ ה-README** — נקודת הכניסה שמחזיקה את כל מה שצריך כדי להבין, להציג, להתקין
-ולתחזק את Filio. הטבלה הזו היא המפה של כל המסמכים בפרויקט: מה כל קובץ הוא, ולמה לפתוח
-אותו.
-
-| קובץ | מה זה | מתי לפתוח |
-|---|---|---|
-| **README.md** (הקובץ הזה) | קובץ ראשי: סקירה טכנית מלאה, איך זה עובד, איך בונים/מריצים/בודקים/מפרסמים | נקודת ההתחלה לכל מי שנוגע בפרויקט - מפתח, לקוח, או מי שממשיך את העבודה |
-| [**SPEC.md**](SPEC.md) | מסמך אפיון: מה הכלי עושה, למי, יכולות עיקריות, מה חסר | לפני הצגה ללקוח/משקיע, או כשצריך תיעוד "רשמי" של המוצר |
-| [**website/index.html**](website/index.html) | דף נחיתה שיווקי - אותו מסר, בשפה של אתר מכירה: הדגמת לפני/אחרי, יכולות, אבטחה, גרסאות | כשרוצים לשתף קישור/דף שמסביר את המוצר למשתמש קצה שלא טכני |
-| [**CHANGELOG.md**](CHANGELOG.md) | יומן גרסאות מלא: מה נוסף/תוקן בכל גרסה, ולמה | לבדוק מה השתנה, או לפני שמתקינים עדכון |
-| [**Filio-Setup-2.9.1.exe**](Filio-Setup-2.9.1.exe) | קובץ ההתקנה עצמו - הגרסה הכי עדכנית תמיד יושבת כאן, ברמת התיקייה הראשית, כדי שיהיה קל למצוא. הגרסה הרשמית ביותר תמיד ב-[GitHub Releases](https://github.com/ofirshudari1-ship-it/filio/releases) | כשרוצים להתקין את Filio בפועל על מחשב Windows |
-
-ברירת המחדל של הממשק היא **אנגלית**, עם אפשרות מעבר מיידי (בלי הפעלה מחדש) ל**עברית**
-מתוך טאב "כללי".
-
----
-
-## מה בפנים
-
-```
-app/                       ← קוד המקור (פתרון C# / WPF, .NET 8)
-  Filio.sln
-  Filio.App/
-    Models/                ← מבני הנתונים (הגדרות, לקוח, חוק סיווג, רשומת יומן, manifest עדכון)
-    Services/               ← הלוגיקה: מעקב תיקיות (עצמי-מחלים), PDF, OCR לתמונות, סיווג,
-                                תיוק, כפילויות, זיהוי ענן, הפעלה אוטומטית, שפה, עדכונים
-  tessdata/                ← נתוני שפה ל-OCR מקומי (eng.traineddata, heb.traineddata)
-    Resources/               ← מילוני טקסט לממשק: Strings.en.xaml / Strings.he.xaml
-    Assets/                   ← אייקון האפליקציה (filio.ico)
-    App.xaml(.cs)             ← נקודת הכניסה + אייקון מגש המערכת (Tray)
-    MainWindow.xaml(.cs)      ← מסך ההגדרות (6 טאבים: כללי/לקוחות/חוקים/יומן/עדכונים/עזרה)
-  Filio.Tests/            ← בדיקות יחידה + אינטגרציה (xUnit, 93 בדיקות)
-design-source/               ← לוגו מאסטר וקטורי (SVG) + PNG בהגדרה גבוהה
-build/installer/             ← סקריפט Inno Setup + תמונות אשף ההתקנה + EULA (wizard_*.bmp, EULA_*.txt)
-build/                       ← קובץ ה-exe שפורסם וההתקנה הסופית (Filio-Setup-<version>.exe)
-website/                     ← דף נחיתה שיווקי (website/index.html) - להסביר את המוצר למשתמש קצה
-CHANGELOG.md                 ← היסטוריית כל הגרסאות
-```
-
-## איך זה עובד (זרימה)
-
-1. Filio רץ ברקע (אייקון שועל קטן ליד השעון) ומאזין לתיקיית ההורדות.
-2. קובץ חדש נשמר בתיקייה (למשל PDF שהורדתם ממייל).
-3. Filio ממתין שההורדה תסתיים לגמרי (כדי לא לתפוס קובץ חלקי), מתעלם מתיקיות שנוצרות
-   בתיקיית המעקב, ומוודא שאותו קובץ לא מטופל פעמיים אם המערכת יורה עליו כמה אירועים. ואז:
-   - שולף טקסט מתוך ה-PDF (מקומית, בלי לשלוח אותו לשום מקום).
-   - משווה את התוכן ואת שם הקובץ מול **חוקי הסיווג** שהגדרתם (Invoices/Contracts/Reports/...).
-   - מחפש התאמה לאחד מ**הלקוחות** שהגדרתם, ומזהה **תאריך** מתוך המסמך.
-4. מעביר (או מעתיק, לפי ההגדרה) את הקובץ אל: `תיקיית יעד\לקוח\שנה\סוג`.
-5. מציג התראה קטנה עם התוצאה, ורושם את הפעולה ב"יומן פעילות" (עם סיכום מספרי: סה״כ/הצליחו/
-   נכשלו) — משם אפשר גם **לבטל** פעולה ולהחזיר קובץ למקומו המקורי אם הזיהוי טעה. קובץ שנשאר
-   נעול (בשימוש ע"י תוכנה אחרת) לא נעלם בשקט - הוא נרשם ביומן כשגיאה.
-
-אם קובץ לא תואם אף חוק — הוא מתויק תחת "Unrecognized" במקום להיעלם או להיכשל, כדי שלא יאבד.
-
-## שפה (English ↔ עברית)
-
-בטאב **כללי** יש בורר שפה. המעבר בין השפות **מיידי, בלי צורך להפעיל מחדש** — כולל כיוון
-הכתיבה (RTL/LTR), תפריט אייקון המגש, ההתראות, וכל הטקסטים במסך ההגדרות. השפה הנבחרת נשמרת
-ונטענת שוב בהפעלה הבאה. שמות הלקוחות וסוגי המסמכים עצמם (הנתונים) **לא** מתורגמים
-אוטומטית — הם טקסט חופשי שאתם קובעים, בכל שפה שנוחה לכם.
-
-## עדכונים בלי התקנה מחדש
-
-בטאב **Updates** אפשר להזין כתובת JSON חיצונית (`UpdateFeedUrl`) שמתארת את הגרסה האחרונה:
-
-```json
-{
-  "version": "2.4.0",
-  "installerUrl": "https://example.com/downloads/Filio-Setup-<version>.exe",
-  "notes": "מה חדש בגרסה הזו...",
-  "sha256": "אופציונלי - גיבוב SHA-256 (hex) של Filio-Setup-<version>.exe, ראו הערת אבטחה למטה"
-}
-```
-
-לחיצה על **Check for Updates** משווה את הגרסה המקומית לגרסה בקובץ; אם יש גרסה חדשה יותר,
-כפתור **Download & Install Update** מוריד את קובץ ההתקנה החדש ומריץ אותו בשקט
-(`/VERYSILENT /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS`) — Inno Setup סוגר את Filio
-הרץ, מחליף את הקבצים באותה תיקיית התקנה, ומפעיל אותו מחדש אוטומטית. אין אשף, אין שאלות,
-אין צורך שהמשתמש יוריד קובץ בעצמו. ניתן גם להפעיל בדיקה אוטומטית בכל הפעלה (מסומן כברירת
-מחדל) דרך תיבת הסימון בטאב.
-
-**חשוב להפעלה בפועל:** צריך לארח את `Filio-Setup-<version>.exe` וקובץ ה-JSON איפשהו (GitHub Releases,
-S3, כל שרת סטטי) ולעדכן את הכתובת בקובץ ה-JSON בכל גרסה חדשה. בלי כתובת מוגדרת, בדיקת
-העדכונים פשוט כבויה.
-
-**הערת אבטחה:** מאחר שהזרימה הזו מורידה ומריצה קובץ הפעלה בלי שהמשתמש רואה כל שלב, שתי
-כתובות ה-URL (כתובת ה-feed וגם `installerUrl` שבתוכו) **חייבות** להיות `https://` — כתובת
-`http://` נדחית עם הודעת שגיאה ברורה בטאב Updates, במקום שהעדכון ירוץ על כתובת שניתן לזייף
-בדרך. אם שדה `sha256` קיים ב-manifest, Filio מחשב את הגיבוב של הקובץ שהתקבל בפועל ומשווה
-- קובץ שלא תואם נמחק במקום להיפתח. השדה אופציונלי (בלעדיו רק ה-HTTPS מגן), אבל מומלץ בחום
-לכל שרת עדכונים אמיתי.
-
-## זיהוי טקסט בתמונות (OCR מקומי)
-
-Filio קורא גם צילום/סריקה של חשבונית או קבלה (jpg/png), לא רק PDF: מנוע OCR מקומי
-(Tesseract, אנגלית + עברית) שרץ לגמרי על המחשב מחלץ את הטקסט מהתמונה, ואז אותו מנוע
-סיווג בדיוק כמו PDF קובע סוג מסמך, לקוח ותאריך. שום תמונה לא נשלחת לשום שרת - בדיוק
-כמו שאר הסיווג. ניתן לכבות בטאב כללי ← הגדרות מתקדמות (`EnableImageOcr`) למי שמעדיף
-מהירות על פני דיוק בתמונות. איטי יותר מ-PDF (כמה שניות לתמונה, תלוי גודל וכמות טקסט).
-
-## קובצי התקנה ובדיקת Windows Defender
-
-שתי הרחבות (2.7.0), שתיהן דורשות הפעלה מפורשת מלבד Defender שמופעל כברירת מחדל:
-
-- **מיון קובצי התקנה** (`OrganizeInstallers`, כבוי כברירת מחדל) — קובצי exe/msi מתויקים
-  לתיקיית `_Installers\שנה` נפרדת, בלי לעבור דרך מנוע הסיווג (אין להם "לקוח" משמעותי).
-  כבוי כברירת מחדל כי לפעמים רוצים להריץ קובץ התקנה מיד אחרי ההורדה.
-- **בדיקת Windows Defender** (`EnableDefenderScan`, מופעל כברירת מחדל) — כל קובץ נבדק מול
-  Windows Defender לפני תיוק, דרך `MpCmdRun.exe` (כלי שורת הפקודה של Defender). Filio
-  לא בונה מנוע אבטחה משל עצמו - הוא רק שואל את מה שכבר מותקן וחינמי בכל Windows. קובץ
-  שמזוהה כאיום נשאר בדיוק במקומו ולעולם לא מתויק; מופיע ביומן הפעילות עם סימון אדום ברור.
-  אם Defender לא זמין, הקובץ מתויק כרגיל עם הערה שהוא לא נבדק - שקיפות מלאה, בלי הבטחת
-  אבטחה כוזבת.
-
-שתי ההגדרות ניתנות לקביעה גם באשף ההתקנה הראשוני (צעד "תיקיות") וגם בטאב כללי בכל עת.
-
-## מגבלות ידועות
-
-- **PDF סרוק (תמונה) עדיין לא נתמך** — בניגוד לקובצי תמונה רגילים (jpg/png) שכן עוברים
-  OCR, PDF סרוק (עמוד שהוא בעצם תמונה בתוך מעטפת PDF) עדיין לא הופך לתמונה לצורך זיהוי;
-  הסיווג שלו יתבסס רק על שם הקובץ. הרחבה טבעית לגרסה הבאה.
-- קבצי Word/Excel/PowerPoint לא נסרקים לתוכן (רק PDF ותמונות) — הם עדיין מזוהים לפי שם
-  הקובץ בלבד.
-- זיהוי הלקוח והתאריך הוא היוריסטי (מבוסס חוקים) ולא מושלם ב-100% למסמכים לא סטנדרטיים;
-  לכן קיים מנגנון "בטל פעולה" ביומן הפעילות.
-- מנגנון העדכונים דורש שתארחו בעצמכם קובץ JSON + קובץ התקנה בכתובת נגישה מהאינטרנט.
-
-## אשף "ברוכים הבאים" (הפעלה ראשונה)
-
-בהתקנה ראשונה Filio לא קופץ ישר למסך ההגדרות עם 6 טאבים ריקים — הוא פותח אשף ממותג
-בן 5 צעדים (עיצוב ייעודי, לא חלון ההגדרות הרגיל): ברוכים הבאים ← שפה ← תיקיות ← **סריקה
-חכמה מקומית** ← סיום. אפשר להריץ אותו שוב בכל רגע מטאב **Help** ← "Run Setup Wizard Again".
-
-**הסריקה החכמה** (`SmartScanService`) היא "AI" מקומי בלבד — מריצה את אותו מנוע הסיווג
-הקיים על עד 40 קובצי PDF שכבר נמצאים בתיקיות המעקב, **בלי לשלוח שום דבר לאף שרת**:
-מציעה לקוחות שזוהו בתוכן המסמכים (עם צ'קבוקסים לבחירה), ומראה כמה מהקבצים הקיימים כבר
-מזוהים נכון על ידי חוקי ברירת המחדל. אין עלות, אין מפתח API, אין תלות ברשת.
-
-## מחקר תחרותי - מה שונה כאן
-
-לפני סבב הפיצ'רים האחרון נבדקו כלים מתחרים אמיתיים (DropIt, Hazel, File Juggler,
-וכלי "AI file organizer" ענניים חדשים מ-2026 כמו Sparkle / The Drive AI / OneDrive+Copilot).
-כל שדרוג להלן עונה על תקלה או מגבלה מתועדת שנמצאה שם:
-
-| ממצא מהמחקר | מי סובל מזה | הפתרון ב-Filio |
-|---|---|---|
-| מעקב אחר תיקייה "מפסיק לעבוד" בשקט אחרי שינה/הפעלה מחדש/עדכון Windows | DropIt | בדיקת-בריאות אוטומטית כל 30 שניות + הקשבה לאירוע Error של FileSystemWatcher, עם בנייה מחדש אוטומטית |
-| תמיכה בתיקיית מעקב אחת בלבד | רוב הכלים המקומיים | `WatchFolders` - כמה תיקיות מעקב במקביל (הורדות + שולחן עבודה + כל תיקייה אחרת) |
-| כלי "AI" תמיד בענן, בתשלום חודשי ($6-$30), ו"הסיווג לא תמיד מדויק" | Sparkle, The Drive AI, OneDrive+Copilot | הסריקה החכמה רצה מקומית לגמרי, חד-פעמית, בחינם - בלי חשבון, בלי מפתח API |
-| ממשק "מיושן", חוסר presets למתחילים, עקומת למידה תלולה | Hazel, File Juggler, DropIt | אשף "ברוכים הבאים" מותאם + ברירות מחדל חכמות + סריקה שממלאת לקוחות מראש |
-| הזזת/מחיקת קבצים כפולים "בעיוורון" בלי שקיפות למשתמש | כלי דה-דופליקציה כלליים | זיהוי כפילות לפי תוכן (SHA-256) שמפנה ל-`_Possible Duplicates` במקום לדרוס - אף פעם לא מוחק |
-| קובץ שזז/שונה בזמן שהוא עדיין מסתנכרן ב-OneDrive/Dropbox יוצר "עותקי קונפליקט" כפולים | בעיה מתועדת בפורומי Microsoft/Dropbox, לא מטופלת בכלי ארגון קבצים | זיהוי תיקיות ענן + זיהוי קובצי placeholder של OneDrive Files On-Demand, והמתנה שיסתיימו להוריד לפני נגיעה |
-
-## גרסאות
-
-הגרסה הנוכחית: **2.9.1**. ההיסטוריה המלאה של כל גרסה (מה נוסף, מה תוקן, ולמה) נמצאת
-במסמך נפרד — [CHANGELOG.md](CHANGELOG.md) — כדי שלא יהיו שני מקומות עם אותו מידע
-שעלולים להתבדר. שינוי אחרון: פרסום הפרויקט ב-GitHub (github.com/ofirshudari1-ship-it/filio)
-כמקור ההפצה הרשמי, ובדיקת עדכונים אוטומטית מול GitHub Releases שמציגה התראה בלבד בלי
-להוריד/להתקין כלום — ראו CHANGELOG.md לפירוט המלא.
-
----
-
-## בנייה מקוד המקור
-
-דורש [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) מותקן.
-
-```bash
-cd app/Filio.App
-dotnet restore
-dotnet run
-```
-
-## הרצת הבדיקות האוטומטיות
-
-```bash
-cd app/Filio.Tests
-dotnet test
-```
-
-93 בדיקות (xUnit) שמכסות את הליבה: זיהוי סוג מסמך וחוקי עדיפות (כולל הסבר הסיווג), זיהוי
-לקוח (כולל ניחוש מתוכן), חילוץ תאריכים (כולל תאריכים לא חוקיים), **OCR אמיתי על תמונה
-שנוצרת בזמן הבדיקה** (לא מדומה - מוודא שנתוני השפה והספרייה הילידית באמת מותקנות ועובדות),
-תיוק קבצים למבנה הנכון עם מניעת דריסה, ביטול פעולה, זיהוי כפילויות וזיהוי תיקיות ענן,
-ייצוא/ייבוא הגדרות (כולל הגנות אבטחה), אבטחת מנגנון העדכון (HTTPS + אימות חתימה), אימות
-תיקיות, והתנהגות המעקב אחרי תיקייה בזמן אמת (כולל מקבילות והתאוששות מתקלות). כל שינוי
-עתידי בלוגיקה כדאי להריץ מולן קודם.
-
-## פרסום קובץ ההרצה (exe) להתקנה
-
-```bash
-cd app/Filio.App
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ../../build/publish
-```
-
-זה יוצר `build/publish/Filio.exe` — קובץ הרצה בודד שלא דורש מהמשתמש להתקין .NET בנפרד.
-
-## בניית קובץ ההתקנה (Filio-Setup-<version>.exe)
-
-1. התקינו [Inno Setup 6](https://jrsoftware.org/isinfo.php) (חינמי).
-2. פתחו את `build/installer/setup.iss` ב-Inno Setup Compiler ולחצו **Build** (או הריצו `ISCC.exe build\installer\setup.iss` משורת הפקודה).
-3. קובץ ההתקנה ייווצר ב-`build/Filio-Setup-<version>.exe`.
-
-ההתקנה כוללת: אשף עם אייקון ותמונת מותג (השועל), בחירת שפה אוטומטית לפי שפת Windows,
-בחירה אם ליצור קיצור דרך בשולחן העבודה, בחירה אם להפעיל אוטומטית עם הפעלת המחשב, והפעלת
-התוכנה בסיום ההתקנה. ההתקנה עצמה **לא דורשת הרשאות מנהל** (מותקנת לתיקיית המשתמש).
-
-**נבדק בפועל** (לא רק קומפילציה): התקנה שקטה מקצה לקצה, הרשמה נכונה בהפעלה האוטומטית וברשימת
-"הסרת התקנה", הפעלת האפליקציה בסיום, הסרת התקנה שקטה שמנקה את כל הקבצים והרישום. בדיקה זו
-היא שחשפה את הבאג בדיאלוג בחירת השפה שתוקן בגרסה 2.0.0.
-
-## הגדרה ראשונית (למשתמש הקצה)
-
-1. הריצו את `Filio-Setup-<version>.exe` ועברו את האשף.
-2. בפתיחה הראשונה ייפתח חלון ההגדרות — קבעו:
-   - תיקיית מעקב (ברירת מחדל: Downloads)
-   - תיקיית יעד לתיוק
-   - שפת הממשק (אנגלית/עברית) בטאב כללי
-   - האם להעביר או להעתיק קבצים
-3. בטאב **Clients** — הוסיפו את שמות הלקוחות הקבועים וכינויים נוספים שלהם.
-4. בטאב **Rules** — אפשר להתאים/להוסיף מילות מפתח לכל סוג מסמך.
-5. (אופציונלי) בטאב **Updates** — הזינו כתובת JSON של עדכונים אם יש לכם אחת.
-6. שמרו, וסגרו את החלון — התוכנה תמשיך לרוץ ברקע ליד השעון.
-
----
-
-*Filio* — downloads that file themselves.
+Filio is fully local-first. Document text extraction, OCR, and client/document-type classification all run entirely on your own computer — no file content, filename, or document is ever sent to an external server. The only network activity is the once-per-session check against the public GitHub Releases API to see if a newer version exists, which sends no personal or file data.
