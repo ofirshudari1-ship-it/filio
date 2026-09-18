@@ -27,3 +27,8 @@ build/Filio-Setup-*.exe
 # OS
 Thumbs.db
 .DS_Store
+SPEC.md
+CHANGELOG.md
+PROJECT.md
+RELEASE-CHECKLIST.md
+DELETIONS.md
