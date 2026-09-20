@@ -27,6 +27,7 @@ public partial class App : Application
     private System.Windows.Controls.MenuItem? _openSettingsMenuItem;
     private System.Windows.Controls.MenuItem? _pauseMenuItem;
     private System.Windows.Controls.MenuItem? _openFolderMenuItem;
+    private System.Windows.Controls.MenuItem? _undoLastMenuItem;
     private System.Windows.Controls.MenuItem? _checkUpdatesMenuItem;
     private System.Windows.Controls.MenuItem? _exitMenuItem;
     private AppSettings _settings = null!;
@@ -210,6 +211,12 @@ public partial class App : Application
         };
         menu.Items.Add(_openFolderMenuItem);
 
+        // גישה מהירה לביטול התיוק האחרון בלי לפתוח את החלון הראשי ולנווט לטאב "פעילות" -
+        // שימושי כשמסתכלים על Downloads ורואים שקובץ שזה עתה תויק הלך למקום הלא נכון.
+        _undoLastMenuItem = new System.Windows.Controls.MenuItem();
+        _undoLastMenuItem.Click += (_, _) => UndoLastFiledFile();
+        menu.Items.Add(_undoLastMenuItem);
+
         _checkUpdatesMenuItem = new System.Windows.Controls.MenuItem();
         _checkUpdatesMenuItem.Click += (_, _) =>
         {
@@ -270,6 +277,7 @@ public partial class App : Application
         if (_openSettingsMenuItem != null) _openSettingsMenuItem.Header = LocalizationService.Get("TrayOpenSettings");
         if (_pauseMenuItem != null) _pauseMenuItem.Header = LocalizationService.Get(_settings.IsPaused ? "TrayResume" : "TrayPause");
         if (_openFolderMenuItem != null) _openFolderMenuItem.Header = LocalizationService.Get("TrayOpenOutputFolder");
+        if (_undoLastMenuItem != null) _undoLastMenuItem.Header = LocalizationService.Get("TrayUndoLast");
         if (_checkUpdatesMenuItem != null) _checkUpdatesMenuItem.Header = LocalizationService.Get("TrayCheckForUpdates");
         if (_exitMenuItem != null) _exitMenuItem.Header = LocalizationService.Get("TrayExit");
 
@@ -368,6 +376,34 @@ public partial class App : Application
         _mainWindow.Activate();
     }
 
+    /// <summary>מבטל את הקובץ האחרון שתויק בהצלחה, ישירות מתפריט המגש - בלי לפתוח את החלון
+    /// הראשי ולנווט לטאב "פעילות" קודם. מחפש מהסוף ליומן את הרשומה המוצלחת האחרונה, כי
+    /// רשומות כישלון (Success=false) אין להן מה לבטל (הקובץ מעולם לא זז).</summary>
+    private void UndoLastFiledFile()
+    {
+        var lastSuccess = FileOrganizerService.ReadLog()
+            .LastOrDefault(entry => entry.Success && !string.IsNullOrEmpty(entry.NewPath));
+
+        if (lastSuccess == null)
+        {
+            _trayIcon?.ShowNotification(
+                LocalizationService.Get("DialogTitle"),
+                LocalizationService.Get("UndoLastNoneMessage"),
+                NotificationIcon.Info);
+            return;
+        }
+
+        var organizer = new FileOrganizerService();
+        var success = organizer.Undo(lastSuccess);
+        _trayIcon?.ShowNotification(
+            LocalizationService.Get("DialogTitle"),
+            LocalizationService.Get(success ? "UndoSuccessMessage" : "UndoFailureMessage"),
+            success ? NotificationIcon.Info : NotificationIcon.Warning);
+
+        if (success)
+            _mainWindow?.RefreshLogGridPublic();
+    }
+
     private async Task CheckForUpdatesInBackgroundAsync()
     {
         try
@@ -431,6 +467,15 @@ public partial class App : Application
         {
             if (!_settings.ShowNotifications || _trayIcon == null)
                 return;
+
+            // "רק בכישלון" מדלג על הבועית עבור קבצים שתויקו בהצלחה, אבל לעולם לא על כשלים -
+            // המשתמש שבחר לצמצם רעש עדיין צריך לדעת כשמשהו דורש תשומת לב ממנו.
+            if (_settings.NotifyOnlyOnFailure && entry.Success)
+            {
+                _lastFiledPath = entry.NewPath;
+                _mainWindow?.NotifyNewLogEntry(entry);
+                return;
+            }
 
             var message = entry.Success
                 ? LocalizationService.Format("NotificationFiledTypeClientFormat", entry.DetectedType, entry.DetectedClient)

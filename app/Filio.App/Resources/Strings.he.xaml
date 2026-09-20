@@ -61,6 +61,8 @@
     <sys:String x:Key="StartWithWindowsCheck">להתחיל לרוץ לבד כשהמחשב נדלק</sys:String>
     <sys:String x:Key="StartWithWindowsTooltip">מציג את המצב האמיתי כרגע ברישום ההפעלה של Windows (לא רק העדפה שמורה) - אם זה אי פעם נראה לא נכון, שמירת המסך הזה מתקנת את זה מיד.</sys:String>
     <sys:String x:Key="ShowNotificationsCheck">להראות התראה על כל קובץ שתויק</sys:String>
+    <sys:String x:Key="NotifyOnlyOnFailureCheck">להתריע רק כשתיוק נכשל</sys:String>
+    <sys:String x:Key="NotifyOnlyOnFailureTooltip">מדלג על הודעת המגש עבור קבצים שתויקו בהצלחה - עדיין תקבלו התראה בכל פעם שתיוק נכשל או דורש בדיקה.</sys:String>
     <sys:String x:Key="PauseCheck">להשהות זמנית (Filio לא יגע בקבצים)</sys:String>
     <sys:String x:Key="FileActionLabel">כשמתייקים קובץ</sys:String>
     <sys:String x:Key="MoveOption">להעביר אותו (הוא נעלם מההורדות)</sys:String>
@@ -148,6 +150,7 @@
     <sys:String x:Key="LogEmptySubtitle">ברגע שקובץ ינחת בתיקיית המעקב הוא יופיע כאן</sys:String>
     <sys:String x:Key="UndoSuccessMessage">הקובץ הוחזר למיקומו המקורי.</sys:String>
     <sys:String x:Key="UndoFailureMessage">לא ניתן היה לבטל - ייתכן שהקובץ כבר הוזז/נמחק.</sys:String>
+    <sys:String x:Key="UndoLastNoneMessage">אין עדיין מה לבטל - שום קובץ לא תויק בהפעלה הנוכחית.</sys:String>
     <sys:String x:Key="LogStatusFiled">טופל</sys:String>
     <sys:String x:Key="LogStatusDuplicate">כפילות אפשרית</sys:String>
     <sys:String x:Key="LogStatusErrorFormat">שגיאה: {0}</sys:String>
@@ -268,6 +271,7 @@
     <sys:String x:Key="TrayPause">השהה תיוק</sys:String>
     <sys:String x:Key="TrayResume">הפעל מחדש</sys:String>
     <sys:String x:Key="TrayOpenOutputFolder">פתח תיקיית יעד</sys:String>
+    <sys:String x:Key="TrayUndoLast">בטל תיוק אחרון</sys:String>
     <sys:String x:Key="TrayCheckForUpdates">בדיקת עדכונים</sys:String>
     <sys:String x:Key="TrayExit">יציאה</sys:String>
     <sys:String x:Key="TrayTooltip">Filio — מתייק את ההורדות שלך אוטומטית</sys:String>

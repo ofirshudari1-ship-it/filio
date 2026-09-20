@@ -200,6 +200,14 @@ public partial class MainWindow : Window
         LanguageChanged?.Invoke();
     }
 
+    /// <summary>ה"רק בכישלון" הוא תת-אפשרות של "הצג התראות" - אין טעם להשאיר אותה זמינה
+    /// כשהתראות כבויות לגמרי, אחרת המשתמש רואה תיבה מסומנת שלא באמת עושה כלום.</summary>
+    private void ShowNotificationsCheckBox_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (NotifyOnlyOnFailureCheckBox != null)
+            NotifyOnlyOnFailureCheckBox.IsEnabled = ShowNotificationsCheckBox.IsChecked ?? false;
+    }
+
     private void LoadGeneralTab()
     {
         WatchFoldersListBox.ItemsSource = _settings.WatchFolders;
@@ -211,6 +219,8 @@ public partial class MainWindow : Window
         // StartupService.SetEnabled בכל מקרה).
         StartWithWindowsCheckBox.IsChecked = StartupService.IsCurrentlyEnabled();
         ShowNotificationsCheckBox.IsChecked = _settings.ShowNotifications;
+        NotifyOnlyOnFailureCheckBox.IsChecked = _settings.NotifyOnlyOnFailure;
+        NotifyOnlyOnFailureCheckBox.IsEnabled = _settings.ShowNotifications;
         IsPausedCheckBox.IsChecked = _settings.IsPaused;
         MoveRadioButton.IsChecked = _settings.MoveInsteadOfCopy;
         CopyRadioButton.IsChecked = !_settings.MoveInsteadOfCopy;
@@ -355,6 +365,7 @@ public partial class MainWindow : Window
         _settings.RootOutputFolder = outputFolder;
         _settings.StartWithWindows = StartWithWindowsCheckBox.IsChecked ?? true;
         _settings.ShowNotifications = ShowNotificationsCheckBox.IsChecked ?? true;
+        _settings.NotifyOnlyOnFailure = NotifyOnlyOnFailureCheckBox.IsChecked ?? false;
         _settings.IsPaused = IsPausedCheckBox.IsChecked ?? false;
         _settings.MoveInsteadOfCopy = MoveRadioButton.IsChecked ?? true;
         _settings.DetectDuplicates = DetectDuplicatesCheckBox.IsChecked ?? true;
@@ -446,6 +457,10 @@ public partial class MainWindow : Window
     }
 
     private void RefreshLog_Click(object sender, RoutedEventArgs e) => RefreshLogGrid();
+
+    /// <summary>קריאה מבחוץ (App.xaml.cs) אחרי ביטול תיוק שבוצע ישירות מתפריט המגש, כדי
+    /// שטאב "פעילות" יציג את המצב העדכני אם החלון הראשי כבר פתוח.</summary>
+    public void RefreshLogGridPublic() => Dispatcher.Invoke(RefreshLogGrid);
 
     private void RefreshLogGrid()
     {

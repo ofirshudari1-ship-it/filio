@@ -32,6 +32,11 @@ public class AppSettings
 
     public bool ShowNotifications { get; set; } = true;
 
+    /// <summary>כשמופעל (ורק אם ShowNotifications מופעל): מציג הודעת מגש רק על תיוק שנכשל,
+    /// לא על כל קובץ שתויק בהצלחה - מפחית רעש למשתמש שמתייק הרבה קבצים ביום ורוצה לדעת
+    /// רק כשמשהו דורש תשומת לב. כבוי כברירת מחדל כדי לא לשנות התנהגות קיימת בלי בחירה מודעת.</summary>
+    public bool NotifyOnlyOnFailure { get; set; } = false;
+
     public bool IsPaused { get; set; } = false;
 
     /// <summary>מזהה קבצים כפולים לפי תוכן (hash) לפני תיוק, ומפנה אותם ל"כפילות אפשריות" במקום לדרוס בשקט.</summary>
@@ -129,6 +134,7 @@ public class AppSettings
         StartWithWindows = other.StartWithWindows;
         MoveInsteadOfCopy = other.MoveInsteadOfCopy;
         ShowNotifications = other.ShowNotifications;
+        NotifyOnlyOnFailure = other.NotifyOnlyOnFailure;
         IsPaused = other.IsPaused;
         DetectDuplicates = other.DetectDuplicates;
         WatchedFileExtensions = other.WatchedFileExtensions;

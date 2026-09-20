@@ -144,7 +144,10 @@
                                            Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
                                 <CheckBox x:Name="StartWithWindowsCheckBox" Content="{DynamicResource StartWithWindowsCheck}" Style="{StaticResource ToggleSwitch}"
                                           ToolTip="{DynamicResource StartWithWindowsTooltip}"/>
-                                <CheckBox x:Name="ShowNotificationsCheckBox" Content="{DynamicResource ShowNotificationsCheck}" Style="{StaticResource ToggleSwitch}"/>
+                                <CheckBox x:Name="ShowNotificationsCheckBox" Content="{DynamicResource ShowNotificationsCheck}" Style="{StaticResource ToggleSwitch}"
+                                          Checked="ShowNotificationsCheckBox_Toggled" Unchecked="ShowNotificationsCheckBox_Toggled"/>
+                                <CheckBox x:Name="NotifyOnlyOnFailureCheckBox" Content="{DynamicResource NotifyOnlyOnFailureCheck}" Style="{StaticResource ToggleSwitch}"
+                                          ToolTip="{DynamicResource NotifyOnlyOnFailureTooltip}" Margin="24,0,0,0"/>
                                 <CheckBox x:Name="IsPausedCheckBox" Content="{DynamicResource PauseCheck}" Style="{StaticResource ToggleSwitch}"/>
 
                                 <Separator Margin="0,12,0,12" Background="{StaticResource BorderBrush2}"/>

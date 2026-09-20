@@ -61,6 +61,8 @@
     <sys:String x:Key="StartWithWindowsCheck">Start automatically with Windows</sys:String>
     <sys:String x:Key="StartWithWindowsTooltip">Shows the real current state of Windows' own startup registration (not just a saved preference) — if this ever looks wrong, saving this screen re-applies it immediately.</sys:String>
     <sys:String x:Key="ShowNotificationsCheck">Show a notification for every file filed</sys:String>
+    <sys:String x:Key="NotifyOnlyOnFailureCheck">Only notify me when filing fails</sys:String>
+    <sys:String x:Key="NotifyOnlyOnFailureTooltip">Skips the tray notification for files that filed successfully — you'll still get one whenever a file fails or needs review.</sys:String>
     <sys:String x:Key="PauseCheck">Pause automatic filing</sys:String>
     <sys:String x:Key="FileActionLabel">When filing a file</sys:String>
     <sys:String x:Key="MoveOption">Move it (it disappears from Downloads)</sys:String>
@@ -148,6 +150,7 @@
     <sys:String x:Key="LogEmptySubtitle">Once a file lands in the watch folder it will show up here</sys:String>
     <sys:String x:Key="UndoSuccessMessage">The file was restored to its original location.</sys:String>
     <sys:String x:Key="UndoFailureMessage">Couldn't undo — the file may already have been moved or deleted.</sys:String>
+    <sys:String x:Key="UndoLastNoneMessage">There's nothing to undo yet — no file has been filed this session.</sys:String>
     <sys:String x:Key="LogStatusFiled">Filed</sys:String>
     <sys:String x:Key="LogStatusDuplicate">Possible duplicate</sys:String>
     <sys:String x:Key="LogStatusErrorFormat">Error: {0}</sys:String>
@@ -268,6 +271,7 @@
     <sys:String x:Key="TrayPause">Pause Filing</sys:String>
     <sys:String x:Key="TrayResume">Resume Filing</sys:String>
     <sys:String x:Key="TrayOpenOutputFolder">Open Destination Folder</sys:String>
+    <sys:String x:Key="TrayUndoLast">Undo Last Filed File</sys:String>
     <sys:String x:Key="TrayCheckForUpdates">Check for Updates</sys:String>
     <sys:String x:Key="TrayExit">Exit</sys:String>
     <sys:String x:Key="TrayTooltip">Filio — files your downloads automatically</sys:String>
