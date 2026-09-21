@@ -29,6 +29,7 @@ public partial class MainWindow : Window
     private ObservableCollection<FileLogEntry> _logEntries = new();
     private UpdateManifest? _pendingUpdate;
     private string? _pendingGitHubReleaseUrl;
+    private GitHubUpdateResult? _pendingGitHubUpdate;
     private bool _isInitializing = true;
 
     /// <summary>מאפשר ל-App.xaml.cs לסנכרן את תפריט אייקון המגש כשהמצב משתנה מכאן.</summary>
@@ -693,12 +694,14 @@ public partial class MainWindow : Window
         CurrentVersionText.Text = versionText;
         HelpVersionText.Text = versionText;
         AutoCheckUpdatesCheckBox.IsChecked = _settings.AutoCheckForUpdates;
+        AutoInstallUpdatesCheckBox.IsChecked = _settings.AutoInstallUpdates;
         UpdateFeedUrlTextBox.Text = _settings.UpdateFeedUrl;
     }
 
     private void SaveUpdatesSettings_Click(object sender, RoutedEventArgs e)
     {
         _settings.AutoCheckForUpdates = AutoCheckUpdatesCheckBox.IsChecked ?? true;
+        _settings.AutoInstallUpdates = AutoInstallUpdatesCheckBox.IsChecked ?? false;
         _settings.UpdateFeedUrl = UpdateFeedUrlTextBox.Text.Trim();
         _settingsService.Save(_settings);
         ShowMessage("SettingsSavedMessage", MessageBoxImage.Information);
@@ -713,10 +716,12 @@ public partial class MainWindow : Window
     {
         CheckForUpdatesButton.IsEnabled = false;
         DownloadAndInstallButton.Visibility = Visibility.Collapsed;
+        UpdateNowButton.Visibility = Visibility.Collapsed;
         OpenReleasePageButton.Visibility = Visibility.Collapsed;
         ChangelogBox.Visibility = Visibility.Collapsed;
         UpdateStatusText.Text = LocalizationService.Get("CheckingStatus");
         _pendingGitHubReleaseUrl = null;
+        _pendingGitHubUpdate = null;
 
         // UpdateFeedUrl הוא הזרימה הישנה יותר (manifest ייעודי + הורדה+התקנה שקטה),
         // ודורש שהמשתמש יזין כתובת בעצמו. כברירת מחדל השדה ריק, אז ללא כתובת feed
@@ -776,7 +781,16 @@ public partial class MainWindow : Window
             {
                 UpdateStatusText.Text = LocalizationService.Format("UpdateAvailableStatus", result.LatestVersion.ToString(3));
                 _pendingGitHubReleaseUrl = result.ReleaseUrl;
-                OpenReleasePageButton.Visibility = Visibility.Visible;
+                _pendingGitHubUpdate = result;
+
+                // "Update Now" (silent download + install) needs a direct installer asset URL;
+                // if the Release was published without one (or under an unexpected file name),
+                // fall back to the old flow - a button that just opens the Release page for a
+                // manual download, same as before this feature existed.
+                if (!string.IsNullOrWhiteSpace(result.InstallerAssetUrl))
+                    UpdateNowButton.Visibility = Visibility.Visible;
+                else
+                    OpenReleasePageButton.Visibility = Visibility.Visible;
             }
         }
         catch
@@ -787,6 +801,64 @@ public partial class MainWindow : Window
         {
             CheckForUpdatesButton.IsEnabled = true;
         }
+    }
+
+    /// <summary>
+    /// "עדכן עכשיו" - הכפתור החדש שדורש קליק אחד (בניגוד לזרימה הישנה: פתיחת דפדפן והתקנה
+    /// ידנית). מוריד את קובץ ההתקנה שהתגלה ב-GitHub Releases, מאמת שההורדה הושלמה במלואה
+    /// (גודל מול מה שדווח ב-API), ואז מריץ אותו בשקט ויוצא - בדיוק כמו DownloadAndInstall_Click
+    /// לזרימת ה-manifest הישנה. בכל כשל (רשת, HTTPS לא-מאובטח, גודל לא תואם) חוזרים לזרימת
+    /// הגיבוי הקיימת: הודעת שגיאה + כפתור "פתיחת עמוד הגרסה" להורדה ידנית, בלי לגעת בהתקנה
+    /// הקיימת של Filio.
+    /// </summary>
+    private async void UpdateNow_Click(object sender, RoutedEventArgs e)
+    {
+        if (_pendingGitHubUpdate?.InstallerAssetUrl == null) return;
+
+        UpdateNowButton.IsEnabled = false;
+        CheckForUpdatesButton.IsEnabled = false;
+        UpdateStatusText.Text = LocalizationService.Get("DownloadingStatus");
+
+        try
+        {
+            var installerPath = await _updateService.DownloadInstallerAsync(
+                _pendingGitHubUpdate.InstallerAssetUrl,
+                expectedSizeBytes: _pendingGitHubUpdate.InstallerAssetSizeBytes);
+
+            UpdateStatusText.Text = LocalizationService.Get("InstallingStatus");
+            UpdateService.LaunchSilentInstall(installerPath);
+            ExitRequestedForUpdate?.Invoke();
+        }
+        catch (InsecureUpdateUrlException)
+        {
+            UpdateStatusText.Text = LocalizationService.Get("UpdateInsecureUrlStatus");
+            FallBackToManualUpdate();
+        }
+        catch (UpdateIntegrityException)
+        {
+            UpdateStatusText.Text = LocalizationService.Get("UpdateIntegrityFailedStatus");
+            FallBackToManualUpdate();
+        }
+        catch
+        {
+            // רשת נפלה, דיסק מלא (IOException בזמן כתיבת הקובץ הזמני), timeout וכו' - כל כשל
+            // אחר שלא נתפס במפורש למעלה. UpdateService.DownloadInstallerAsync כבר מנקה את
+            // הקובץ החלקי לפני שהחריגה מגיעה לכאן.
+            UpdateStatusText.Text = LocalizationService.Get("UpdateErrorStatus");
+            FallBackToManualUpdate();
+        }
+    }
+
+    /// <summary>נקודת הגיבוי המשותפת לכל כשל ב-UpdateNow_Click: Filio הרץ כרגע לא נגעו בו כלל
+    /// (הכשל תמיד קורה לפני LaunchSilentInstall/ExitRequestedForUpdate), אז פשוט מחזירים את
+    /// כפתורי הבקרה ומציגים את כפתור הגיבוי הידן - בדיוק כמו הזרימה שהייתה קיימת לפני
+    /// שהתווסף עדכון-בקליק-אחד.</summary>
+    private void FallBackToManualUpdate()
+    {
+        UpdateNowButton.Visibility = Visibility.Collapsed;
+        OpenReleasePageButton.Visibility = Visibility.Visible;
+        UpdateNowButton.IsEnabled = true;
+        CheckForUpdatesButton.IsEnabled = true;
     }
 
     private void OpenReleasePage_Click(object sender, RoutedEventArgs e)

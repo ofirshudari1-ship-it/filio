@@ -108,6 +108,12 @@ public partial class App : Application
 
         SetupTrayIcon();
 
+        // בודק אם ההתקנה השקטה האחרונה (Setup.cs / RunSilentInstall) נכשלה אחרי ש-Filio
+        // הקודם כבר יצא (למשל Filio לא הצליח להיסגר, או תקלת דיסק/הרשאות בזמן ההתקנה עצמה) -
+        // תרחיש שהתהליך הנוכחי כבר לא היה קיים כדי לתפוס ולדווח עליו בזמן אמת. ראו
+        // UpdateService.TryConsumeUpdateFailedMarker ל-הסבר המלא על מוסכמת הנתיב המשותפת.
+        ReportPendingUpdateFailureIfAny();
+
         splash.SetStatus(LocalizationService.Get("SplashReady"), 100);
         await Task.Delay(800); // minimum visible time
         splash.Close();
@@ -448,20 +454,82 @@ public partial class App : Application
                 return;
 
             var result = await _updateService.CheckGitHubReleaseAsync();
-            if (result != null)
+            if (result == null)
+                return;
+
+            _pendingGitHubReleaseUrl = result.ReleaseUrl;
+
+            // AutoInstallUpdates (הגדרה opt-in, כבויה כברירת מחדל - ראו AppSettings) מדלגת על
+            // בועית ה"יש עדכון" ומנסה להוריד+להתקין ישר. דורשת asset ישיר מה-Release (אם
+            // אין כזה, אין דרך להתקין בשקט ממילא - חוזרים לבועית הרגילה עם קישור לדפדפן).
+            if (_settings.AutoInstallUpdates && !string.IsNullOrWhiteSpace(result.InstallerAssetUrl))
             {
-                _pendingGitHubReleaseUrl = result.ReleaseUrl;
-                _trayIcon?.ShowNotification(
-                    LocalizationService.Get("DialogTitle"),
-                    LocalizationService.Format("UpdateAvailableStatus", result.LatestVersion.ToString(3)),
-                    NotificationIcon.Info);
+                await TryAutoInstallUpdateAsync(result);
+                return;
             }
+
+            _trayIcon?.ShowNotification(
+                LocalizationService.Get("DialogTitle"),
+                LocalizationService.Format("UpdateAvailableStatus", result.LatestVersion.ToString(3)),
+                NotificationIcon.Info);
         }
         catch (Exception ex)
         {
             // best-effort בלבד - בדיקת עדכונים אף פעם לא אמורה להשפיע על שאר האפליקציה.
             DiagnosticLogger.Warn($"GitHub update check failed: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// זרימת ה"הורדה והתקנה אוטומטית" (AppSettings.AutoInstallUpdates): מורידה את קובץ
+    /// ההתקנה שהתגלה מול GitHub Releases, מאמתת שההורדה הושלמה במלואה (גודל מול מה שדווח
+    /// ב-API - ראו UpdateService.DownloadInstallerAsync), ואז מריצה אותה בשקט ויוצאת מ-Filio
+    /// כדי שההתקנה תוכל לדרוס את הקבצים הנעולים. בכל כשל (רשת, HTTPS לא מאובטח, אי-התאמת
+    /// גודל, דיסק מלא) לא נוגעים בהתקנה הקיימת בכלל - חוזרים לזרימת הגיבוי הרגילה: בועית
+    /// "יש עדכון" עם קישור לעמוד ה-Release, בדיוק כאילו AutoInstallUpdates היה כבוי.
+    /// </summary>
+    private async Task TryAutoInstallUpdateAsync(GitHubUpdateResult result)
+    {
+        try
+        {
+            DiagnosticLogger.Info($"Auto-installing update {result.LatestVersion} (AutoInstallUpdates is on)");
+
+            var installerPath = await _updateService.DownloadInstallerAsync(
+                result.InstallerAssetUrl!,
+                expectedSizeBytes: result.InstallerAssetSizeBytes);
+
+            UpdateService.LaunchSilentInstall(installerPath);
+
+            // ExitRequestedForUpdate (MainWindow's event) לא זמין תמיד כאן - הבדיקה הזו רצה
+            // גם כש-Filio עלה עם --minimized ואף פעם לא בנה MainWindow. ExitApplication היא
+            // אותה לוגיקת סגירה נקייה (dispose ל-watcher/tray/mutex) שכל שאר נתיבי היציאה
+            // כבר עוברים דרכה.
+            Dispatcher.Invoke(ExitApplication);
+        }
+        catch (Exception ex)
+        {
+            DiagnosticLogger.Warn($"Auto-install failed, falling back to manual update notification: {ex.Message}");
+            _trayIcon?.ShowNotification(
+                LocalizationService.Get("DialogTitle"),
+                LocalizationService.Format("UpdateAvailableStatus", result.LatestVersion.ToString(3)),
+                NotificationIcon.Info);
+        }
+    }
+
+    /// <summary>קורא (ומוחק) את סימון "ההתקנה השקטה הקודמת נכשלה" שכתב Setup.cs, אם קיים,
+    /// ומציג בועית מגש עם הפניה לעמוד ההורדה הידני - אותה הודעת גיבוי שהיינו מציגים אילו
+    /// הכשל נתפס בזמן שהאפליקציה עדיין רצה (ראו TryAutoInstallUpdateAsync).</summary>
+    private void ReportPendingUpdateFailureIfAny()
+    {
+        var failureDetails = UpdateService.TryConsumeUpdateFailedMarker();
+        if (failureDetails == null)
+            return;
+
+        DiagnosticLogger.Warn($"Previous silent update failed: {failureDetails}");
+        _trayIcon?.ShowNotification(
+            LocalizationService.Get("DialogTitle"),
+            LocalizationService.Get("UpdateFallbackAfterFailureStatus"),
+            NotificationIcon.Warning);
     }
 
     private void OnFileProcessed(FileLogEntry entry)

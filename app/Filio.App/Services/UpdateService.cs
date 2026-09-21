@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -33,8 +35,14 @@ public class UpdateIntegrityException : Exception
 /// ההתקנה יכול להוחלף בדרך על ידי כל מי שבין המחשב לשרת. (2) אם ה-manifest מצהיר על
 /// sha256, מאמתים את הגיבוב בפועל מול הקובץ שהתקבל לפני שמריצים אותו.
 /// </summary>
-/// <summary>תוצאת בדיקת עדכונים מול GitHub Releases: הגרסה שפורסמה ועמוד ה-Release הציבורי שלה.</summary>
-public record GitHubUpdateResult(Version LatestVersion, string ReleaseUrl);
+/// <summary>תוצאת בדיקת עדכונים מול GitHub Releases: הגרסה שפורסמה, עמוד ה-Release הציבורי
+/// שלה, וכשקיים - כתובת ההורדה הישירה + הגודל המדווח של קובץ ההתקנה (Filio-Setup-X.Y.Z.exe)
+/// המצורף ל-Release, כדי לאפשר עדכון שקט בלי לעבור דרך דפדפן.</summary>
+public record GitHubUpdateResult(
+    Version LatestVersion,
+    string ReleaseUrl,
+    string? InstallerAssetUrl = null,
+    long? InstallerAssetSizeBytes = null);
 
 public class UpdateService
 {
@@ -52,6 +60,35 @@ public class UpdateService
 
     public static Version CurrentVersion =>
         Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
+
+    // שם/מיקום קבועים, מוכרים גם ל-Setup.cs (build\installer) - פרויקט נפרד שלא יכול
+    // להפנות ל-UpdateService, אז שני הצדדים משתמשים באותה מוסכמת נתיב בכתיבה עצמאית.
+    // ב-RunSilentInstall של Setup.cs: כשההתקנה השקטה נכשלת (קוד יציאה שונה מ-0 - רשת/דיסק
+    // מלא/לא הצליח לסגור את Filio הרץ), הוא כותב לכאן לפני שהוא חוזר; Filio קורא את זה
+    // בהפעלה הבאה (App.OnStartup) ומציג הודעת נפילה-בחזרה עם קישור להורדה ידנית, בדיוק
+    // כמו כשל שנתפס ישירות (רשת/HTTPS/checksum) בזמן שהאפליקציה עדיין רצה.
+    public const string UpdateFailedMarkerFileName = "update-failed.txt";
+
+    public static string GetUpdateFailedMarkerPath() =>
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Filio", UpdateFailedMarkerFileName);
+
+    /// <summary>קורא ומוחק (best-effort, לא זורק) את קובץ הסימון שנכתב על ידי Setup.cs
+    /// כשההתקנה השקטה נכשלה. מחזיר null אם אין סימון ממתין.</summary>
+    public static string? TryConsumeUpdateFailedMarker()
+    {
+        var path = GetUpdateFailedMarkerPath();
+        try
+        {
+            if (!File.Exists(path)) return null;
+            var content = File.ReadAllText(path);
+            File.Delete(path);
+            return string.IsNullOrWhiteSpace(content) ? "unknown error" : content.Trim();
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
     public async Task<UpdateManifest?> CheckForUpdateAsync(string feedUrl)
     {
@@ -123,7 +160,13 @@ public class UpdateService
                 ? "https://github.com/ofirshudari1-ship-it/filio/releases"
                 : release.HtmlUrl;
 
-            return new GitHubUpdateResult(remoteVersion, releaseUrl);
+            var installerAsset = SelectInstallerAsset(release.Assets);
+
+            return new GitHubUpdateResult(
+                remoteVersion,
+                releaseUrl,
+                installerAsset?.BrowserDownloadUrl,
+                installerAsset != null ? installerAsset.Size : null);
         }
         catch
         {
@@ -131,6 +174,22 @@ public class UpdateService
             // ואסור שתזרוק החוצה ותפריע לשום קורא (במיוחד לא לרצף האתחול).
             return null;
         }
+    }
+
+    /// <summary>
+    /// בוחרת את קובץ ההתקנה (Filio-Setup-X.Y.Z.exe) מבין ה-assets המצורפים ל-Release, אם
+    /// יש כזה. מופרדת כמתודה סטטית טהורה (בלי רשת) כדי שניתן יהיה לבדוק אותה ביחידה - כולל
+    /// המקרים "אין assets בכלל", "יש assets אבל בלי קובץ התקנה" ו"יש כמה קבצים ורק אחד
+    /// תואם את השם/הסיומת הצפויים".
+    /// </summary>
+    public static GitHubReleaseAsset? SelectInstallerAsset(IEnumerable<GitHubReleaseAsset>? assets)
+    {
+        if (assets == null) return null;
+        return assets.FirstOrDefault(a =>
+            a != null &&
+            !string.IsNullOrWhiteSpace(a.BrowserDownloadUrl) &&
+            a.Name.StartsWith("Filio-Setup-", StringComparison.OrdinalIgnoreCase) &&
+            a.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>
@@ -153,7 +212,16 @@ public class UpdateService
             throw new InsecureUpdateUrlException(url);
     }
 
-    public async Task<string> DownloadInstallerAsync(string installerUrl, string? expectedSha256 = null, IProgress<double>? progress = null)
+    /// <param name="installerUrl">כתובת ההורדה הישירה (HTTPS) של קובץ ההתקנה.</param>
+    /// <param name="expectedSha256">גיבוב sha256 מוצהר (זרימת ה-manifest הישנה) - אם קיים, מאומת מול הקובץ שהתקבל.</param>
+    /// <param name="progress">התקדמות הורדה (0-100), אם ה-Content-Length ידוע.</param>
+    /// <param name="expectedSizeBytes">גודל קובץ מוצהר (זרימת GitHub Releases - "size" ב-asset) - עוגן פשוט
+    /// יותר מ-sha256 לוודא שההורדה הושלמה במלואה ולא נקטעה, גם ל-Release שלא מפרסם checksum ייעודי.</param>
+    public async Task<string> DownloadInstallerAsync(
+        string installerUrl,
+        string? expectedSha256 = null,
+        IProgress<double>? progress = null,
+        long? expectedSizeBytes = null)
     {
         EnsureHttps(installerUrl);
 
@@ -179,6 +247,20 @@ public class UpdateService
 
                     if (totalBytes > 0)
                         progress?.Report((double)totalRead / totalBytes * 100);
+                }
+            }
+
+            // עוגן "הורדה הושלמה" בסיסי - לפני שבודקים sha256 (שלא תמיד קיים, למשל ב-GitHub
+            // Releases שלא מפרסם checksum ייעודי לכל asset): קובץ שנקטע (רשת נפלה, החיבור
+            // נסגר באמצע) הרבה פעמים עדיין "מצליח" מבחינת ה-HTTP status אבל מגיע קטן מהמדווח.
+            if (expectedSizeBytes.HasValue)
+            {
+                var actualSize = new FileInfo(tempPath).Length;
+                if (actualSize != expectedSizeBytes.Value)
+                {
+                    TryDelete(tempPath);
+                    throw new UpdateIntegrityException(
+                        $"downloaded size {actualSize} bytes does not match expected {expectedSizeBytes.Value} bytes");
                 }
             }
 
@@ -219,13 +301,16 @@ public class UpdateService
     }
 
     /// <summary>
-    /// מריץ את קובץ ההתקנה בשקט (ללא אשף) ובלי לבקש הפעלה מחדש של Windows. Inno Setup
-    /// מזהה שהתוכנה רצה (CloseApplications) וסוגר/מפעיל אותה מחדש אוטומטית בסיום.
-    /// קוראים לפעולה הזו ואז יוצאים מהתוכנה הנוכחית.
+    /// מריץ את קובץ ההתקנה בשקט (ללא אשף) ובלי לבקש הפעלה מחדש של Windows. Filio-Setup.exe
+    /// (build\installer\Setup.cs) מזהה את הדגלים האלה בעצמו (Program.Main / RunSilentInstall) -
+    /// זה לא Inno Setup, אבל השמות תואמים במכוון למוסכמת Inno Setup (VERYSILENT וכו') כי אלה
+    /// כבר מוכרים לכל מי שמריץ עדכון שקט מסקריפט. /CLOSEAPPLICATIONS גורם להתקנה לנסות לסגור
+    /// Filio הרץ בעצמה (במקום להיכשל על קובץ נעול), ו-/RESTARTAPPLICATIONS מפעיל אותה מחדש
+    /// בסיום מוצלח. קוראים לפעולה הזו ואז יוצאים מהתוכנה הנוכחית - היא זו שמחזיקה את הנעילה
+    /// על Filio.exe, אז ההתקנה לא יכולה לדרוס אותו כל עוד התהליך הנוכחי עדיין חי.
     ///
-    /// חשוב: /LANG= חובה גם ב-VERYSILENT - בלעדיו Inno Setup עדיין מציג את דיאלוג בחירת
-    /// שפת ההתקנה בהרצה הראשונה על מכונה נתונה, מה שהופך עדכון "שקט" לתקוע וממתין לקלט
-    /// שאף אחד לא רואה. תוקן אחרי שנתפס בבדיקה בפועל של ההתקנה.
+    /// חשוב: /LANG= חובה גם ב-VERYSILENT - בלעדיו ההתקנה השקטה הייתה יכולה ליפול חזרה
+    /// לברירת מחדל שגויה. תוקן אחרי שנתפס בבדיקה בפועל של ההתקנה.
     /// </summary>
     public static void LaunchSilentInstall(string installerPath)
     {

@@ -190,9 +190,14 @@
     <sys:String x:Key="UpdateIntegrityFailedStatus">🔒 נחסם מטעמי אבטחה: הקובץ שהתקבל לא תואם את החתימה שפורסמה לגרסה הזו, ולכן הוא נמחק במקום להיפתח. ניתן לנסות שוב מאוחר יותר, או לבדוק את כתובת העדכונים.</sys:String>
     <sys:String x:Key="DownloadAndInstallButton">הורדה והתקנת עדכון</sys:String>
     <sys:String x:Key="OpenReleasePageButton">פתיחת עמוד הגרסה</sys:String>
+    <sys:String x:Key="UpdateNowButton">עדכן עכשיו</sys:String>
     <sys:String x:Key="DownloadingStatus">מוריד עדכון...</sys:String>
     <sys:String x:Key="InstallingStatus">מתקין - Filio יופעל מחדש אוטומטית.</sys:String>
     <sys:String x:Key="AutoCheckOnStartupCheck">בדיקת עדכונים אוטומטית בהפעלה</sys:String>
+    <sys:String x:Key="AutoInstallUpdatesCheck">הורדה והתקנה אוטומטית של עדכונים</sys:String>
+    <sys:String x:Key="AutoInstallUpdatesHelp">כשמתגלה גרסה חדשה, Filio מוריד ומתקין אותה ברקע - בלי צורך בלחיצות. כבוי כברירת מחדל; כשזה כבוי, Filio רק מודיע לכם ואתם מתקינים בעזרת כפתור "עדכן עכשיו".</sys:String>
+    <sys:String x:Key="UpdateAutoInstallingStatus">התגלתה גרסה חדשה - מוריד ומתקין אוטומטית...</sys:String>
+    <sys:String x:Key="UpdateFallbackAfterFailureStatus">העדכון האוטומטי לא הצליח להשלים, אז Filio השאיר את הגרסה הנוכחית פועלת. השתמשו ב"פתיחת עמוד הגרסה" כדי להוריד בעצמכם.</sys:String>
     <sys:String x:Key="UpdateFeedUrlLabel">כתובת עדכונים (מתקדם)</sys:String>
     <sys:String x:Key="UpdateFeedUrlHelp">קובץ JSON שמתאר את הגרסה האחרונה. השאירו ריק כדי לבטל בדיקת עדכונים.</sys:String>
     <sys:String x:Key="UpdateFeedUrlTooltip">חייבת להיות כתובת https://. Filio מסרב לקישורי http:// רגילים, וכאשר כתובת העדכונים מפרסמת גיבוב sha256, מאמת את קובץ ההתקנה שהתקבל מולו לפני שמריצים משהו.</sys:String>

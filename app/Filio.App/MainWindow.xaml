@@ -450,6 +450,8 @@
                                 <Button x:Name="CheckForUpdatesButton" Content="{DynamicResource CheckForUpdatesButton}" Margin="0,0,8,0" Click="CheckForUpdates_Click"/>
                                 <Button x:Name="DownloadAndInstallButton" Content="{DynamicResource DownloadAndInstallButton}" Style="{StaticResource PrimaryButton}"
                                         Visibility="Collapsed" Click="DownloadAndInstall_Click"/>
+                                <Button x:Name="UpdateNowButton" Content="{DynamicResource UpdateNowButton}" Style="{StaticResource PrimaryButton}"
+                                        Visibility="Collapsed" Click="UpdateNow_Click"/>
                                 <Button x:Name="OpenReleasePageButton" Content="{DynamicResource OpenReleasePageButton}" Style="{StaticResource PrimaryButton}"
                                         Visibility="Collapsed" Click="OpenReleasePage_Click"/>
                             </StackPanel>
@@ -457,6 +459,9 @@
                     </Border>
 
                     <CheckBox x:Name="AutoCheckUpdatesCheckBox" Content="{DynamicResource AutoCheckOnStartupCheck}" Style="{StaticResource ToggleSwitch}" Margin="0,20,0,0"/>
+                    <CheckBox x:Name="AutoInstallUpdatesCheckBox" Content="{DynamicResource AutoInstallUpdatesCheck}" Style="{StaticResource ToggleSwitch}" Margin="0,10,0,0"/>
+                    <TextBlock Text="{DynamicResource AutoInstallUpdatesHelp}" FontSize="11.5" TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,0"/>
 
                     <TextBlock Text="{DynamicResource UpdateFeedUrlLabel}" FontWeight="SemiBold" Margin="0,20,0,4"/>
                     <TextBox x:Name="UpdateFeedUrlTextBox" ToolTip="{DynamicResource UpdateFeedUrlTooltip}"/>

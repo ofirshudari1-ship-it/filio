@@ -365,6 +365,55 @@ namespace FilioSetup
         }
     }
 
+    /// <summary>Parses the Inno-Setup-style silent-install switches (kept for familiarity —
+    /// this installer is a hand-rolled WinForms wizard, not Inno Setup) that UpdateService.
+    /// LaunchSilentInstall passes. Pure/no I/O so RunSelfTest can exercise it headlessly.</summary>
+    internal struct SilentInstallOptions
+    {
+        public bool Silent;
+        public bool VerySilent;
+        public bool SuppressMsgBoxes;
+        public bool CloseApplications;
+        public bool RestartApplications;
+        public bool NoRestart;
+        public string Lang;
+
+        public static SilentInstallOptions Parse(string[] args)
+        {
+            var opt = new SilentInstallOptions { Lang = "en" };
+            foreach (var raw in args)
+            {
+                var a = (raw ?? "").Trim();
+                if (a.Equals("/VERYSILENT", StringComparison.OrdinalIgnoreCase)) { opt.Silent = true; opt.VerySilent = true; }
+                else if (a.Equals("/SILENT", StringComparison.OrdinalIgnoreCase)) { opt.Silent = true; }
+                else if (a.Equals("/SUPPRESSMSGBOXES", StringComparison.OrdinalIgnoreCase)) opt.SuppressMsgBoxes = true;
+                else if (a.Equals("/CLOSEAPPLICATIONS", StringComparison.OrdinalIgnoreCase)) opt.CloseApplications = true;
+                else if (a.Equals("/RESTARTAPPLICATIONS", StringComparison.OrdinalIgnoreCase)) opt.RestartApplications = true;
+                else if (a.Equals("/NORESTART", StringComparison.OrdinalIgnoreCase)) opt.NoRestart = true;
+                else if (a.StartsWith("/LANG=", StringComparison.OrdinalIgnoreCase))
+                {
+                    var v = a.Substring("/LANG=".Length).Trim().ToLowerInvariant();
+                    opt.Lang = v == "hebrew" || v == "he" ? "he" : "en";
+                }
+            }
+            return opt;
+        }
+    }
+
+    /// <summary>Process exit codes for the /SILENT and /VERYSILENT unattended-install path
+    /// (Program.RunSilentInstall). UpdateService's caller (App/MainWindow) never actually
+    /// observes these directly — the running Filio process has already exited by the time the
+    /// installer finishes — but they matter for a scripted/enterprise deploy invoking the
+    /// installer directly, and they drive whether RunSilentInstall writes the update-failed
+    /// marker that the NEXT Filio launch reads back.</summary>
+    internal static class SetupExitCodes
+    {
+        public const int Success = 0;
+        public const int GenericError = 1;
+        public const int AppStillRunning = 2;
+        public const int ElevationDeclined = 3;
+    }
+
     public class SetupForm : Form
     {
         public const string AppName = "Filio";
@@ -796,6 +845,86 @@ namespace FilioSetup
             }
         }
 
+        /// <summary>Static, no-UI version of DetectExistingInstall for Program.RunSilentInstall
+        /// (which never constructs a SetupForm at all, since that would build the whole wizard
+        /// UI just to read two registry values).</summary>
+        public static (bool installed, string installDir, string? version) DetectExistingInstallStatic()
+        {
+            string dir = DefaultInstallDir();
+            bool installed = false;
+            string? version = null;
+            try
+            {
+                using (var key = Registry.LocalMachine.OpenSubKey(UninstallKeyPath))
+                {
+                    if (key != null)
+                    {
+                        version = key.GetValue("DisplayVersion") as string;
+                        var existingDir = key.GetValue("InstallLocation") as string;
+                        if (!string.IsNullOrEmpty(existingDir)) dir = existingDir;
+                        installed = true;
+                    }
+                }
+            }
+            catch { }
+            return (installed, dir, version);
+        }
+
+        public static bool IsAppRunningStatic() => IsFilioRunning();
+
+        /// <summary>Best-effort close of a running Filio for /CLOSEAPPLICATIONS: tries a graceful
+        /// WM_CLOSE first (lets it save state / flush the activity log), then escalates to Kill()
+        /// for a tray-minimized instance with no visible main window CloseMainWindow can't reach.
+        /// Returns false if Filio is still running when the timeout elapses - RunSilentInstall
+        /// treats that as a hard failure rather than trying to overwrite a locked exe.</summary>
+        public static bool TryCloseRunningApp(TimeSpan timeout)
+        {
+            var deadline = DateTime.UtcNow + timeout;
+
+            foreach (var proc in Process.GetProcessesByName("Filio"))
+            {
+                try { proc.CloseMainWindow(); } catch { }
+                finally { proc.Dispose(); }
+            }
+
+            while (IsFilioRunning() && DateTime.UtcNow < deadline)
+                Thread.Sleep(250);
+
+            if (!IsFilioRunning()) return true;
+
+            foreach (var proc in Process.GetProcessesByName("Filio"))
+            {
+                try { proc.Kill(); proc.WaitForExit(3000); } catch { }
+                finally { proc.Dispose(); }
+            }
+
+            return !IsFilioRunning();
+        }
+
+        public static bool GetAutostartEnabled()
+        {
+            try
+            {
+                using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath))
+                    return key?.GetValue("Filio") != null;
+            }
+            catch { return false; }
+        }
+
+        public static void SetAutostart(bool enabled, string exePath)
+        {
+            try
+            {
+                using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true))
+                {
+                    if (key == null) return;
+                    if (enabled) key.SetValue("Filio", "\"" + exePath + "\" --minimized");
+                    else key.DeleteValue("Filio", false);
+                }
+            }
+            catch { }
+        }
+
         // No UI dependency, so both the graphical wizard above and Program's --selftest /
         // silent paths use the exact same install logic.
         public static string PerformInstall(string installDir, bool desktopShortcut, bool startMenuShortcut)
@@ -984,6 +1113,24 @@ namespace FilioSetup
                 return;
             }
 
+            // /SILENT and /VERYSILENT: the unattended path UpdateService.LaunchSilentInstall
+            // uses for in-place self-update. Checked before --uninstall/the GUI wizard, and
+            // routed through a wait-for-exit elevation (RelaunchElevatedAndWait) instead of the
+            // fire-and-forget RelaunchElevated below, because a script/caller waiting on this
+            // process's exit code needs the REAL result, not "0 because we returned immediately
+            // after spawning a UAC prompt".
+            var silentOptions = SilentInstallOptions.Parse(args);
+            if (silentOptions.Silent)
+            {
+                if (!IsAdmin())
+                {
+                    Environment.Exit(RelaunchElevatedAndWait(args));
+                    return;
+                }
+                Environment.Exit(RunSilentInstall(silentOptions));
+                return;
+            }
+
             if (args.Contains("--uninstall"))
             {
                 if (!IsAdmin())
@@ -1006,6 +1153,95 @@ namespace FilioSetup
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new SetupForm());
+        }
+
+        /// <summary>Runs the entire install with zero dialogs: installs to the existing location
+        /// when Filio is already present (or the default Program Files location for a fresh
+        /// install), preserves user settings/data (PerformInstall never touches %APPDATA%\Filio -
+        /// only the install dir, shortcuts and registry), and preserves the existing autostart
+        /// choice on an update rather than silently resetting it. Never shows a MessageBox or
+        /// window; every failure is reported only via the process exit code and (for the cases a
+        /// caller who already exited can't see, like the app-still-running guard) the
+        /// update-failed marker file that Filio's own UpdateService reads back on next launch.</summary>
+        private static int RunSilentInstall(SilentInstallOptions opt)
+        {
+            Loc.Lang = opt.Lang;
+            try
+            {
+                var (alreadyInstalled, installDir, _) = SetupForm.DetectExistingInstallStatic();
+
+                if (SetupForm.IsAppRunningStatic())
+                {
+                    bool closed = opt.CloseApplications && SetupForm.TryCloseRunningApp(TimeSpan.FromSeconds(20));
+                    if (!closed)
+                    {
+                        WriteUpdateFailedMarker(opt.CloseApplications
+                            ? "Filio was running and did not close in time for the silent update."
+                            : "Filio was running; silent install requires /CLOSEAPPLICATIONS.");
+                        return SetupExitCodes.AppStillRunning;
+                    }
+                }
+
+                // Preserve the existing autostart choice on an update; default ON for a genuinely
+                // fresh silent install (matches the GUI wizard's default-checked checkbox), since
+                // there is no user present to ask either way.
+                bool autostart = alreadyInstalled ? SetupForm.GetAutostartEnabled() : true;
+
+                string exePath = SetupForm.PerformInstall(installDir, desktopShortcut: true, startMenuShortcut: true);
+                SetupForm.SetAutostart(autostart, exePath);
+
+                if (opt.RestartApplications)
+                {
+                    try { Process.Start(new ProcessStartInfo(exePath) { UseShellExecute = true }); }
+                    catch { /* best-effort relaunch - install itself already succeeded */ }
+                }
+
+                return SetupExitCodes.Success;
+            }
+            catch (Exception ex)
+            {
+                WriteUpdateFailedMarker("Silent install failed: " + ex.GetType().Name + ": " + ex.Message);
+                return SetupExitCodes.GenericError;
+            }
+        }
+
+        /// <summary>Same path UpdateService.GetUpdateFailedMarkerPath() reads on Filio's next
+        /// launch - kept as a literal path (not a shared constant) because Setup.cs is a
+        /// separate project (build\installer\Setup.csproj) that intentionally has no reference
+        /// to Filio.App, to keep the installer a single self-contained exe.</summary>
+        private static void WriteUpdateFailedMarker(string message)
+        {
+            try
+            {
+                var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Filio");
+                Directory.CreateDirectory(dir);
+                File.WriteAllText(Path.Combine(dir, "update-failed.txt"), DateTime.UtcNow.ToString("u") + " " + message);
+            }
+            catch { /* best-effort - a missing marker just means the user isn't told WHY */ }
+        }
+
+        /// <summary>Elevation for the silent path: unlike RelaunchElevated (fire-and-forget, used
+        /// by the interactive GUI/--uninstall paths), this BLOCKS until the elevated copy exits
+        /// and propagates its real exit code, because a caller invoking Filio-Setup.exe /SILENT
+        /// and checking the exit code needs the actual result. Returns ElevationDeclined if the
+        /// user cancels the UAC prompt (Win32Exception 1223/ERROR_CANCELLED).</summary>
+        private static int RelaunchElevatedAndWait(string[] args)
+        {
+            var psi = new ProcessStartInfo(Application.ExecutablePath) { Verb = "runas", UseShellExecute = true };
+            if (args.Length > 0) psi.Arguments = string.Join(" ", args.Select(a => "\"" + a + "\""));
+            try
+            {
+                using (var proc = Process.Start(psi))
+                {
+                    if (proc == null) return SetupExitCodes.GenericError;
+                    proc.WaitForExit();
+                    return proc.ExitCode;
+                }
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                return SetupExitCodes.ElevationDeclined;
+            }
         }
 
         private static void RelaunchElevated(string[] args)
@@ -1096,6 +1332,33 @@ namespace FilioSetup
                     SetupForm.InitialLanguageOverrideForTests = null;
                     Loc.Lang = "en";
                 }
+            });
+
+            Check("silent install args parse correctly (/VERYSILENT + /LANG=hebrew + flags)", () =>
+            {
+                var opt = SilentInstallOptions.Parse(new[]
+                {
+                    "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/LANG=hebrew", "/CLOSEAPPLICATIONS", "/RESTARTAPPLICATIONS"
+                });
+                if (!opt.Silent || !opt.VerySilent) throw new Exception("VERYSILENT should set Silent and VerySilent");
+                if (opt.Lang != "he") throw new Exception("expected /LANG=hebrew to parse to \"he\", got \"" + opt.Lang + "\"");
+                if (!opt.SuppressMsgBoxes || !opt.NoRestart || !opt.CloseApplications || !opt.RestartApplications)
+                    throw new Exception("one or more flags were not parsed");
+            });
+
+            Check("silent install args default to English and plain /SILENT != /VERYSILENT", () =>
+            {
+                var opt = SilentInstallOptions.Parse(new[] { "/SILENT" });
+                if (!opt.Silent) throw new Exception("expected Silent=true");
+                if (opt.VerySilent) throw new Exception("/SILENT alone must not set VerySilent");
+                if (opt.Lang != "en") throw new Exception("expected default language \"en\" when /LANG is omitted");
+                if (opt.CloseApplications || opt.RestartApplications) throw new Exception("unset flags must default to false");
+            });
+
+            Check("non-silent args (e.g. GUI launch with no switches) leave Silent=false", () =>
+            {
+                var opt = SilentInstallOptions.Parse(Array.Empty<string>());
+                if (opt.Silent || opt.VerySilent) throw new Exception("no args should never imply silent mode");
             });
 
             Console.WriteLine(failures == 0 ? "SELFTEST OK" : "SELFTEST FAILED (" + failures + " check(s))");

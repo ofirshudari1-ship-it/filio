@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Filio.Models;
@@ -24,4 +25,25 @@ public class GitHubReleaseInfo
 
     [JsonPropertyName("prerelease")]
     public bool Prerelease { get; set; }
+
+    /// <summary>קבצי ה-Release הבינאריים שצורפו (installer .exe וכו') - משמש לאיתור כתובת
+    /// ההורדה הישירה של Filio-Setup-X.Y.Z.exe בשביל עדכון שקט, בלי שהמשתמש יפתח דפדפן.</summary>
+    [JsonPropertyName("assets")]
+    public List<GitHubReleaseAsset> Assets { get; set; } = new();
+}
+
+/// <summary>תת-קבוצה של שדות קובץ בינארי מצורף ל-Release (GitHub REST API "assets[]").</summary>
+public class GitHubReleaseAsset
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>כתובת ההורדה הישירה (HTTPS) של הקובץ - נקודת קצה ציבורית, לא דורשת אימות.</summary>
+    [JsonPropertyName("browser_download_url")]
+    public string BrowserDownloadUrl { get; set; } = string.Empty;
+
+    /// <summary>גודל הקובץ בבתים כפי שדווח על ידי GitHub - עוגן לאימות שההורדה הושלמה
+    /// במלואה (ראו UpdateService.DownloadInstallerAsync).</summary>
+    [JsonPropertyName("size")]
+    public long Size { get; set; }
 }

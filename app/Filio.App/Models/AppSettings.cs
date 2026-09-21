@@ -108,6 +108,15 @@ public class AppSettings
     /// <summary>כתובת JSON שמתארת את הגרסה האחרונה. ריק = בדיקת עדכונים כבויה.</summary>
     public string UpdateFeedUrl { get; set; } = string.Empty;
 
+    /// <summary>
+    /// כשמופעל: עדכון שמתגלה מול GitHub Releases (ראו UpdateService.CheckGitHubReleaseAsync)
+    /// מוריד ומתקין את עצמו בשקט ברקע, בלי לשאול - במקום להציג רק הודעת מגש עם קישור לעמוד
+    /// ה-Release. כבוי כברירת מחדל (opt-in): התקנה שקטה שמחליטה בעצמה מתי לסגור ולהפעיל
+    /// מחדש את Filio היא שינוי משמעותי בהתנהגות, שדורש בחירה מודעת של המשתמש - לא ברירת
+    /// מחדל שמפתיעה מישהו שהתרגל לזרימה הישנה (התראה + הורדה/הפעלה ידנית).
+    /// </summary>
+    public bool AutoInstallUpdates { get; set; } = false;
+
     /// <summary>false בהתקנה ראשונה - גורם לאשף ה"ברוכים הבאים" לרוץ במקום לקפוץ ישר למסך ההגדרות.</summary>
     public bool HasCompletedOnboarding { get; set; } = false;
 
@@ -150,6 +159,7 @@ public class AppSettings
         Language = other.Language;
         AutoCheckForUpdates = other.AutoCheckForUpdates;
         UpdateFeedUrl = other.UpdateFeedUrl;
+        AutoInstallUpdates = other.AutoInstallUpdates;
         HasShownTrayMinimizeHint = other.HasShownTrayMinimizeHint;
 
         Clients.Clear();

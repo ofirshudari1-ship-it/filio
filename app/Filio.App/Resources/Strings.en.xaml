@@ -190,9 +190,14 @@
     <sys:String x:Key="UpdateIntegrityFailedStatus">🔒 Blocked for your safety: the downloaded file doesn't match the signature published for this version, so it was deleted instead of run. Try again later, or check the update feed.</sys:String>
     <sys:String x:Key="DownloadAndInstallButton">Download &amp; Install Update</sys:String>
     <sys:String x:Key="OpenReleasePageButton">Open Release Page</sys:String>
+    <sys:String x:Key="UpdateNowButton">Update Now</sys:String>
     <sys:String x:Key="DownloadingStatus">Downloading update…</sys:String>
     <sys:String x:Key="InstallingStatus">Installing — Filio will restart automatically.</sys:String>
     <sys:String x:Key="AutoCheckOnStartupCheck">Check for updates automatically on startup</sys:String>
+    <sys:String x:Key="AutoInstallUpdatesCheck">Automatically download and install updates</sys:String>
+    <sys:String x:Key="AutoInstallUpdatesHelp">When a new version is found, Filio downloads it and installs it in the background — no clicks needed. Off by default; with this off, Filio only notifies you and you install with the "Update Now" button.</sys:String>
+    <sys:String x:Key="UpdateAutoInstallingStatus">A new version was found — downloading and installing automatically…</sys:String>
+    <sys:String x:Key="UpdateFallbackAfterFailureStatus">The automatic update couldn't finish, so Filio kept your current version running. Use "Open Release Page" to download it yourself.</sys:String>
     <sys:String x:Key="UpdateFeedUrlLabel">Update feed URL (advanced)</sys:String>
     <sys:String x:Key="UpdateFeedUrlHelp">A JSON file describing the latest version. Leave empty to disable update checks.</sys:String>
     <sys:String x:Key="UpdateFeedUrlTooltip">Must be an https:// address. Filio refuses plain http:// links and, when the feed publishes a sha256 hash, verifies the downloaded installer against it before running anything.</sys:String>
