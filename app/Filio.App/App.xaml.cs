@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 using H.NotifyIcon;
 using H.NotifyIcon.Core;
 using Filio.Models;
@@ -64,7 +65,25 @@ public partial class App : Application
         // in build.ps1, sourced from version.json) instead of a literal here - a hardcoded
         // string here would silently drift out of sync on every version bump.
         splash.SetVersion(UpdateService.CurrentVersion.ToString(3));
+        var splashShownAt = DateTime.UtcNow;
         splash.Show();
+
+        // Safety timeout (STANDARDS.md §19.2): if startup ever stalls (disk/registry hiccup,
+        // antivirus scan holding a file lock, etc.) the splash must not be able to stay up
+        // forever - it force-closes after 8s independent of how far OnStartup got, so the
+        // user always ends up looking at the main window's own state (including any error)
+        // instead of a frozen brand screen. Mirrors HOMEY AI's SPLASH_MIN_MS/8s-timeout pair.
+        var splashSafetyTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(8) };
+        splashSafetyTimer.Tick += (_, _) =>
+        {
+            splashSafetyTimer.Stop();
+            if (splash.IsVisible)
+            {
+                DiagnosticLogger.Warn("Splash safety timeout (8s) reached - forcing close");
+                splash.Close();
+            }
+        };
+        splashSafetyTimer.Start();
 
         // Settings (and with them, the language) must load before the first status line is
         // shown - otherwise the splash text would flash in the wrong language, or fall back to
@@ -115,8 +134,19 @@ public partial class App : Application
         ReportPendingUpdateFailureIfAny();
 
         splash.SetStatus(LocalizationService.Get("SplashReady"), 100);
-        await Task.Delay(800); // minimum visible time
-        splash.Close();
+
+        // Minimum visible time, enforced against the real clock (not a blind flat delay):
+        // waits out only whatever is left of 800ms since the splash actually appeared, so a
+        // slower startup (antivirus, cold disk cache) never gets padded with extra waiting on
+        // top of its own real time. STANDARDS.md §19.2.
+        splashSafetyTimer.Stop();
+        var elapsedSinceShown = DateTime.UtcNow - splashShownAt;
+        var remainingMinDisplay = TimeSpan.FromMilliseconds(800) - elapsedSinceShown;
+        if (remainingMinDisplay > TimeSpan.Zero)
+            await Task.Delay(remainingMinDisplay);
+
+        if (splash.IsVisible)
+            splash.Close();
 
         if (!_settings.HasCompletedOnboarding)
         {
