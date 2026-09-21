@@ -50,7 +50,8 @@
             </Border.Background>
             <DockPanel Margin="26,30,26,26">
                 <StackPanel DockPanel.Dock="Top">
-                    <Image Source="/Assets/filio-64.png" Width="40" Height="40" HorizontalAlignment="Left"/>
+                    <!-- FlowDirection קבוע ל-LTR: לוגו המותג לא הופך כיוון ב-RTL (סעיף 18.1) -->
+                    <Image Source="/Assets/filio-64.png" Width="40" Height="40" HorizontalAlignment="Left" FlowDirection="LeftToRight"/>
                     <TextBlock Text="{DynamicResource AppName}" Foreground="White" FontSize="22" FontWeight="Bold" Margin="0,10,0,0"/>
                     <TextBlock Text="{DynamicResource AppTagline}" Foreground="#DFF3EF" FontSize="12" TextWrapping="Wrap" Margin="0,6,0,0"/>
                 </StackPanel>

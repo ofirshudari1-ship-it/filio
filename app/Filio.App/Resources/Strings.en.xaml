@@ -272,6 +272,7 @@
     <sys:String x:Key="SettingsSavedMessage">✅ Settings saved!</sys:String>
     <sys:String x:Key="ClientsSavedMessage">✅ Client list saved!</sys:String>
     <sys:String x:Key="RulesSavedMessage">✅ Rules saved!</sys:String>
+    <sys:String x:Key="FileIgnoredMessage">✅ File added to the ignore list!</sys:String>
     <sys:String x:Key="MissingFoldersWarning">Please choose both a watch folder and a destination folder.</sys:String>
     <sys:String x:Key="AtLeastOneWatchFolderRequired">You need at least one watch folder — add another before removing this one.</sys:String>
     <sys:String x:Key="NestedFoldersWarning">The destination folder can't be the same as, or inside, the watch folder — that can cause a mess. Choose a separate destination folder.</sys:String>

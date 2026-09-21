@@ -39,9 +39,13 @@
         <TextBlock Grid.Row="7" x:Name="LearnHintText" Text="" FontSize="11.5" FontStyle="Italic"
                    TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,0" VerticalAlignment="Top"/>
 
-        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
-            <Button Content="{DynamicResource CancelButton}" Margin="0,0,8,0" Click="Cancel_Click"/>
-            <Button Content="{DynamicResource ReassignConfirmButton}" Style="{StaticResource PrimaryButton}" Click="Confirm_Click"/>
+        <!-- FlowDirection="LeftToRight" קבוע בכוונה (§18.1) - מוסכמת OK/Cancel של Windows עצמו
+             שומרת על כפתור הפעולה הראשית (אישור) בצד ימין גם בממשק RTL, בדיוק כמו שדיאלוגים
+             מובנים של Windows מציגים אותו; בלי זה, המיראור האוטומטי של FlowDirection.RightToLeft
+             (שמוגדר על כל החלון) היה הופך את כל השורה לצד שמאל ומחליף את סדר הכפתורים. -->
+        <StackPanel Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Right" FlowDirection="LeftToRight" Margin="0,14,0,0">
+            <Button Content="{DynamicResource CancelButton}" IsCancel="True" Margin="0,0,8,0" Click="Cancel_Click"/>
+            <Button Content="{DynamicResource ReassignConfirmButton}" Style="{StaticResource PrimaryButton}" IsDefault="True" Click="Confirm_Click"/>
         </StackPanel>
     </Grid>
 </Window>

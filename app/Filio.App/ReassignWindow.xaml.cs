@@ -57,8 +57,11 @@ public partial class ReassignWindow : Window
 
         if (string.IsNullOrWhiteSpace(client))
         {
+            var options = LocalizationService.IsRightToLeft
+                ? MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign
+                : MessageBoxOptions.None;
             MessageBox.Show(LocalizationService.Get("ReassignClientRequired"), LocalizationService.Get("DialogTitle"),
-                MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, options);
             return;
         }
 

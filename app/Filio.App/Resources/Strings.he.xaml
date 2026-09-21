@@ -272,6 +272,7 @@
     <sys:String x:Key="SettingsSavedMessage">✅ ההגדרות נשמרו!</sys:String>
     <sys:String x:Key="ClientsSavedMessage">✅ רשימת הלקוחות נשמרה!</sys:String>
     <sys:String x:Key="RulesSavedMessage">✅ חוקי הסיווג נשמרו!</sys:String>
+    <sys:String x:Key="FileIgnoredMessage">✅ הקובץ נוסף לרשימת ההתעלמות!</sys:String>
     <sys:String x:Key="MissingFoldersWarning">יש לבחור גם תיקיית מעקב וגם תיקיית יעד.</sys:String>
     <sys:String x:Key="AtLeastOneWatchFolderRequired">חייבת להישאר לפחות תיקיית מעקב אחת - הוסיפו תיקייה נוספת לפני מחיקת זו.</sys:String>
     <sys:String x:Key="NestedFoldersWarning">תיקיית היעד לא יכולה להיות זהה לתיקיית המעקב או נמצאת בתוכה - זה עלול לגרום לבלגן. בחרו תיקיית יעד נפרדת.</sys:String>

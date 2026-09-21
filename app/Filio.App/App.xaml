@@ -101,6 +101,10 @@
                 <Setter Property="FontWeight" Value="Bold"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="BorderThickness" Value="0"/>
+                <!-- הסגנון הזה לא ירש מ-{x:Type Button} (הוא לא BasedOn), אז בלי השורה הזו הוא
+                     היה מפספס את FocusVisualStyle הממותג המשותף - עדיין היה מקבל את טבעת
+                     המיקוד המובנית של Windows, אבל לא עקבית עם שאר האפליקציה (סעיף 18.2). -->
+                <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -294,10 +298,14 @@
                             <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="14">
                                 <DockPanel>
+                                    <!-- FocusVisualStyle מפורש: ה-ControlTemplate המותאם-אישית למטה לא היה
+                                         מציג שום טבעת מיקוד כשמנווטים אליו ב-Tab - "הגדרות מתקדמות" היה
+                                         היחיד בכל האפליקציה בלי אינדיקציית פוקוס גלויה (סעיף 18.2). -->
                                     <ToggleButton x:Name="HeaderToggle" DockPanel.Dock="Top"
                                                   IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                                                   Content="{TemplateBinding Header}"
-                                                  Padding="{TemplateBinding Padding}" Cursor="Hand">
+                                                  Padding="{TemplateBinding Padding}" Cursor="Hand"
+                                                  FocusVisualStyle="{StaticResource FocusVisual}">
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Border Background="Transparent" Padding="{TemplateBinding Padding}">

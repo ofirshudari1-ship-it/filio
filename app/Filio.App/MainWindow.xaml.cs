@@ -412,9 +412,8 @@ public partial class MainWindow : Window
         if (ClientsGrid.SelectedItem is not ClientProfile client)
             return;
 
-        var confirm = MessageBox.Show(
-            LocalizationService.Format("ConfirmDeleteClient", client.Name),
-            LocalizationService.Get("DialogTitle"), MessageBoxButton.YesNo, MessageBoxImage.Question);
+        var confirm = ShowConfirm(
+            LocalizationService.Format("ConfirmDeleteClient", client.Name), LocalizationService.Get("DialogTitle"));
         if (confirm != MessageBoxResult.Yes)
             return;
 
@@ -441,9 +440,8 @@ public partial class MainWindow : Window
         if (DocTypesGrid.SelectedItem is not DocTypeRule rule)
             return;
 
-        var confirm = MessageBox.Show(
-            LocalizationService.Format("ConfirmDeleteRule", rule.TypeName),
-            LocalizationService.Get("DialogTitle"), MessageBoxButton.YesNo, MessageBoxImage.Question);
+        var confirm = ShowConfirm(
+            LocalizationService.Format("ConfirmDeleteRule", rule.TypeName), LocalizationService.Get("DialogTitle"));
         if (confirm != MessageBoxResult.Yes)
             return;
 
@@ -589,9 +587,8 @@ public partial class MainWindow : Window
 
         var fileName = Path.GetFileName(entry.OriginalPath);
 
-        var confirm = MessageBox.Show(
-            LocalizationService.Format("ConfirmIgnoreFile", fileName),
-            LocalizationService.Get("DialogTitle"), MessageBoxButton.YesNo, MessageBoxImage.Question);
+        var confirm = ShowConfirm(
+            LocalizationService.Format("ConfirmIgnoreFile", fileName), LocalizationService.Get("DialogTitle"));
         if (confirm != MessageBoxResult.Yes)
             return;
 
@@ -606,6 +603,10 @@ public partial class MainWindow : Window
             _settingsService.Save(_settings);
             _watcherService.UpdateSettings(_settings);
             IgnorePatternsTextBox.Text = _settings.IgnoredFileNamePatterns;
+
+            // כמו כל שמירת הגדרות אחרת באפליקציה (SaveGeneral/SaveClients/SaveDocTypes/
+            // SaveUpdatesSettings) - אישור מיידי ✅ עקבי, לא שינוי שקט של state (סעיף 18.5).
+            ShowMessage("FileIgnoredMessage", MessageBoxImage.Information);
         }
     }
 
@@ -928,5 +929,15 @@ public partial class MainWindow : Window
     }
 
     private static void ShowMessage(string messageKey, MessageBoxImage icon) =>
-        MessageBox.Show(LocalizationService.Get(messageKey), LocalizationService.Get("DialogTitle"), MessageBoxButton.OK, icon);
+        MessageBox.Show(LocalizationService.Get(messageKey), LocalizationService.Get("DialogTitle"), MessageBoxButton.OK,
+            icon, MessageBoxResult.OK, RtlOptions());
+
+    /// <summary>מציג MessageBox עם כפתורי כן/לא ותומך בכיווניות RTL (§18.1/18.2) - בלי זה, גם
+    /// כשהטקסט עברי, החלון עצמו נשאר LTR (כותרת/כפתורים לא הופכים כיוון) כי MessageBox.Show
+    /// לא מזהה שפה אוטומטית מ-FlowDirection של שאר האפליקציה.</summary>
+    private static MessageBoxResult ShowConfirm(string text, string title) =>
+        MessageBox.Show(text, title, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No, RtlOptions());
+
+    private static MessageBoxOptions RtlOptions() =>
+        LocalizationService.IsRightToLeft ? MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : MessageBoxOptions.None;
 }

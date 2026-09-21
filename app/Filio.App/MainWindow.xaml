@@ -33,7 +33,9 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Source="/Assets/filio-32.png" Width="26" Height="26" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <!-- FlowDirection קבוע ל-LTR: לוגו המותג לא הופך כיוון ב-RTL (מוסכמה אוניברסלית, סעיף 18.1) -
+                         בלי זה, מיראור ה-RTL הגלובלי של WPF היה הופך את התמונה עצמה (לא רק את מיקומה). -->
+                    <Image Source="/Assets/filio-32.png" Width="26" Height="26" Margin="0,0,10,0" VerticalAlignment="Center" FlowDirection="LeftToRight"/>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="{DynamicResource AppName}" FontSize="19" FontWeight="Bold" Foreground="White"/>
                         <TextBlock Text="{DynamicResource AppTagline}" FontSize="11" Foreground="#DFF3EF"/>
@@ -43,7 +45,8 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <!-- Language quick toggle -->
                     <Button x:Name="QuickLangButton" Width="46" Height="30" Margin="0,0,8,0"
-                            ToolTip="{DynamicResource LanguageLabel}" Click="QuickLangToggle_Click">
+                            ToolTip="{DynamicResource LanguageLabel}" Click="QuickLangToggle_Click"
+                            AutomationProperties.Name="{DynamicResource LanguageLabel}">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="lb" Background="Transparent" BorderBrush="#4DFFFFFF"
@@ -63,7 +66,8 @@
 
                     <!-- Theme toggle -->
                     <Button x:Name="ThemeToggleButton" Width="30" Height="30" Margin="0,0,10,0"
-                            ToolTip="{DynamicResource ThemeLabel}" Click="ThemeToggle_Click">
+                            ToolTip="{DynamicResource ThemeLabel}" Click="ThemeToggle_Click"
+                            AutomationProperties.Name="{DynamicResource ThemeLabel}">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="tb" Background="Transparent" CornerRadius="6" Padding="4">
