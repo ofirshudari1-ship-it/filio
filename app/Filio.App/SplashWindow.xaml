@@ -21,7 +21,7 @@
                 <Image Source="/Assets/filio-128.png" Width="64" Height="64" Margin="0,0,0,12"/>
                 <TextBlock Text="Filio" FontSize="32" FontWeight="Bold" Foreground="White"
                            HorizontalAlignment="Center" FontFamily="Segoe UI"/>
-                <TextBlock x:Name="TaglineText" Text="כלי תיוק אוטומטי" FontSize="14"
+                <TextBlock x:Name="TaglineText" Text="{DynamicResource AppTagline}" FontSize="14"
                            Foreground="#DFF3EF" HorizontalAlignment="Center" Margin="0,4,0,0"/>
                 <TextBlock x:Name="VersionText" Text="v2.7.0" FontSize="12"
                            Foreground="#99C5BF" HorizontalAlignment="Center" Margin="0,4,0,24"/>

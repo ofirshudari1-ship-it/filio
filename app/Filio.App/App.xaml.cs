@@ -65,10 +65,13 @@ public partial class App : Application
         // string here would silently drift out of sync on every version bump.
         splash.SetVersion(UpdateService.CurrentVersion.ToString(3));
         splash.Show();
-        splash.SetStatus("Loading settings…", 20);
 
+        // Settings (and with them, the language) must load before the first status line is
+        // shown - otherwise the splash text would flash in the wrong language, or fall back to
+        // showing the raw resource key, before LocalizationService has a dictionary merged in.
         _settings = _settingsService.Load();
         LocalizationService.SetLanguage(_settings.Language);
+        splash.SetStatus(LocalizationService.Get("SplashLoadingSettings"), 20);
         ApplyTheme(_settings.Theme);
 
         // Detect system theme on first run if user hasn't set a preference
@@ -95,7 +98,7 @@ public partial class App : Application
         // סימון מסומנת שלא משקפת את מה שבאמת יקרה באתחול הבא. נתפס בשימוש אמיתי.
         StartupService.SetEnabled(_settings.StartWithWindows);
 
-        splash.SetStatus("Starting file watcher…", 60);
+        splash.SetStatus(LocalizationService.Get("SplashStartingWatcher"), 60);
 
         _watcherService = new FileWatcherService(_settings);
         _watcherService.FileProcessed += OnFileProcessed;
@@ -105,7 +108,7 @@ public partial class App : Application
 
         SetupTrayIcon();
 
-        splash.SetStatus("Ready!", 100);
+        splash.SetStatus(LocalizationService.Get("SplashReady"), 100);
         await Task.Delay(800); // minimum visible time
         splash.Close();
 

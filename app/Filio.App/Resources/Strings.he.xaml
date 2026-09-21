@@ -13,6 +13,11 @@
     <sys:String x:Key="PauseButton">השהה</sys:String>
     <sys:String x:Key="ResumeButton">הפעל מחדש</sys:String>
 
+    <!-- מסך פתיחה -->
+    <sys:String x:Key="SplashLoadingSettings">טוען הגדרות…</sys:String>
+    <sys:String x:Key="SplashStartingWatcher">מפעיל מעקב קבצים…</sys:String>
+    <sys:String x:Key="SplashReady">מוכן!</sys:String>
+
     <!-- טאבים -->
     <sys:String x:Key="TabGeneral">⚙️ הגדרות</sys:String>
     <sys:String x:Key="TabClients">👥 לקוחות</sys:String>

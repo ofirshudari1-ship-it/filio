@@ -6,15 +6,15 @@
         Height="580" Width="820" ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI" FontSize="14"
-        Background="{StaticResource SurfaceBrush}">
+        Background="{DynamicResource SurfaceBrush}">
 
     <Window.Resources>
         <Style x:Key="LangCard" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource NeutralButtonForegroundBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource NeutralButtonForegroundBrush}"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush2}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush2}"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -73,7 +73,7 @@
                     <TextBlock Text="{DynamicResource OnboardWelcomeTitle}" FontSize="26" FontWeight="Bold"
                                Foreground="{StaticResource BrandPrimaryDarkBrush}" TextWrapping="Wrap"/>
                     <TextBlock Text="{DynamicResource OnboardWelcomeTagline}" FontSize="14.5" Margin="0,14,0,0"
-                               Foreground="{StaticResource TextMutedBrush}" TextWrapping="Wrap" LineHeight="21"/>
+                               Foreground="{DynamicResource TextMutedBrush}" TextWrapping="Wrap" LineHeight="21"/>
                     <StackPanel Margin="0,28,0,0">
                         <TextBlock Text="{DynamicResource OnboardWelcomeBullet1}" FontSize="14" Margin="0,0,0,10"/>
                         <TextBlock Text="{DynamicResource OnboardWelcomeBullet2}" FontSize="14" Margin="0,0,0,10"/>
@@ -84,7 +84,7 @@
                 <!-- Step 1: Language -->
                 <StackPanel x:Name="StepLanguage" VerticalAlignment="Center" Visibility="Collapsed">
                     <TextBlock Text="{DynamicResource OnboardLanguageTitle}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource BrandPrimaryDarkBrush}"/>
-                    <TextBlock Text="{DynamicResource OnboardLanguageSubtitle}" FontSize="13" Foreground="{StaticResource TextMutedBrush}" Margin="0,8,0,26" TextWrapping="Wrap"/>
+                    <TextBlock Text="{DynamicResource OnboardLanguageSubtitle}" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,26" TextWrapping="Wrap"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -95,14 +95,14 @@
                             <StackPanel>
                                 <TextBlock Text="🇺🇸" FontSize="32" HorizontalAlignment="Center"/>
                                 <TextBlock Text="EN" FontSize="26" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                <TextBlock Text="English" FontSize="14" HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource TextMutedBrush}"/>
+                                <TextBlock Text="English" FontSize="14" HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{DynamicResource TextMutedBrush}"/>
                             </StackPanel>
                         </Button>
                         <Button Grid.Column="2" x:Name="HebrewCard" Style="{StaticResource LangCard}" Click="HebrewCard_Click">
                             <StackPanel>
                                 <TextBlock Text="🇮🇱" FontSize="32" HorizontalAlignment="Center"/>
                                 <TextBlock Text="עב" FontSize="26" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                <TextBlock Text="עברית" FontSize="14" HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{StaticResource TextMutedBrush}"/>
+                                <TextBlock Text="עברית" FontSize="14" HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="{DynamicResource TextMutedBrush}"/>
                             </StackPanel>
                         </Button>
                     </Grid>
@@ -111,7 +111,7 @@
                 <!-- Step 2: Folders -->
                 <StackPanel x:Name="StepFolders" VerticalAlignment="Center" Visibility="Collapsed">
                     <TextBlock Text="{DynamicResource OnboardFoldersTitle}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource BrandPrimaryDarkBrush}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{DynamicResource OnboardFoldersSubtitle}" FontSize="13" Foreground="{StaticResource TextMutedBrush}" Margin="0,8,0,22" TextWrapping="Wrap"/>
+                    <TextBlock Text="{DynamicResource OnboardFoldersSubtitle}" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,22" TextWrapping="Wrap"/>
 
                     <TextBlock Text="{DynamicResource WatchFolderLabel}" FontWeight="SemiBold" Margin="0,0,0,4"/>
                     <DockPanel Margin="0,0,0,18">
@@ -130,25 +130,25 @@
                     <TextBlock Text="{DynamicResource OnboardWhatElseTitle}" FontWeight="SemiBold" Margin="0,26,0,10"/>
                     <CheckBox x:Name="OnboardOrganizeInstallersCheckBox" Content="{DynamicResource OrganizeInstallersCheck}" Style="{StaticResource ToggleSwitch}"/>
                     <TextBlock Text="{DynamicResource OrganizeInstallersSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                               Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,10"/>
+                               Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,10"/>
                     <CheckBox x:Name="OnboardEnableDefenderScanCheckBox" Content="{DynamicResource EnableDefenderScanCheck}" Style="{StaticResource ToggleSwitch}" IsChecked="True"/>
                     <TextBlock Text="{DynamicResource EnableDefenderScanSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                               Foreground="{StaticResource TextMutedBrush}"/>
+                               Foreground="{DynamicResource TextMutedBrush}"/>
 
-                    <Separator Margin="0,16,0,16" Background="{StaticResource BorderBrush2}"/>
+                    <Separator Margin="0,16,0,16" Background="{DynamicResource BorderBrush2}"/>
                     <TextBlock Text="{DynamicResource OnboardStartupTitle}" FontWeight="SemiBold" Margin="0,0,0,8"/>
                     <CheckBox x:Name="OnboardStartWithWindowsCheckBox" Content="{DynamicResource StartWithWindowsCheck}"
                               Style="{StaticResource ToggleSwitch}" IsChecked="True"
                               ToolTip="{DynamicResource StartWithWindowsTooltip}"/>
                     <TextBlock Text="{DynamicResource OnboardStartupSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                               Foreground="{StaticResource TextMutedBrush}"/>
+                               Foreground="{DynamicResource TextMutedBrush}"/>
                 </StackPanel>
 
                 <!-- Step 3: Smart scan -->
                 <DockPanel x:Name="StepScan" Visibility="Collapsed">
                     <StackPanel DockPanel.Dock="Top">
                         <TextBlock Text="{DynamicResource OnboardScanTitle}" FontSize="21" FontWeight="Bold" Foreground="{StaticResource BrandPrimaryDarkBrush}" TextWrapping="Wrap"/>
-                        <TextBlock Text="{DynamicResource OnboardScanSubtitle}" FontSize="13" Foreground="{StaticResource TextMutedBrush}" Margin="0,8,0,18" TextWrapping="Wrap" LineHeight="19"/>
+                        <TextBlock Text="{DynamicResource OnboardScanSubtitle}" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,18" TextWrapping="Wrap" LineHeight="19"/>
                     </StackPanel>
 
                     <StackPanel x:Name="ScanPromptPanel" DockPanel.Dock="Top">
@@ -157,18 +157,18 @@
                     </StackPanel>
 
                     <StackPanel x:Name="ScanResultsPanel" DockPanel.Dock="Top" Visibility="Collapsed">
-                        <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="12" Margin="0,0,0,16">
+                        <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="8" Padding="12" Margin="0,0,0,16">
                             <TextBlock x:Name="ScanSummaryText" TextWrapping="Wrap" FontSize="13"/>
                         </Border>
 
                         <StackPanel x:Name="SuggestedClientsSection">
                             <TextBlock Text="{DynamicResource OnboardSuggestedClientsTitle}" FontWeight="SemiBold" Margin="0,0,0,2"/>
-                            <TextBlock Text="{DynamicResource OnboardSuggestedClientsSubtitle}" FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,10"/>
+                            <TextBlock Text="{DynamicResource OnboardSuggestedClientsSubtitle}" FontSize="11.5" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,10"/>
                             <ItemsControl x:Name="SuggestedClientsList" MaxHeight="150">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <DockPanel Margin="0,3">
-                                            <TextBlock DockPanel.Dock="Right" Text="{Binding MatchCount, StringFormat={}{0} docs}" Foreground="{StaticResource TextMutedBrush}" FontSize="12"/>
+                                            <TextBlock DockPanel.Dock="Right" Text="{Binding MatchCount, StringFormat={}{0} docs}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                                             <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected}"/>
                                         </DockPanel>
                                     </DataTemplate>
@@ -184,8 +184,8 @@
                 <StackPanel x:Name="StepFinish" VerticalAlignment="Center" Visibility="Collapsed">
                     <TextBlock Text="🎉" FontSize="34"/>
                     <TextBlock Text="{DynamicResource OnboardFinishTitle}" FontSize="24" FontWeight="Bold" Foreground="{StaticResource BrandPrimaryDarkBrush}" Margin="0,10,0,0"/>
-                    <TextBlock Text="{DynamicResource OnboardFinishSubtitle}" FontSize="13.5" Foreground="{StaticResource TextMutedBrush}" Margin="0,6,0,20" TextWrapping="Wrap"/>
-                    <Border Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="16">
+                    <TextBlock Text="{DynamicResource OnboardFinishSubtitle}" FontSize="13.5" Foreground="{DynamicResource TextMutedBrush}" Margin="0,6,0,20" TextWrapping="Wrap"/>
+                    <Border Background="{DynamicResource SurfaceAltBrush}" CornerRadius="8" Padding="16">
                         <StackPanel>
                             <TextBlock x:Name="FinishWatchText" FontSize="13" Margin="0,0,0,6"/>
                             <TextBlock x:Name="FinishOutputText" FontSize="13" Margin="0,0,0,6"/>

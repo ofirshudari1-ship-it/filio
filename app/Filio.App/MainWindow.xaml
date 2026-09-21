@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="{DynamicResource WindowTitle}" Height="700" Width="960" MinHeight="560" MinWidth="820"
         FontFamily="Segoe UI" FontSize="14"
-        Background="{StaticResource BrandBackgroundBrush}"
+        Background="{DynamicResource BrandBackgroundBrush}"
         WindowStartupLocation="CenterScreen">
 
     <DockPanel Margin="0" x:Name="RootPanel">
@@ -104,7 +104,7 @@
                                     <TextBlock Text="{DynamicResource WatchFoldersLabel}" Style="{StaticResource CardTitle}"/>
                                 </StackPanel>
                                 <TextBlock Text="{DynamicResource WatchFoldersSubtitle}" Style="{StaticResource CardSubtitle}"/>
-                                <ListBox x:Name="WatchFoldersListBox" Height="90" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"/>
+                                <ListBox x:Name="WatchFoldersListBox" Height="90" BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1"/>
                                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                                     <Button Content="{DynamicResource AddWatchFolderButton}" Margin="0,0,8,0" Click="AddWatchFolder_Click"/>
                                     <Button Content="{DynamicResource RemoveWatchFolderButton}" Style="{StaticResource DangerButton}" Click="RemoveWatchFolder_Click"/>
@@ -125,7 +125,7 @@
                                     <TextBox x:Name="OutputFolderTextBox" Margin="0,0,8,0" IsReadOnly="True"/>
                                 </DockPanel>
                                 <TextBlock Text="{DynamicResource OutputFolderWarning}" FontSize="11.5"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" TextWrapping="Wrap"/>
                                 <TextBlock x:Name="CloudSyncInfoText" FontSize="11.5" TextWrapping="Wrap"
                                            Foreground="{StaticResource BrandPrimaryBrush}" Margin="0,6,0,0" Visibility="Collapsed"/>
                             </StackPanel>
@@ -141,7 +141,7 @@
 
                                 <!-- Group: הפעלה ומעקב -->
                                 <TextBlock Text="{DynamicResource BehaviorGroupMonitor}" FontSize="11" FontWeight="Bold"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8"/>
                                 <CheckBox x:Name="StartWithWindowsCheckBox" Content="{DynamicResource StartWithWindowsCheck}" Style="{StaticResource ToggleSwitch}"
                                           ToolTip="{DynamicResource StartWithWindowsTooltip}"/>
                                 <CheckBox x:Name="ShowNotificationsCheckBox" Content="{DynamicResource ShowNotificationsCheck}" Style="{StaticResource ToggleSwitch}"
@@ -150,37 +150,37 @@
                                           ToolTip="{DynamicResource NotifyOnlyOnFailureTooltip}" Margin="24,0,0,0"/>
                                 <CheckBox x:Name="IsPausedCheckBox" Content="{DynamicResource PauseCheck}" Style="{StaticResource ToggleSwitch}"/>
 
-                                <Separator Margin="0,12,0,12" Background="{StaticResource BorderBrush2}"/>
+                                <Separator Margin="0,12,0,12" Background="{DynamicResource BorderBrush2}"/>
 
                                 <!-- Group: אבטחה -->
                                 <TextBlock Text="{DynamicResource BehaviorGroupSecurity}" FontSize="11" FontWeight="Bold"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8"/>
                                 <CheckBox x:Name="EnableDefenderScanCheckBox" Content="{DynamicResource EnableDefenderScanCheck}" Style="{StaticResource ToggleSwitch}"
                                           ToolTip="{DynamicResource EnableDefenderScanTooltip}"/>
                                 <TextBlock Text="{DynamicResource EnableDefenderScanSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="56,0,0,4"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="56,0,0,4"/>
 
-                                <Separator Margin="0,12,0,12" Background="{StaticResource BorderBrush2}"/>
+                                <Separator Margin="0,12,0,12" Background="{DynamicResource BorderBrush2}"/>
 
                                 <!-- Group: ארגון קבצים -->
                                 <TextBlock Text="{DynamicResource BehaviorGroupOrganize}" FontSize="11" FontWeight="Bold"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8"/>
                                 <CheckBox x:Name="DetectDuplicatesCheckBox" Content="{DynamicResource DetectDuplicatesCheck}" Style="{StaticResource ToggleSwitch}"
                                           ToolTip="{DynamicResource DetectDuplicatesTooltip}"/>
                                 <CheckBox x:Name="OrganizeInstallersCheckBox" Content="{DynamicResource OrganizeInstallersCheck}" Style="{StaticResource ToggleSwitch}"
                                           ToolTip="{DynamicResource OrganizeInstallersTooltip}"/>
                                 <TextBlock Text="{DynamicResource OrganizeInstallersSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="56,0,0,4"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="56,0,0,4"/>
                                 <CheckBox x:Name="ReviewLowConfidenceCheckBox" Content="{DynamicResource ReviewLowConfidenceCheck}" Style="{StaticResource ToggleSwitch}"
                                           ToolTip="{DynamicResource ReviewLowConfidenceTooltip}"/>
                                 <TextBlock Text="{DynamicResource ReviewLowConfidenceSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="56,0,0,4"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="56,0,0,4"/>
 
-                                <Separator Margin="0,12,0,12" Background="{StaticResource BorderBrush2}"/>
+                                <Separator Margin="0,12,0,12" Background="{DynamicResource BorderBrush2}"/>
 
                                 <!-- Group: פעולת קובץ -->
                                 <TextBlock Text="{DynamicResource FileActionLabel}" FontSize="11" FontWeight="Bold"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8"/>
                                 <RadioButton x:Name="MoveRadioButton" Content="{DynamicResource MoveOption}" GroupName="MoveCopy" Margin="0,0,0,4"/>
                                 <RadioButton x:Name="CopyRadioButton" Content="{DynamicResource CopyOption}" GroupName="MoveCopy"/>
                             </StackPanel>
@@ -218,7 +218,7 @@
                                           Style="{StaticResource ToggleSwitch}" Margin="0,16,0,0"
                                           ToolTip="{DynamicResource MinimizeToTrayTooltip}"/>
                                 <TextBlock Text="{DynamicResource MinimizeToTraySubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="56,0,0,0"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="56,0,0,0"/>
                             </StackPanel>
                         </Border>
 
@@ -230,18 +230,18 @@
                                 <TextBlock Text="{DynamicResource WatchedExtensionsLabel}" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                 <TextBox x:Name="WatchedExtensionsTextBox" ToolTip="{DynamicResource WatchedExtensionsTooltip}"/>
                                 <TextBlock Text="{DynamicResource WatchedExtensionsSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,0"/>
 
                                 <CheckBox x:Name="EnableImageOcrCheckBox" Content="{DynamicResource EnableImageOcrCheck}"
                                           Style="{StaticResource ToggleSwitch}" Margin="0,16,0,0"
                                           ToolTip="{DynamicResource EnableImageOcrTooltip}"/>
                                 <TextBlock Text="{DynamicResource EnableImageOcrSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,2,0,0"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,2,0,0"/>
 
                                 <TextBlock Text="{DynamicResource IgnorePatternsLabel}" FontWeight="SemiBold" Margin="0,18,0,4"/>
                                 <TextBox x:Name="IgnorePatternsTextBox" ToolTip="{DynamicResource IgnorePatternsTooltip}"/>
                                 <TextBlock Text="{DynamicResource IgnorePatternsSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,0"/>
 
                                 <TextBlock Text="{DynamicResource FolderOrderLabel}" FontWeight="SemiBold" Margin="0,18,0,4"/>
                                 <ComboBox x:Name="FolderOrderComboBox" Width="320" HorizontalAlignment="Left" ToolTip="{DynamicResource FolderOrderTooltip}">
@@ -254,10 +254,10 @@
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBox x:Name="LogRetentionDaysTextBox" Width="80" HorizontalAlignment="Left"/>
                                     <TextBlock Text="{DynamicResource LogRetentionDaysUnit}" VerticalAlignment="Center" Margin="8,0,0,0"
-                                               Foreground="{StaticResource TextMutedBrush}"/>
+                                               Foreground="{DynamicResource TextMutedBrush}"/>
                                 </StackPanel>
                                 <TextBlock Text="{DynamicResource LogRetentionSubtitle}" FontSize="11.5" TextWrapping="Wrap"
-                                           Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
+                                           Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Expander>
 
@@ -270,14 +270,14 @@
             <TabItem Header="{DynamicResource TabClients}">
                 <Grid Margin="16">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceAltBrush}" CornerRadius="12" Padding="16" Margin="0,0,0,14">
+                        <Border DockPanel.Dock="Top" Background="{DynamicResource SurfaceAltBrush}" CornerRadius="12" Padding="16" Margin="0,0,0,14">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="👥" FontSize="18" Margin="0,0,8,0"/>
                                     <TextBlock Text="{DynamicResource ClientsIntroTitle}" Style="{StaticResource CardTitle}" Margin="0"/>
                                 </StackPanel>
                                 <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="{DynamicResource ClientsIntro}"/>
-                                <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" FontStyle="Italic" Foreground="{StaticResource TextMutedBrush}"
+                                <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" FontStyle="Italic" Foreground="{DynamicResource TextMutedBrush}"
                                            FontSize="12" Text="{DynamicResource ClientsExample}"/>
                             </StackPanel>
                         </Border>
@@ -297,8 +297,8 @@
                     <StackPanel x:Name="ClientsEmptyHint" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 Visibility="Collapsed" IsHitTestVisible="False" Margin="0,40,0,0">
                         <TextBlock Text="👥" FontSize="28" HorizontalAlignment="Center" Opacity="0.5"/>
-                        <TextBlock Text="{DynamicResource ClientsEmptyTitle}" Foreground="{StaticResource TextMutedBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
-                        <TextBlock Text="{DynamicResource ClientsEmptySubtitle}" FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource ClientsEmptyTitle}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource ClientsEmptySubtitle}" FontSize="11.5" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -306,14 +306,14 @@
             <TabItem Header="{DynamicResource TabRules}">
                 <Grid Margin="16">
                     <DockPanel>
-                        <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceAltBrush}" CornerRadius="12" Padding="16" Margin="0,0,0,14">
+                        <Border DockPanel.Dock="Top" Background="{DynamicResource SurfaceAltBrush}" CornerRadius="12" Padding="16" Margin="0,0,0,14">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="🧭" FontSize="18" Margin="0,0,8,0"/>
                                     <TextBlock Text="{DynamicResource RulesIntroTitle}" Style="{StaticResource CardTitle}" Margin="0"/>
                                 </StackPanel>
                                 <TextBlock Margin="0,6,0,0" TextWrapping="Wrap" Text="{DynamicResource RulesIntro}"/>
-                                <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" FontStyle="Italic" Foreground="{StaticResource TextMutedBrush}"
+                                <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" FontStyle="Italic" Foreground="{DynamicResource TextMutedBrush}"
                                            FontSize="12" Text="{DynamicResource RulesExample}"/>
                             </StackPanel>
                         </Border>
@@ -338,24 +338,24 @@
                 <DockPanel Margin="16">
                     <Grid DockPanel.Dock="Top" Margin="0,0,0,14">
                         <StackPanel Orientation="Horizontal">
-                            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                            <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1"
                                     CornerRadius="8" Padding="14,8" Margin="0,0,10,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{DynamicResource TotalFiledLabel}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,4,0"/>
+                                    <TextBlock Text="{DynamicResource TotalFiledLabel}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,4,0"/>
                                     <TextBlock x:Name="LogTotalText" Text="0" FontWeight="Bold"/>
                                 </StackPanel>
                             </Border>
-                            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                            <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1"
                                     CornerRadius="8" Padding="14,8" Margin="0,0,10,0">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{DynamicResource SucceededLabel}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,4,0"/>
+                                    <TextBlock Text="{DynamicResource SucceededLabel}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,4,0"/>
                                     <TextBlock x:Name="LogSuccessText" Text="0" FontWeight="Bold" Foreground="{StaticResource SuccessBrush}"/>
                                 </StackPanel>
                             </Border>
-                            <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                            <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1"
                                     CornerRadius="8" Padding="14,8">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{DynamicResource FailedLabel}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,4,0"/>
+                                    <TextBlock Text="{DynamicResource FailedLabel}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,4,0"/>
                                     <TextBlock x:Name="LogFailedText" Text="0" FontWeight="Bold" Foreground="{StaticResource DangerBrush}"/>
                                 </StackPanel>
                             </Border>
@@ -363,7 +363,7 @@
                     </Grid>
 
                     <TextBlock DockPanel.Dock="Top" Text="{DynamicResource ActivityHoverHint}" FontSize="11.5" FontStyle="Italic"
-                               Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,10" TextWrapping="Wrap"/>
+                               Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,10" TextWrapping="Wrap"/>
 
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0">
                         <Button Content="{DynamicResource RefreshButton}" Margin="0,0,8,0" Click="RefreshLog_Click"/>
@@ -418,8 +418,8 @@
                         <StackPanel x:Name="LogEmptyHint" VerticalAlignment="Center" HorizontalAlignment="Center"
                                     Visibility="Collapsed" IsHitTestVisible="False" Margin="0,40,0,0">
                             <TextBlock Text="📭" FontSize="28" HorizontalAlignment="Center" Opacity="0.5"/>
-                            <TextBlock Text="{DynamicResource LogEmptyTitle}" Foreground="{StaticResource TextMutedBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
-                            <TextBlock Text="{DynamicResource LogEmptySubtitle}" FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource LogEmptyTitle}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource LogEmptySubtitle}" FontSize="11.5" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </DockPanel>
@@ -429,17 +429,17 @@
                 <StackPanel Margin="20">
                     <TextBlock Text="{DynamicResource UpdatesIntro}" TextWrapping="Wrap" Margin="0,0,0,20"/>
 
-                    <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush2}" BorderThickness="1"
+                    <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1"
                             CornerRadius="10" Padding="18">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{DynamicResource CurrentVersionLabel}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,6,0"/>
+                                <TextBlock Text="{DynamicResource CurrentVersionLabel}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,6,0"/>
                                 <TextBlock x:Name="CurrentVersionText" FontWeight="Bold"/>
                             </StackPanel>
 
-                            <TextBlock x:Name="UpdateStatusText" Margin="0,14,0,0" TextWrapping="Wrap" Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBlock x:Name="UpdateStatusText" Margin="0,14,0,0" TextWrapping="Wrap" Foreground="{DynamicResource TextMutedBrush}"/>
 
-                            <Border x:Name="ChangelogBox" Background="{StaticResource SurfaceAltBrush}" CornerRadius="8" Padding="12" Margin="0,10,0,0" Visibility="Collapsed">
+                            <Border x:Name="ChangelogBox" Background="{DynamicResource SurfaceAltBrush}" CornerRadius="8" Padding="12" Margin="0,10,0,0" Visibility="Collapsed">
                                 <StackPanel>
                                     <TextBlock Text="{DynamicResource ChangelogLabel}" FontWeight="SemiBold" Margin="0,0,0,4"/>
                                     <TextBlock x:Name="ChangelogText" TextWrapping="Wrap" FontSize="12.5"/>
@@ -460,9 +460,9 @@
 
                     <TextBlock Text="{DynamicResource UpdateFeedUrlLabel}" FontWeight="SemiBold" Margin="0,20,0,4"/>
                     <TextBox x:Name="UpdateFeedUrlTextBox" ToolTip="{DynamicResource UpdateFeedUrlTooltip}"/>
-                    <TextBlock Text="{DynamicResource UpdateFeedUrlHelp}" FontSize="11.5" Foreground="{StaticResource TextMutedBrush}" Margin="0,4,0,0"/>
+                    <TextBlock Text="{DynamicResource UpdateFeedUrlHelp}" FontSize="11.5" Foreground="{DynamicResource TextMutedBrush}" Margin="0,4,0,0"/>
                     <TextBlock Text="{DynamicResource UpdateSecurityNote}" FontSize="11.5" TextWrapping="Wrap"
-                               Foreground="{StaticResource TextMutedBrush}" Margin="0,6,0,0"/>
+                               Foreground="{DynamicResource TextMutedBrush}" Margin="0,6,0,0"/>
 
                     <Button Content="{DynamicResource SaveButton}" Style="{StaticResource PrimaryButton}"
                             HorizontalAlignment="Left" Margin="0,20,0,0" Click="SaveUpdatesSettings_Click"/>
@@ -474,12 +474,12 @@
                     <StackPanel Margin="24">
                         <TextBlock Text="{DynamicResource AppName}" FontSize="22" FontWeight="Bold" Foreground="{StaticResource BrandPrimaryBrush}"/>
                         <StackPanel Orientation="Horizontal" Margin="0,4,0,16">
-                            <TextBlock Text="{DynamicResource HelpVersionPrefix}" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,4,0"/>
-                            <TextBlock x:Name="HelpVersionText" Foreground="{StaticResource TextMutedBrush}"/>
+                            <TextBlock Text="{DynamicResource HelpVersionPrefix}" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,4,0"/>
+                            <TextBlock x:Name="HelpVersionText" Foreground="{DynamicResource TextMutedBrush}"/>
                         </StackPanel>
 
                         <TextBlock Text="{DynamicResource HelpCopyright}" FontSize="11.5"
-                                   Foreground="{StaticResource TextMutedBrush}" Margin="0,10,0,0"/>
+                                   Foreground="{DynamicResource TextMutedBrush}" Margin="0,10,0,0"/>
 
                         <TextBlock TextWrapping="Wrap" Text="{DynamicResource HelpDescription}"/>
                         <TextBlock Margin="0,16,0,0" TextWrapping="Wrap" Text="{DynamicResource HelpClosingNote}"/>

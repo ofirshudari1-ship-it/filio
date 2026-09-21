@@ -13,6 +13,11 @@
     <sys:String x:Key="PauseButton">Pause</sys:String>
     <sys:String x:Key="ResumeButton">Resume</sys:String>
 
+    <!-- Splash screen -->
+    <sys:String x:Key="SplashLoadingSettings">Loading settings…</sys:String>
+    <sys:String x:Key="SplashStartingWatcher">Starting file watcher…</sys:String>
+    <sys:String x:Key="SplashReady">Ready!</sys:String>
+
     <!-- Tabs -->
     <sys:String x:Key="TabGeneral">⚙️ Settings</sys:String>
     <sys:String x:Key="TabClients">👥 Clients</sys:String>
