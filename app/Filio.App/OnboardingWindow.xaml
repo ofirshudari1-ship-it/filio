@@ -71,6 +71,14 @@
 
                 <!-- Step 0: Welcome -->
                 <StackPanel x:Name="StepWelcome" VerticalAlignment="Center">
+                    <!-- Welcome illustration (local-designer skill, see ../../assets/onboarding/meta.json).
+                         Wrapped in a fixed-white card so it stays legible on the Dark/HighContrast themes
+                         too - the source image itself has no background to blend into a dark page. -->
+                    <Border Background="White" BorderBrush="{DynamicResource BorderBrush2}" BorderThickness="1"
+                            CornerRadius="12" Padding="14,10" HorizontalAlignment="Left" Margin="0,0,0,18">
+                        <Image Source="/Assets/filio-onboarding-illustration.png" Height="110" Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Border>
                     <TextBlock Text="{DynamicResource OnboardWelcomeTitle}" FontSize="26" FontWeight="Bold"
                                Foreground="{StaticResource BrandPrimaryDarkBrush}" TextWrapping="Wrap"/>
                     <TextBlock Text="{DynamicResource OnboardWelcomeTagline}" FontSize="14.5" Margin="0,14,0,0"

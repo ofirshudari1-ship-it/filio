@@ -1,0 +1,10 @@
+{
+  "file": "onboarding-illustration.png",
+  "source": "onboarding-illustration-source.png",
+  "dimensions": "800x600",
+  "generated_by": "local-designer skill (SVG rendered with sharp, no generative AI, no credits used)",
+  "generated_date": "2026-09-29",
+  "usage": "Embedded WPF resource (app/Filio.App/Assets/filio-onboarding-illustration.png) shown on the OnboardingWindow welcome step (app/Filio.App/OnboardingWindow.xaml), not the marketing site.",
+  "alt_en": "Filio's checkmark folder catching an incoming document, with two already-filed documents neatly stacked beneath it.",
+  "alt_he": "תיקיית Filio עם סימן וי קולטת מסמך נכנס, ומתחתיה כבר מונחים שני קבצים מסודרים וממוינים."
+}

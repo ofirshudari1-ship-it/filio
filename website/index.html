@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Filio</title>
 <meta name="description" id="meta-description" content="Filio automatically files invoices, contracts and reports from your Downloads folder by client, year and type — fully local, no cloud AI, no monthly cost.">
+<meta property="og:title" content="Filio — downloads that file themselves">
+<meta property="og:description" content="Filio automatically files invoices, contracts and reports from your Downloads folder by client, year and type — fully local, no cloud AI, no monthly cost.">
+<meta property="og:image" content="../assets/marketing/hero.webp">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="../assets/marketing/hero.webp">
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIESURBVFhH7Ve7SgNBFM0nWFpkdtIIFhaCjVhpZ2klVnaChRB2FXQjzKqNhUUKsdJCUFBEEMFWYiPBQsFCzEvjOxgxvtCNz5Ebybh7s0YTdwQhBw4sd87OOZm5k0k8ngokghp91QrT5ghTU0B4hhrWSQE1/D7CtCvF0LiVUIMxrHcdClOXsLkgU5ew3nU4fXrrKmC96yBMNbHxZwDVxHrXoTAthI0FmRbCetdBDX+90ypADcawXgqooTYSpoU/zbUw1LDOht1+6osFSHdcJ0NuEuaM6LQW+9kQH6TNMZ2Y8YDCZTGie9uwr0AsoITwC+Vyf7SBn0y28wSrsY/pJIx9BeIBksQTlcOj8Vb+at5wwNX6FBonSewr4EaAg7Em/nKbzpkDrjdmkEZigL2ROv6YTgjzp8xxLpBdJykA7LV5tCXMYQsOgy0FOmkB7qMhYf72nM01INZ8sMQAsKyp+Z7CbrYQ9tmKs9muAk3ZAR72w7lJnfdT4ZerQZv5xcpwgeZXAbJnO2JyHOJ8sddmnlmbcDDELDEAGIJxHnDE4JyfTnfazG82FxzMnFhiAKcQ0OHQaHlAAxbrkV8HAMJXq3U78oAaNCrWf80yAwDBCPcEBMO64iwS4CeXEYSAY3e3vex4Kr5l0ctowNsq+zqO6t4O7GtD0qBV8LtABpN99G/+lFTwr/AO3WIczZn4wkIAAAAASUVORK5CYII=">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -395,6 +401,11 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="wrap" style="margin-top:48px;">
+    <img id="heroVisual" src="../assets/marketing/hero.webp"
+         alt="Scattered invoices and contracts flowing into Filio's folder and coming out sorted into neat, checked-off client folders."
+         style="width:100%;max-width:560px;height:auto;display:block;margin:0 auto;border-radius:20px;">
   </div>
 </header>
 
@@ -820,7 +831,8 @@
       "footer.spec": "Spec document",
       "footer.changelog": "Full changelog",
       "footer.readme": "Technical docs",
-      "meta.description": "Filio automatically files invoices, contracts and reports from your Downloads folder by client, year and type — fully local, no cloud AI, no monthly cost."
+      "meta.description": "Filio automatically files invoices, contracts and reports from your Downloads folder by client, year and type — fully local, no cloud AI, no monthly cost.",
+      "heroimg.alt": "Scattered invoices and contracts flowing into Filio's folder and coming out sorted into neat, checked-off client folders."
     },
     he: {
       "nav.how": "איך זה עובד",
@@ -952,7 +964,8 @@
       "footer.spec": "מסמך אפיון",
       "footer.changelog": "יומן גרסאות מלא",
       "footer.readme": "תיעוד טכני",
-      "meta.description": "Filio מתייק אוטומטית חשבוניות, חוזים ודוחות מתיקיית ההורדות לפי לקוח, שנה וסוג — לגמרי מקומי, בלי AI בענן ובלי עלות חודשית."
+      "meta.description": "Filio מתייק אוטומטית חשבוניות, חוזים ודוחות מתיקיית ההורדות לפי לקוח, שנה וסוג — לגמרי מקומי, בלי AI בענן ובלי עלות חודשית.",
+      "heroimg.alt": "קבצים מפוזרים כמו חשבוניות וחוזים זורמים אל תיקיית Filio ויוצאים ממוינים לתיקיות לקוח מסודרות עם סימוני וי."
     }
   };
 
@@ -982,6 +995,9 @@
 
     var demoBox = document.getElementById("demoBox");
     if (demoBox) demoBox.setAttribute("aria-label", dict["demo.aria"]);
+
+    var heroVisual = document.getElementById("heroVisual");
+    if (heroVisual) heroVisual.setAttribute("alt", dict["heroimg.alt"]);
 
     var opts = document.querySelectorAll(".lang-opt");
     for (var j = 0; j < opts.length; j++){
