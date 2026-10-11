@@ -350,7 +350,7 @@
 <header class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow" data-i18n="hero.eyebrow">Background tool for Windows · v2.8.0</span>
+      <span class="eyebrow" data-i18n="hero.eyebrow">Background tool for Windows · v2.9.8</span>
       <h1><span data-i18n="hero.title1">Your downloads,</span><br><em data-i18n="hero.title2">filed automatically.</em></h1>
       <p class="lede" data-i18n="hero.lede">
         Filio sits quietly by the clock, keeps an eye on your Downloads folder, and every time a
@@ -523,7 +523,7 @@
         <div class="sec-item">
           <div class="ic">🛡️</div>
           <h3 data-i18n="s2.title">Secure updates</h3>
-          <p data-i18n="s2.body">In-place updates require HTTPS only, and verify the SHA-256 signature of the installer before it runs — a file that doesn't match is deleted instead of opened.</p>
+          <p data-i18n="s2.body">In-place updates only run from the official GitHub release over HTTPS, and verify the installer's size, file type and SHA-256 (the checksum GitHub publishes for the release) before it runs — a file that doesn't match is deleted instead of opened.</p>
         </div>
         <div class="sec-item">
           <div class="ic">🗑️</div>
@@ -538,7 +538,7 @@
         <div class="sec-item">
           <div class="ic">🔔</div>
           <h3 data-i18n="s5.title">Automatic updates</h3>
-          <p data-i18n="s5.body">Filio quietly checks the official GitHub release page once per session and only shows a notification if a newer version exists — it never downloads or installs anything without you clicking through.</p>
+          <p data-i18n="s5.body">Filio checks the official GitHub release page a few seconds after launch and then about every 6 hours, downloads a newer version in the background and installs it by itself while you are away from the PC, then reopens quietly in the tray. Windows asks for admin approval (UAC) on each update — if you decline, nothing is installed and Filio doesn't ask again for 24 hours. You can switch automatic install off in Settings and just get a notification.</p>
         </div>
       </div>
     </div>
@@ -552,6 +552,27 @@
 
       <div class="timeline">
         <div class="tl-item current">
+          <div class="tl-badge">2.9.8</div>
+          <div class="tl-body">
+            <h3 data-i18n="tl298.title">Updates install themselves<span class="tl-date" data-i18n="tl.date.oct2026">October 2026</span></h3>
+            <ul>
+              <li data-i18n="tl298.li1">Automatic update is now on by default: checked after launch and every ~6 hours, downloaded and verified in the background (size, file type, SHA-256), installed only while you are away from the PC, and Filio reopens quietly in the tray.</li>
+              <li data-i18n="tl298.li2">If you decline the Windows approval prompt, Filio comes back by itself and doesn't ask again for 24 hours (before, it simply stayed closed).</li>
+              <li data-i18n="tl298.li3">Filio now restarts without admin rights after an update, and update problems are written to the diagnostic log instead of being swallowed.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-badge">2.9.0–2.9.7</div>
+          <div class="tl-body">
+            <h3 data-i18n="tl29x.title">New installer, polish and standards sweeps<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
+            <ul>
+              <li data-i18n="tl29x.li1">A custom branded setup wizard replaced the stock installer, with a silent-update mode that preserves your settings and Windows auto-start choice.</li>
+              <li data-i18n="tl29x.li2">One-click "Update Now", RTL and focus-ring fixes, a standards-compliant splash screen, and a local hero image and welcome illustration.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tl-item">
           <div class="tl-badge">2.8.0</div>
           <div class="tl-body">
             <h3 data-i18n="tl280.title">Review-before-filing + OCR fix<span class="tl-date" data-i18n="tl.date.sep2026">September 2026</span></h3>
@@ -682,9 +703,9 @@
         <span class="eyebrow" data-i18n="download.eyebrow">Get started</span>
         <h2 data-i18n="download.title">Five minutes, and your Downloads folder stops being a swamp</h2>
         <p class="lede" data-i18n="download.lede">A short setup wizard asks where to watch and where to file, and suggests clients from the files you already have — no blank screen.</p>
-        <div class="file-fact">📦 <span data-i18n="download.filefact">Installer file: <strong>Filio-Setup-2.8.0.exe</strong> · version 2.8.0 · no admin rights required</span></div>
+        <div class="file-fact">📦 <span data-i18n="download.filefact">Installer file: <strong>Filio-Setup-2.9.8.exe</strong> · version 2.9.8 · installs to Program Files (Windows asks for admin approval)</span></div>
         <div class="hero-ctas" style="justify-content:center; margin-top:24px;">
-          <a href="../Filio-Setup-2.8.0.exe" class="btn btn-primary" data-i18n="download.cta1">⬇ Download for Windows 10/11</a>
+          <a href="https://github.com/ofirshudari1-ship-it/filio/releases/latest" class="btn btn-primary" data-i18n="download.cta1">⬇ Download for Windows 10/11</a>
           <a href="#how" class="btn btn-ghost" data-i18n="download.cta2">Back to how it works</a>
         </div>
       </div>
@@ -707,7 +728,7 @@
       "nav.security": "Security & Privacy",
       "nav.versions": "Versions",
       "nav.download": "Download",
-      "hero.eyebrow": "Background tool for Windows · v2.8.0",
+      "hero.eyebrow": "Background tool for Windows · v2.9.8",
       "hero.title1": "Your downloads,",
       "hero.title2": "filed automatically.",
       "hero.lede": "Filio sits quietly by the clock, keeps an eye on your Downloads folder, and every time a file lands there — an invoice, a contract, a report — it recognizes the document type and the client it belongs to, and moves it to the right, organized folder. Without touching any other files. Without sending anything to the cloud.",
@@ -768,16 +789,24 @@
       "s1.title": "Fully local classification",
       "s1.body": "The rules engine runs only on your computer. No file, and no text extracted from it, is ever sent to an external server — not even to \"improve the service.\"",
       "s2.title": "Secure updates",
-      "s2.body": "In-place updates require HTTPS only, and verify the SHA-256 signature of the installer before it runs — a file that doesn't match is deleted instead of opened.",
+      "s2.body": "In-place updates only run from the official GitHub release over HTTPS, and verify the installer's size, file type and SHA-256 (the checksum GitHub publishes for the release) before it runs — a file that doesn't match is deleted instead of opened.",
       "s3.title": "Never deletes anything",
       "s3.body": "Duplicates are routed to a separate folder, never overwritten. Every filing action can be undone. Your backups stay yours.",
       "s4.title": "Defender checks every file — not us",
       "s4.body": "Filio doesn't write antivirus logic. It asks the Windows Defender already installed on your machine. A suspicious file stays untouched — the decision stays in your hands.",
       "s5.title": "Automatic updates",
-      "s5.body": "Filio quietly checks the official GitHub release page once per session and only shows a notification if a newer version exists — it never downloads or installs anything without you clicking through.",
+      "s5.body": "Filio checks the official GitHub release page a few seconds after launch and then about every 6 hours, downloads a newer version in the background and installs it by itself while you are away from the PC, then reopens quietly in the tray. Windows asks for admin approval (UAC) on each update — if you decline, nothing is installed and Filio doesn't ask again for 24 hours. You can switch automatic install off in Settings and just get a notification.",
       "versions.eyebrow": "Changelog",
       "versions.title": "What changed, version by version",
       "versions.lede": "Every version answered a real problem caught in actual use — not cosmetic changes. The full list is kept in CHANGELOG.md.",
+      "tl.date.oct2026": "October 2026",
+      "tl298.title": "Updates install themselves",
+      "tl298.li1": "Automatic update is now on by default: checked after launch and every ~6 hours, downloaded and verified in the background (size, file type, SHA-256), installed only while you are away from the PC, and Filio reopens quietly in the tray.",
+      "tl298.li2": "If you decline the Windows approval prompt, Filio comes back by itself and doesn't ask again for 24 hours (before, it simply stayed closed).",
+      "tl298.li3": "Filio now restarts without admin rights after an update, and update problems are written to the diagnostic log instead of being swallowed.",
+      "tl29x.title": "New installer, polish and standards sweeps",
+      "tl29x.li1": "A custom branded setup wizard replaced the stock installer, with a silent-update mode that preserves your settings and Windows auto-start choice.",
+      "tl29x.li2": "One-click \"Update Now\", RTL and focus-ring fixes, a standards-compliant splash screen, and a local hero image and welcome illustration.",
       "tl.date.sep2026": "September 2026",
       "tl.date.aug2026": "August 2026",
       "tl280.title": "Review-before-filing + OCR fix",
@@ -824,7 +853,7 @@
       "download.eyebrow": "Get started",
       "download.title": "Five minutes, and your Downloads folder stops being a swamp",
       "download.lede": "A short setup wizard asks where to watch and where to file, and suggests clients from the files you already have — no blank screen.",
-      "download.filefact": "Installer file: <strong>Filio-Setup-2.8.0.exe</strong> · version 2.8.0 · no admin rights required",
+      "download.filefact": "Installer file: <strong>Filio-Setup-2.9.8.exe</strong> · version 2.9.8 · installs to Program Files (Windows asks for admin approval)",
       "download.cta1": "⬇ Download for Windows 10/11",
       "download.cta2": "Back to how it works",
       "footer.tagline": "Filio — downloads that file themselves.",
@@ -840,7 +869,7 @@
       "nav.security": "אבטחה ופרטיות",
       "nav.versions": "גרסאות",
       "nav.download": "הורדה",
-      "hero.eyebrow": "תוכנת רקע ל-Windows · v2.8.0",
+      "hero.eyebrow": "תוכנת רקע ל-Windows · v2.9.8",
       "hero.title1": "ההורדות שלכם,",
       "hero.title2": "מתויקות לבד.",
       "hero.lede": "Filio יושב שקט ליד השעון, שם עין על תיקיית ההורדות, ובכל פעם שנופל בה קובץ — חשבונית, חוזה או דוח — הוא מזהה את סוג המסמך ואת הלקוח שלו, ומעביר אותו לתיקייה המסודרת הנכונה. בלי לגעת בקבצים אחרים. בלי לשלוח שום דבר לענן.",
@@ -901,16 +930,24 @@
       "s1.title": "סיווג לגמרי מקומי",
       "s1.body": "מנוע החוקים רץ על המחשב שלכם בלבד. שום קובץ, שום טקסט מתוכו, לא נשלח לשום שרת חיצוני — אפילו לא לצורך \"שיפור השירות\".",
       "s2.title": "עדכונים מאובטחים",
-      "s2.body": "עדכון-במקום דורש HTTPS בלבד, ומאמת חתימת SHA-256 של קובץ ההתקנה לפני שהוא רץ — קובץ שלא תואם נמחק במקום להיפתח.",
+      "s2.body": "עדכון-במקום רץ רק מול ה-Release הרשמי ב-GitHub דרך HTTPS, ומאמת גודל, סוג קובץ ו-SHA-256 (הסכום ש-GitHub מפרסם לגרסה) של קובץ ההתקנה לפני שהוא רץ — קובץ שלא תואם נמחק במקום להיפתח.",
       "s3.title": "אף פעם לא מוחק",
       "s3.body": "כפילויות מנותבות לתיקייה נפרדת, לא נדרסות. כל פעולת תיוק ניתנת לביטול. הגיבוי שלכם נשאר שלכם.",
       "s4.title": "Defender בודק כל קובץ — לא אנחנו",
       "s4.body": "Filio לא כותב לוגיקת אנטי-וירוס. הוא שואל את Windows Defender שכבר מותקן אצלכם. קובץ חשוד נשאר במקומו בלי שום געה — הכדור עובר לידיים שלכם.",
       "s5.title": "עדכונים אוטומטיים",
-      "s5.body": "Filio בודק בשקט מול עמוד ה-Release הרשמי ב-GitHub פעם אחת בכל הפעלה, ומציג התראה רק אם יש גרסה חדשה יותר — הוא לעולם לא מוריד או מתקין שום דבר בלי שתלחצו בעצמכם.",
+      "s5.body": "Filio בודק את עמוד ה-Release הרשמי ב-GitHub כמה שניות אחרי ההפעלה ואז בערך כל 6 שעות, מוריד גרסה חדשה ברקע ומתקין אותה בעצמו כשאתם לא ליד המחשב, ואז נפתח מחדש בשקט במגש. Windows מבקש אישור מנהל (UAC) בכל עדכון — אם תדחו, שום דבר לא יותקן ו-Filio לא יבקש שוב במשך 24 שעות. אפשר לכבות את ההתקנה האוטומטית בהגדרות ולקבל התראה בלבד.",
       "versions.eyebrow": "יומן גרסאות",
       "versions.title": "מה השתנה, גרסה אחר גרסה",
       "versions.lede": "כל גרסה נענתה על בעיה אמיתית שנתפסה בשימוש בפועל — לא שינויים קוסמטיים. הרשימה המלאה נשמרת ב-CHANGELOG.md.",
+      "tl.date.oct2026": "אוקטובר 2026",
+      "tl298.title": "העדכונים מתקינים את עצמם",
+      "tl298.li1": "עדכון אוטומטי מופעל עכשיו כברירת מחדל: בדיקה אחרי ההפעלה וכל ~6 שעות, הורדה ואימות ברקע (גודל, סוג קובץ, SHA-256), התקנה רק כשאתם לא ליד המחשב, ו-Filio נפתח מחדש בשקט במגש.",
+      "tl298.li2": "אם דוחים את בקשת האישור של Windows, Filio חוזר לבד ולא מבקש שוב במשך 24 שעות (קודם הוא פשוט נשאר סגור).",
+      "tl298.li3": "Filio עולה מחדש בלי הרשאות מנהל אחרי עדכון, ותקלות עדכון נרשמות ללוג האבחון במקום להיבלע.",
+      "tl29x.title": "מתקין חדש, ליטושים וסבבי תקנים",
+      "tl29x.li1": "אשף התקנה מותאם במיתוג Filio החליף את המתקין הרגיל, עם מצב עדכון שקט ששומר על ההגדרות ועל בחירת ההפעלה האוטומטית עם Windows.",
+      "tl29x.li2": "\"עדכן עכשיו\" בלחיצה אחת, תיקוני RTL וטבעות פוקוס, מסך פתיחה לפי התקן, ותמונת הירו ואיור ברוכים-הבאים מקומיים.",
       "tl.date.sep2026": "ספטמבר 2026",
       "tl.date.aug2026": "אוגוסט 2026",
       "tl280.title": "בדיקה לפני תיוק + תיקון OCR",
@@ -957,7 +994,7 @@
       "download.eyebrow": "להתחיל",
       "download.title": "חמש דקות, ותיקיית ההורדות מפסיקה להיות ביצה",
       "download.lede": "אשף הגדרה קצר שואל היכן לעקוב ולאן לתייק, ומציע לקוחות מתוך הקבצים שכבר יש לכם — בלי מסך ריק.",
-      "download.filefact": "קובץ ההתקנה: <strong>Filio-Setup-2.8.0.exe</strong> · גרסה 2.8.0 · לא דורש הרשאות מנהל",
+      "download.filefact": "קובץ ההתקנה: <strong>Filio-Setup-2.9.8.exe</strong> · גרסה 2.9.8 · מותקן ב-Program Files (Windows יבקש אישור מנהל)",
       "download.cta1": "⬇ הורדה ל-Windows 10/11",
       "download.cta2": "חזרה לאיך זה עובד",
       "footer.tagline": "Filio — ההורדות מתייקות את עצמן.",

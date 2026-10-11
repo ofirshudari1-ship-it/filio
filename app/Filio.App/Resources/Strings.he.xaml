@@ -195,7 +195,7 @@
     <sys:String x:Key="InstallingStatus">מתקין - Filio יופעל מחדש אוטומטית.</sys:String>
     <sys:String x:Key="AutoCheckOnStartupCheck">בדיקת עדכונים אוטומטית בהפעלה</sys:String>
     <sys:String x:Key="AutoInstallUpdatesCheck">הורדה והתקנה אוטומטית של עדכונים</sys:String>
-    <sys:String x:Key="AutoInstallUpdatesHelp">כשמתגלה גרסה חדשה, Filio מוריד ומתקין אותה ברקע - בלי צורך בלחיצות. כבוי כברירת מחדל; כשזה כבוי, Filio רק מודיע לכם ואתם מתקינים בעזרת כפתור "עדכן עכשיו".</sys:String>
+    <sys:String x:Key="AutoInstallUpdatesHelp">מופעל כברירת מחדל. Filio בודק גרסה חדשה כמה שניות אחרי ההפעלה וכל ~6 שעות, מוריד אותה ברקע, מאמת אותה (גודל, סוג קובץ ו-sha256 מול GitHub) ומתקין רק אחרי שלא נגעתם במחשב כמה דקות, ואז נפתח מחדש בשקט במגש. ההתקנה היא ל-Program Files, ולכן Windows יציג בקשת UAC שצריך לאשר — אם תדחו, שום דבר לא יותקן ו-Filio לא יבקש שוב במשך 24 שעות. כשזה כבוי, Filio רק מודיע לכם ואתם מתקינים בעזרת כפתור "עדכן עכשיו".</sys:String>
     <sys:String x:Key="UpdateAutoInstallingStatus">התגלתה גרסה חדשה - מוריד ומתקין אוטומטית...</sys:String>
     <sys:String x:Key="UpdateFallbackAfterFailureStatus">העדכון האוטומטי לא הצליח להשלים, אז Filio השאיר את הגרסה הנוכחית פועלת. השתמשו ב"פתיחת עמוד הגרסה" כדי להוריד בעצמכם.</sys:String>
     <sys:String x:Key="UpdateFeedUrlLabel">כתובת עדכונים (מתקדם)</sys:String>

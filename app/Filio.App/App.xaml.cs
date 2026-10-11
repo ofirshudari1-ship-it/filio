@@ -41,6 +41,23 @@ public partial class App : Application
     private string? _pendingGitHubReleaseUrl;
     private bool _gitHubUpdateCheckedThisSession;
 
+    // 2.9.8: מתזמן עדכונים מחזורי + שער "רגע בטוח" (ר' UpdateGate.cs).
+    private System.Windows.Threading.DispatcherTimer? _updateTimer;
+    private System.Windows.Threading.DispatcherTimer? _installGateTimer;
+    private GitHubUpdateResult? _pendingGitHubResult;
+    private string? _readyInstallerPath;
+    private string? _notifiedUpdateVersion;
+    private DateTime _autoInstallBlockedUntilUtc = DateTime.MinValue;
+    private bool _sessionEnding;
+    private bool _installLaunched;
+
+    protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
+    {
+        // כיבוי/התנתקות של Windows: לעולם לא מתחילים התקנת עדכון עכשיו (התקנה שנקטעת באמצע = שבורה).
+        _sessionEnding = true;
+        base.OnSessionEnding(e);
+    }
+
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -155,7 +172,9 @@ public partial class App : Application
             RefreshTrayTexts(notifyPauseChange: false); // האשף עשוי לשנות שפה
         }
 
-        var startMinimized = e.Args.Contains("--minimized");
+        // --minimized (הפעלה עם Windows) או סימון חד-פעמי ש-Setup משאיר אחרי עדכון אוטומטי בשקט.
+        var restartMinimized = UpdateGate.TryConsumeRestartMinimizedFlag();
+        var startMinimized = e.Args.Contains("--minimized") || restartMinimized;
         if (!startMinimized)
             ShowMainWindow();
 
@@ -163,10 +182,10 @@ public partial class App : Application
             _ = CheckForUpdatesInBackgroundAsync();
 
         // בדיקת עדכונים מול GitHub Releases (המקור הרשמי כיום) - לא תלויה ב-UpdateFeedUrl
-        // (שנועד לזרימת ה-manifest/silent-install הישנה יותר). רצה פעם אחת בלבד לכל הפעלה,
-        // כמה שניות אחרי העלייה כדי לא להתחרות על רוחב פס/CPU עם אתחול חלון הראשי.
-        if (_settings.AutoCheckForUpdates)
-            _ = CheckGitHubUpdatesInBackgroundAsync();
+        // (שנועד לזרימת ה-manifest/silent-install הישנה יותר). 2.9.8: כמה שניות אחרי העלייה
+        // ואז כל 6 שעות כל עוד Filio רץ (עד 2.9.7 - פעם אחת בלבד לכל הפעלה, אז Filio שיושב
+        // במגש שבועות לא התעדכן אף פעם). ההגדרות נקראות מחדש בכל סבב.
+        _ = CheckGitHubUpdatesInBackgroundAsync();
     }
 
     private static AppTheme GetSystemTheme()
@@ -463,10 +482,8 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// בדיקת עדכון "רגילה" מול GitHub Releases (ראו UpdateService.CheckGitHubReleaseAsync):
-    /// לא מורידה/מתקינה כלום - רק מציגה התראה במגש עם קישור לעמוד ה-Release, שהמשתמש
-    /// לוחץ עליו כדי להמשיך בדפדפן. נכשלת בשקט תמיד (השירות עצמו כבר בולע חריגות, וזה
-    /// כאן ליתר ביטחון) ולא חוסמת שום דבר באתחול, כי היא רצה fire-and-forget.
+    /// מתזמן הבדיקה ברקע: ~5 שניות אחרי העלייה (לא מתחרה בעומס האתחול) ואז כל
+    /// <see cref="UpdateGate.CheckInterval"/> (6 שעות). רץ fire-and-forget, לא חוסם שום דבר באתחול.
     /// </summary>
     private async Task CheckGitHubUpdatesInBackgroundAsync()
     {
@@ -476,73 +493,133 @@ public partial class App : Application
 
         try
         {
-            // השהייה קצרה כדי לא להתחרות עם עליית חלון האתחול/הצגת החלון הראשי על
-            // רוחב פס ו-CPU, ולא כדי לעכב את אף שלב באתחול (זה רץ בלי await מהקורא).
+            _autoInstallBlockedUntilUtc = UpdateGate.LoadBackoffUntilUtc();
             await Task.Delay(TimeSpan.FromSeconds(5));
+            await RunBackgroundUpdateCycleAsync();
 
-            if (!_settings.AutoCheckForUpdates)
+            _updateTimer = new System.Windows.Threading.DispatcherTimer { Interval = UpdateGate.CheckInterval };
+            _updateTimer.Tick += async (_, _) => await RunBackgroundUpdateCycleAsync();
+            _updateTimer.Start();
+        }
+        catch (Exception ex)
+        {
+            DiagnosticLogger.Warn($"Update scheduler failed to start: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// סבב אחד: בדיקה מול GitHub -> (אם AutoInstallUpdates) הורדה ואימות ברקע (גודל, MZ, sha256 מה-digest
+    /// ש-GitHub מפרסם) -> המתנה ל"רגע בטוח" (UpdateGate) -> התקנה שקטה. בכל כשל: לוג ל-DiagnosticLogger,
+    /// התראה אחת בלבד לכל גרסה, וניסיון חוזר בסבב הבא - לעולם לא חוסם ולא זורק.
+    /// </summary>
+    private async Task RunBackgroundUpdateCycleAsync()
+    {
+        try
+        {
+            if (_installLaunched || !_settings.AutoCheckForUpdates)
                 return;
+
+            // כבר יש installer מאומת שמחכה לרגע בטוח - לא מורידים שוב.
+            if (_readyInstallerPath != null && File.Exists(_readyInstallerPath))
+            {
+                if (_settings.AutoInstallUpdates) StartInstallGate();
+                return;
+            }
 
             var result = await _updateService.CheckGitHubReleaseAsync();
             if (result == null)
                 return;
 
+            _pendingGitHubResult = result;
             _pendingGitHubReleaseUrl = result.ReleaseUrl;
 
-            // AutoInstallUpdates (הגדרה opt-in, כבויה כברירת מחדל - ראו AppSettings) מדלגת על
-            // בועית ה"יש עדכון" ומנסה להוריד+להתקין ישר. דורשת asset ישיר מה-Release (אם
-            // אין כזה, אין דרך להתקין בשקט ממילא - חוזרים לבועית הרגילה עם קישור לדפדפן).
-            if (_settings.AutoInstallUpdates && !string.IsNullOrWhiteSpace(result.InstallerAssetUrl))
+            if (!_settings.AutoInstallUpdates || string.IsNullOrWhiteSpace(result.InstallerAssetUrl)
+                || DateTime.UtcNow < _autoInstallBlockedUntilUtc)
             {
-                await TryAutoInstallUpdateAsync(result);
+                NotifyUpdateOnce(result);
                 return;
             }
 
-            _trayIcon?.ShowNotification(
-                LocalizationService.Get("DialogTitle"),
-                LocalizationService.Format("UpdateAvailableStatus", result.LatestVersion.ToString(3)),
-                NotificationIcon.Info);
+            DiagnosticLogger.Info($"Downloading update {result.LatestVersion.ToString(3)} in the background (AutoInstallUpdates is on)");
+            _readyInstallerPath = await _updateService.DownloadInstallerAsync(
+                result.InstallerAssetUrl!,
+                expectedSha256: result.InstallerAssetSha256,
+                expectedSizeBytes: result.InstallerAssetSizeBytes,
+                requireGitHubHost: true);
+            StartInstallGate();
         }
         catch (Exception ex)
         {
-            // best-effort בלבד - בדיקת עדכונים אף פעם לא אמורה להשפיע על שאר האפליקציה.
-            DiagnosticLogger.Warn($"GitHub update check failed: {ex.Message}");
+            DiagnosticLogger.Warn($"Background update cycle failed, will retry later: {ex.GetType().Name}: {ex.Message}");
+            if (_pendingGitHubResult != null) NotifyUpdateOnce(_pendingGitHubResult);
         }
     }
 
+    /// <summary>התראת "יש עדכון" פעם אחת בלבד לכל גרסה - בלי הצפה בכל סבב של 6 שעות.</summary>
+    private void NotifyUpdateOnce(GitHubUpdateResult result)
+    {
+        var version = result.LatestVersion.ToString(3);
+        if (_notifiedUpdateVersion == version)
+            return;
+        _notifiedUpdateVersion = version;
+
+        _trayIcon?.ShowNotification(
+            LocalizationService.Get("DialogTitle"),
+            LocalizationService.Format("UpdateAvailableStatus", version),
+            NotificationIcon.Info);
+    }
+
+    private void StartInstallGate()
+    {
+        if (_installGateTimer != null)
+            return;
+        _installGateTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+        _installGateTimer.Tick += (_, _) => TryInstallReadyUpdate();
+        _installGateTimer.Start();
+    }
+
+    private void StopInstallGate()
+    {
+        _installGateTimer?.Stop();
+        _installGateTimer = null;
+    }
+
     /// <summary>
-    /// זרימת ה"הורדה והתקנה אוטומטית" (AppSettings.AutoInstallUpdates): מורידה את קובץ
-    /// ההתקנה שהתגלה מול GitHub Releases, מאמתת שההורדה הושלמה במלואה (גודל מול מה שדווח
-    /// ב-API - ראו UpdateService.DownloadInstallerAsync), ואז מריצה אותה בשקט ויוצאת מ-Filio
-    /// כדי שההתקנה תוכל לדרוס את הקבצים הנעולים. בכל כשל (רשת, HTTPS לא מאובטח, אי-התאמת
-    /// גודל, דיסק מלא) לא נוגעים בהתקנה הקיימת בכלל - חוזרים לזרימת הגיבוי הרגילה: בועית
-    /// "יש עדכון" עם קישור לעמוד ה-Release, בדיוק כאילו AutoInstallUpdates היה כבוי.
+    /// רץ כל 30 שניות כל עוד יש installer מאומת שמחכה. מתקין רק ברגע בטוח (UpdateGate.IsSafeToInstall:
+    /// המשתמש idle 3 דקות ומעלה, לא בכיבוי Windows, לא בתוך המתנת 24 שעות אחרי דחיית UAC).
+    /// ההתקנה סוגרת את Filio, מחליפה קבצים ומפעילה אותו מחדש במגש (בלי חלון על המסך).
     /// </summary>
-    private async Task TryAutoInstallUpdateAsync(GitHubUpdateResult result)
+    private void TryInstallReadyUpdate()
     {
         try
         {
-            DiagnosticLogger.Info($"Auto-installing update {result.LatestVersion} (AutoInstallUpdates is on)");
+            if (_installLaunched) return;
+            if (!_settings.AutoInstallUpdates) { StopInstallGate(); return; }
+            if (_readyInstallerPath == null || !File.Exists(_readyInstallerPath))
+            {
+                _readyInstallerPath = null;
+                StopInstallGate();
+                return;
+            }
+            if (!UpdateGate.IsSafeToInstall(UpdateGate.GetIdleSeconds(), _sessionEnding, false,
+                    DateTime.UtcNow, _autoInstallBlockedUntilUtc))
+                return;
 
-            var installerPath = await _updateService.DownloadInstallerAsync(
-                result.InstallerAssetUrl!,
-                expectedSizeBytes: result.InstallerAssetSizeBytes);
-
-            UpdateService.LaunchSilentInstall(installerPath);
-
-            // ExitRequestedForUpdate (MainWindow's event) לא זמין תמיד כאן - הבדיקה הזו רצה
-            // גם כש-Filio עלה עם --minimized ואף פעם לא בנה MainWindow. ExitApplication היא
-            // אותה לוגיקת סגירה נקייה (dispose ל-watcher/tray/mutex) שכל שאר נתיבי היציאה
-            // כבר עוברים דרכה.
-            Dispatcher.Invoke(ExitApplication);
+            StopInstallGate();
+            DiagnosticLogger.Info("Safe moment reached (user idle) - installing the downloaded update");
+            _installLaunched = true;
+            UpdateService.LaunchSilentInstall(_readyInstallerPath, restartMinimized: true);
+            ExitApplication();
         }
         catch (Exception ex)
         {
-            DiagnosticLogger.Warn($"Auto-install failed, falling back to manual update notification: {ex.Message}");
-            _trayIcon?.ShowNotification(
-                LocalizationService.Get("DialogTitle"),
-                LocalizationService.Format("UpdateAvailableStatus", result.LatestVersion.ToString(3)),
-                NotificationIcon.Info);
+            // ההפעלה נכשלה לפני שיצאנו - Filio עדיין רץ. מנוחה של 24 שעות ולא לנדנד.
+            _installLaunched = false;
+            DiagnosticLogger.Warn($"Silent install launch failed, backing off 24h: {ex.Message}");
+            _autoInstallBlockedUntilUtc = DateTime.UtcNow + UpdateGate.DeclineBackoff;
+            UpdateGate.SaveBackoffUntilUtc(_autoInstallBlockedUntilUtc);
+            _readyInstallerPath = null;
+            if (_pendingGitHubResult != null) NotifyUpdateOnce(_pendingGitHubResult);
         }
     }
 
@@ -556,6 +633,12 @@ public partial class App : Application
             return;
 
         DiagnosticLogger.Warn($"Previous silent update failed: {failureDetails}");
+        if (failureDetails.Contains("declined", StringComparison.OrdinalIgnoreCase))
+        {
+            // המשתמש דחה את בקשת ה-UAC: לא מנדנדים שוב ב-24 השעות הקרובות (גם אחרי הפעלה מחדש).
+            _autoInstallBlockedUntilUtc = DateTime.UtcNow + UpdateGate.DeclineBackoff;
+            UpdateGate.SaveBackoffUntilUtc(_autoInstallBlockedUntilUtc);
+        }
         _trayIcon?.ShowNotification(
             LocalizationService.Get("DialogTitle"),
             LocalizationService.Get("UpdateFallbackAfterFailureStatus"),

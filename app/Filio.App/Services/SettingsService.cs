@@ -33,13 +33,36 @@ public class SettingsService
 
             var json = File.ReadAllText(SettingsPath);
             var loaded = JsonSerializer.Deserialize<AppSettings>(json, JsonOptions);
-            return loaded ?? AppSettings.CreateDefault();
+            if (loaded == null)
+                return AppSettings.CreateDefault();
+
+            // מיגרציה חד-פעמית ל-2.9.8: עד 2.9.7 העדכון האוטומטי היה כבוי כברירת מחדל, אז
+            // "AutoInstallUpdates": false בקובץ הקיים הוא ברירת המחדל הישנה ולא בחירה מפורשת.
+            // הקובץ הישן לא מכיל את מפתח AutoInstallDefaultMigrated בכלל.
+            if (MigrateLegacyAutoInstallDefault(loaded, json))
+            {
+                try { Save(loaded); } catch { /* ייכתב בשמירה הבאה */ }
+            }
+            return loaded;
         }
         catch
         {
             // קובץ הגדרות פגום/לא קריא - חוזרים לברירת מחדל במקום לקרוס
             return AppSettings.CreateDefault();
         }
+    }
+
+    /// <summary>מיגרציית 2.9.8 (טהורה, נבדקת ביחידה): קובץ הגדרות שנכתב ע"י גרסה ישנה לא מכיל את
+    /// המפתח AutoInstallDefaultMigrated - אז AutoInstallUpdates=false שבו הוא ברירת המחדל הישנה ולא
+    /// בחירה מפורשת, והופכים אותו ל-true. קובץ שכבר עבר מיגרציה (או נכתב ע"י 2.9.8+) לא נוגעים בו.
+    /// מחזיר true אם בוצע שינוי.</summary>
+    public static bool MigrateLegacyAutoInstallDefault(AppSettings loaded, string json)
+    {
+        if (json.Contains("\"AutoInstallDefaultMigrated\"", StringComparison.Ordinal))
+            return false;
+        loaded.AutoInstallUpdates = true;
+        loaded.AutoInstallDefaultMigrated = true;
+        return true;
     }
 
     public void Save(AppSettings settings)

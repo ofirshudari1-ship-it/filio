@@ -42,7 +42,8 @@ public record GitHubUpdateResult(
     Version LatestVersion,
     string ReleaseUrl,
     string? InstallerAssetUrl = null,
-    long? InstallerAssetSizeBytes = null);
+    long? InstallerAssetSizeBytes = null,
+    string? InstallerAssetSha256 = null);
 
 public class UpdateService
 {
@@ -139,7 +140,10 @@ public class UpdateService
 
             using var response = await Http.SendAsync(request, cancellationToken);
             if (!response.IsSuccessStatusCode)
+            {
+                DiagnosticLogger.Warn($"GitHub update check: HTTP {(int)response.StatusCode}");
                 return null;
+            }
 
             var json = await response.Content.ReadAsStringAsync(cancellationToken);
             var release = JsonSerializer.Deserialize<GitHubReleaseInfo>(json, new JsonSerializerOptions
@@ -162,16 +166,20 @@ public class UpdateService
 
             var installerAsset = SelectInstallerAsset(release.Assets);
 
+            DiagnosticLogger.Info($"GitHub update check: {remoteVersion.ToString(3)} available (installed {CurrentVersion.ToString(3)})");
             return new GitHubUpdateResult(
                 remoteVersion,
                 releaseUrl,
                 installerAsset?.BrowserDownloadUrl,
-                installerAsset != null ? installerAsset.Size : null);
+                installerAsset != null ? installerAsset.Size : null,
+                ParseSha256Digest(installerAsset?.Digest));
         }
-        catch
+        catch (Exception ex)
         {
             // כשל רשת/JSON/DNS וכו' - בדיקת עדכונים היא נוחות, לא פונקציונליות קריטית,
-            // ואסור שתזרוק החוצה ותפריע לשום קורא (במיוחד לא לרצף האתחול).
+            // ואסור שתזרוק החוצה ותפריע לשום קורא (במיוחד לא לרצף האתחול). נרשם ללוג
+            // האבחון (עד 2.9.7 נבלע לגמרי ואי אפשר היה לדעת למה "לא התעדכן").
+            DiagnosticLogger.Warn($"GitHub update check failed: {ex.GetType().Name}: {ex.Message}");
             return null;
         }
     }
@@ -206,6 +214,71 @@ public class UpdateService
         return Version.TryParse(trimmed, out version!);
     }
 
+    /// <summary>"sha256:ABCD..." (כפי ש-GitHub מפרסם) -> hex באותיות קטנות; כל דבר אחר -> null.</summary>
+    public static string? ParseSha256Digest(string? digest)
+    {
+        if (string.IsNullOrWhiteSpace(digest)) return null;
+        const string prefix = "sha256:";
+        if (!digest.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return null;
+        var hex = digest[prefix.Length..].Trim().ToLowerInvariant();
+        if (hex.Length != 64 || !hex.All(c => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')))
+            return null;
+        return hex;
+    }
+
+    /// <summary>true רק לכתובת HTTPS של GitHub (github.com / *.github.com / *.githubusercontent.com
+    /// ל-CDN של ה-redirect). עדכון אוטומטי בשקט חייב לרוץ רק מול המקור הרשמי.</summary>
+    public static bool IsTrustedGitHubUrl(string? url)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps)
+            return false;
+        var host = uri.Host.ToLowerInvariant();
+        return host == "github.com" || host.EndsWith(".github.com") ||
+               host == "githubusercontent.com" || host.EndsWith(".githubusercontent.com");
+    }
+
+    /// <summary>אימות קובץ התקנה שהורד: גודל (אם ידוע), חתימת PE ("MZ", מעל 1KB - תופס דף HTML של
+    /// proxy/captive-portal במקום ההתקנה) ו-sha256 (אם ידוע). מחזיר null אם תקין, אחרת תיאור הכשל.
+    /// פונקציה סטטית טהורה - נבדקת ביחידה בלי רשת.</summary>
+    public static string? VerifyInstallerFile(string path, long? expectedSizeBytes, string? expectedSha256)
+    {
+        var info = new FileInfo(path);
+        if (!info.Exists) return "file missing";
+        if (expectedSizeBytes.HasValue && expectedSizeBytes.Value > 0 && info.Length != expectedSizeBytes.Value)
+            return $"downloaded size {info.Length} bytes does not match expected {expectedSizeBytes.Value} bytes";
+
+        using (var fs = File.OpenRead(path))
+        {
+            if (fs.Length <= 1024 || fs.ReadByte() != 'M' || fs.ReadByte() != 'Z')
+                return "downloaded file is not a Windows executable";
+        }
+
+        if (!string.IsNullOrWhiteSpace(expectedSha256))
+        {
+            using var fs = File.OpenRead(path);
+            var actual = Convert.ToHexString(SHA256.HashData(fs));
+            if (!string.Equals(actual, expectedSha256.Trim(), StringComparison.OrdinalIgnoreCase))
+                return $"sha256 mismatch: got {actual}";
+        }
+        return null;
+    }
+
+    private static void CleanupStaleDownloads()
+    {
+        try
+        {
+            foreach (var f in Directory.GetFiles(Path.GetTempPath(), "FilioUpdate_*.exe"))
+            {
+                try
+                {
+                    if (File.GetLastWriteTime(f) < DateTime.Now.AddHours(-1)) File.Delete(f);
+                }
+                catch { /* ננעל / בשימוש - לא קריטי */ }
+            }
+        }
+        catch { /* best-effort */ }
+    }
+
     private static void EnsureHttps(string url)
     {
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps)
@@ -221,16 +294,29 @@ public class UpdateService
         string installerUrl,
         string? expectedSha256 = null,
         IProgress<double>? progress = null,
-        long? expectedSizeBytes = null)
+        long? expectedSizeBytes = null,
+        bool requireGitHubHost = false)
     {
         EnsureHttps(installerUrl);
+        if (requireGitHubHost && !IsTrustedGitHubUrl(installerUrl))
+            throw new InsecureUpdateUrlException(installerUrl);
 
+        CleanupStaleDownloads();
         var tempPath = Path.Combine(Path.GetTempPath(), $"FilioUpdate_{Guid.NewGuid():N}.exe");
 
         try
         {
             using var response = await DownloadHttp.GetAsync(installerUrl, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
+
+            // גם אחרי redirect של GitHub אל ה-CDN: חייב להישאר HTTPS (ולמקור GitHub אם נדרש).
+            var finalUri = response.RequestMessage?.RequestUri?.ToString();
+            if (finalUri != null)
+            {
+                EnsureHttps(finalUri);
+                if (requireGitHubHost && !IsTrustedGitHubUrl(finalUri))
+                    throw new InsecureUpdateUrlException(finalUri);
+            }
 
             var totalBytes = response.Content.Headers.ContentLength ?? -1L;
             await using (var httpStream = await response.Content.ReadAsStreamAsync())
@@ -250,30 +336,18 @@ public class UpdateService
                 }
             }
 
-            // עוגן "הורדה הושלמה" בסיסי - לפני שבודקים sha256 (שלא תמיד קיים, למשל ב-GitHub
-            // Releases שלא מפרסם checksum ייעודי לכל asset): קובץ שנקטע (רשת נפלה, החיבור
-            // נסגר באמצע) הרבה פעמים עדיין "מצליח" מבחינת ה-HTTP status אבל מגיע קטן מהמדווח.
-            if (expectedSizeBytes.HasValue)
+            // אימות לפני שמריצים כלום: גודל (מול GitHub API), חתימת PE ("MZ") ו-sha256 (מה-manifest
+            // או מה-digest ש-GitHub מפרסם ל-asset). קובץ שנקטע, דף HTML של proxy, או קובץ שהוחלף
+            // בדרך - נמחק ולא מורץ.
+            var verifyError = await Task.Run(() => VerifyInstallerFile(tempPath, expectedSizeBytes, expectedSha256));
+            if (verifyError != null)
             {
-                var actualSize = new FileInfo(tempPath).Length;
-                if (actualSize != expectedSizeBytes.Value)
-                {
-                    TryDelete(tempPath);
-                    throw new UpdateIntegrityException(
-                        $"downloaded size {actualSize} bytes does not match expected {expectedSizeBytes.Value} bytes");
-                }
+                TryDelete(tempPath);
+                DiagnosticLogger.Warn($"Update download rejected: {verifyError}");
+                throw new UpdateIntegrityException(verifyError);
             }
 
-            if (!string.IsNullOrWhiteSpace(expectedSha256))
-            {
-                var actualHash = await ComputeSha256Async(tempPath);
-                if (!string.Equals(actualHash, expectedSha256.Trim(), StringComparison.OrdinalIgnoreCase))
-                {
-                    TryDelete(tempPath);
-                    throw new UpdateIntegrityException(actualHash);
-                }
-            }
-
+            DiagnosticLogger.Info($"Update installer downloaded and verified ({new FileInfo(tempPath).Length} bytes, sha256 {(string.IsNullOrWhiteSpace(expectedSha256) ? "not published" : "ok")})");
             return tempPath;
         }
         catch
@@ -312,12 +386,17 @@ public class UpdateService
     /// חשוב: /LANG= חובה גם ב-VERYSILENT - בלעדיו ההתקנה השקטה הייתה יכולה ליפול חזרה
     /// לברירת מחדל שגויה. תוקן אחרי שנתפס בבדיקה בפועל של ההתקנה.
     /// </summary>
-    public static void LaunchSilentInstall(string installerPath)
+    public static void LaunchSilentInstall(string installerPath, bool restartMinimized = false)
     {
         var lang = LocalizationService.CurrentLanguage == LocalizationService.Hebrew ? "hebrew" : "english";
 
+        // /RESTARTMINIMIZED: עדכון אוטומטי שרץ כשהמשתמש רחוק מהמחשב - Filio נפתח מחדש במגש
+        // ולא קופץ עם חלון ראשי על המסך (ה-Setup משאיר לזה סימון, ראו Setup.cs).
+        var extra = restartMinimized ? " /RESTARTMINIMIZED" : string.Empty;
+        DiagnosticLogger.Info($"Launching silent installer (lang={lang}, restartMinimized={restartMinimized})");
+
         Process.Start(new ProcessStartInfo(installerPath,
-            $"/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LANG={lang} /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS")
+            $"/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LANG={lang} /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS{extra}")
         {
             UseShellExecute = true
         });

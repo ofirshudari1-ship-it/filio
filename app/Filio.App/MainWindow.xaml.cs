@@ -702,7 +702,7 @@ public partial class MainWindow : Window
     private void SaveUpdatesSettings_Click(object sender, RoutedEventArgs e)
     {
         _settings.AutoCheckForUpdates = AutoCheckUpdatesCheckBox.IsChecked ?? true;
-        _settings.AutoInstallUpdates = AutoInstallUpdatesCheckBox.IsChecked ?? false;
+        _settings.AutoInstallUpdates = AutoInstallUpdatesCheckBox.IsChecked ?? true;
         _settings.UpdateFeedUrl = UpdateFeedUrlTextBox.Text.Trim();
         _settingsService.Save(_settings);
         ShowMessage("SettingsSavedMessage", MessageBoxImage.Information);
@@ -824,7 +824,9 @@ public partial class MainWindow : Window
         {
             var installerPath = await _updateService.DownloadInstallerAsync(
                 _pendingGitHubUpdate.InstallerAssetUrl,
-                expectedSizeBytes: _pendingGitHubUpdate.InstallerAssetSizeBytes);
+                expectedSha256: _pendingGitHubUpdate.InstallerAssetSha256,
+                expectedSizeBytes: _pendingGitHubUpdate.InstallerAssetSizeBytes,
+                requireGitHubHost: true);
 
             UpdateStatusText.Text = LocalizationService.Get("InstallingStatus");
             UpdateService.LaunchSilentInstall(installerPath);

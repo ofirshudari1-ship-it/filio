@@ -46,4 +46,9 @@ public class GitHubReleaseAsset
     /// במלואה (ראו UpdateService.DownloadInstallerAsync).</summary>
     [JsonPropertyName("size")]
     public long Size { get; set; }
+
+    /// <summary>"sha256:&lt;hex&gt;" כפי ש-GitHub מחשב ומפרסם לכל asset (שדה digest ב-REST API).
+    /// ריק ב-releases ישנים שהועלו לפני שהשדה נוסף.</summary>
+    [JsonPropertyName("digest")]
+    public string? Digest { get; set; }
 }

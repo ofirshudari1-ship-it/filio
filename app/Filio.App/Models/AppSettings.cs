@@ -111,11 +111,15 @@ public class AppSettings
     /// <summary>
     /// כשמופעל: עדכון שמתגלה מול GitHub Releases (ראו UpdateService.CheckGitHubReleaseAsync)
     /// מוריד ומתקין את עצמו בשקט ברקע, בלי לשאול - במקום להציג רק הודעת מגש עם קישור לעמוד
-    /// ה-Release. כבוי כברירת מחדל (opt-in): התקנה שקטה שמחליטה בעצמה מתי לסגור ולהפעיל
-    /// מחדש את Filio היא שינוי משמעותי בהתנהגות, שדורש בחירה מודעת של המשתמש - לא ברירת
-    /// מחדל שמפתיעה מישהו שהתרגל לזרימה הישנה (התראה + הורדה/הפעלה ידנית).
+    /// ה-Release. מופעל כברירת מחדל מ-2.9.8 (עד 2.9.7: opt-in כבוי) - הדרישה היא שכלי יתעדכן
+    /// לבד ברקע כמו OptiGuard. ההתקנה מתבצעת רק ברגע בטוח (המשתמש לא נגע במחשב כמה דקות, לא
+    /// בכיבוי Windows) ודורשת אישור UAC (התקנה ל-Program Files); כיבוי ההגדרה = התראה בלבד.
     /// </summary>
-    public bool AutoInstallUpdates { get; set; } = false;
+    public bool AutoInstallUpdates { get; set; } = true;
+
+    /// <summary>true אחרי שהמיגרציה החד-פעמית של 2.9.8 (ברירת המחדל התהפכה ל-true) כבר רצה על
+    /// קובץ ההגדרות הזה. מונע מהמיגרציה לדרוס בחירה מפורשת של המשתמש אחרי שכבר התעדכן.</summary>
+    public bool AutoInstallDefaultMigrated { get; set; } = true;
 
     /// <summary>false בהתקנה ראשונה - גורם לאשף ה"ברוכים הבאים" לרוץ במקום לקפוץ ישר למסך ההגדרות.</summary>
     public bool HasCompletedOnboarding { get; set; } = false;
@@ -160,6 +164,7 @@ public class AppSettings
         AutoCheckForUpdates = other.AutoCheckForUpdates;
         UpdateFeedUrl = other.UpdateFeedUrl;
         AutoInstallUpdates = other.AutoInstallUpdates;
+        AutoInstallDefaultMigrated = other.AutoInstallDefaultMigrated;
         HasShownTrayMinimizeHint = other.HasShownTrayMinimizeHint;
 
         Clients.Clear();

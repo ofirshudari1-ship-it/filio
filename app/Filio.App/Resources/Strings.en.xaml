@@ -195,7 +195,7 @@
     <sys:String x:Key="InstallingStatus">Installing — Filio will restart automatically.</sys:String>
     <sys:String x:Key="AutoCheckOnStartupCheck">Check for updates automatically on startup</sys:String>
     <sys:String x:Key="AutoInstallUpdatesCheck">Automatically download and install updates</sys:String>
-    <sys:String x:Key="AutoInstallUpdatesHelp">When a new version is found, Filio downloads it and installs it in the background — no clicks needed. Off by default; with this off, Filio only notifies you and you install with the "Update Now" button.</sys:String>
+    <sys:String x:Key="AutoInstallUpdatesHelp">On by default. Filio checks for a new version shortly after launch and every ~6 hours, downloads it in the background, verifies it (size, file type and sha256 against GitHub) and installs it only after you have been away from the PC for a few minutes, then reopens quietly in the tray. The install is to Program Files, so Windows shows a UAC prompt you have to approve — if you decline, nothing is installed and Filio will not ask again for 24 hours. With this off, Filio only notifies you and you install with the "Update Now" button.</sys:String>
     <sys:String x:Key="UpdateAutoInstallingStatus">A new version was found — downloading and installing automatically…</sys:String>
     <sys:String x:Key="UpdateFallbackAfterFailureStatus">The automatic update couldn't finish, so Filio kept your current version running. Use "Open Release Page" to download it yourself.</sys:String>
     <sys:String x:Key="UpdateFeedUrlLabel">Update feed URL (advanced)</sys:String>

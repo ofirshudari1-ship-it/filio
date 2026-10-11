@@ -375,6 +375,7 @@ namespace FilioSetup
         public bool SuppressMsgBoxes;
         public bool CloseApplications;
         public bool RestartApplications;
+        public bool RestartMinimized;
         public bool NoRestart;
         public string Lang;
 
@@ -389,6 +390,7 @@ namespace FilioSetup
                 else if (a.Equals("/SUPPRESSMSGBOXES", StringComparison.OrdinalIgnoreCase)) opt.SuppressMsgBoxes = true;
                 else if (a.Equals("/CLOSEAPPLICATIONS", StringComparison.OrdinalIgnoreCase)) opt.CloseApplications = true;
                 else if (a.Equals("/RESTARTAPPLICATIONS", StringComparison.OrdinalIgnoreCase)) opt.RestartApplications = true;
+                else if (a.Equals("/RESTARTMINIMIZED", StringComparison.OrdinalIgnoreCase)) opt.RestartMinimized = true;
                 else if (a.Equals("/NORESTART", StringComparison.OrdinalIgnoreCase)) opt.NoRestart = true;
                 else if (a.StartsWith("/LANG=", StringComparison.OrdinalIgnoreCase))
                 {
@@ -848,11 +850,11 @@ namespace FilioSetup
         /// <summary>Static, no-UI version of DetectExistingInstall for Program.RunSilentInstall
         /// (which never constructs a SetupForm at all, since that would build the whole wizard
         /// UI just to read two registry values).</summary>
-        public static (bool installed, string installDir, string? version) DetectExistingInstallStatic()
+        public static (bool installed, string installDir, string version) DetectExistingInstallStatic()
         {
             string dir = DefaultInstallDir();
             bool installed = false;
-            string? version = null;
+            string version = null;
             try
             {
                 using (var key = Registry.LocalMachine.OpenSubKey(UninstallKeyPath))
@@ -871,6 +873,44 @@ namespace FilioSetup
         }
 
         public static bool IsAppRunningStatic() => IsFilioRunning();
+
+        /// <summary>Starts Filio WITHOUT admin rights. The silent installer runs elevated (UAC), and a
+        /// plain Process.Start from an elevated process launches Filio elevated too: drag&amp;drop from
+        /// Explorer into it is then blocked (UIPI), and files it writes are owned by the elevated token.
+        /// explorer.exe launches the target at the normal user's integrity level instead. When
+        /// <paramref name="minimized"/> is set (automatic update while the user is away) a one-shot flag
+        /// file asks Filio to come back in the tray with no main window.</summary>
+        public static void LaunchDeElevated(string exePath, bool minimized)
+        {
+            try
+            {
+                if (minimized)
+                {
+                    var dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Filio");
+                    Directory.CreateDirectory(dir);
+                    File.WriteAllText(Path.Combine(dir, "restart-minimized.flag"), DateTime.UtcNow.ToString("u"));
+                }
+                Process.Start(new ProcessStartInfo("explorer.exe", "\"" + exePath + "\"") { UseShellExecute = false });
+            }
+            catch
+            {
+                try { Process.Start(new ProcessStartInfo(exePath) { UseShellExecute = true }); } catch { }
+            }
+        }
+
+        /// <summary>Called by a NON-elevated Setup when the elevated install did not complete: brings the
+        /// existing Filio back if it is installed and not already running.</summary>
+        public static void RestartExistingFilioIfNotRunning(bool minimized)
+        {
+            try
+            {
+                var (installed, dir, _) = DetectExistingInstallStatic();
+                if (!installed || IsFilioRunning()) return;
+                var exe = Path.Combine(dir, ExeFileName);
+                if (File.Exists(exe)) LaunchDeElevated(exe, minimized);
+            }
+            catch { /* best-effort */ }
+        }
 
         /// <summary>Best-effort close of a running Filio for /CLOSEAPPLICATIONS: tries a graceful
         /// WM_CLOSE first (lets it save state / flush the activity log), then escalates to Kill()
@@ -1124,7 +1164,19 @@ namespace FilioSetup
             {
                 if (!IsAdmin())
                 {
-                    Environment.Exit(RelaunchElevatedAndWait(args));
+                    int elevatedCode = RelaunchElevatedAndWait(args);
+                    if (elevatedCode != SetupExitCodes.Success)
+                    {
+                        // 2.9.8: Filio already exited before this UAC prompt (it launches us and quits).
+                        // If the prompt was declined / timed out, or the elevated install failed, the
+                        // user would be left with NO running Filio - bring it back, and leave a marker
+                        // so the next launch knows why (and backs off 24h instead of nagging again).
+                        if (elevatedCode == SetupExitCodes.ElevationDeclined)
+                            WriteUpdateFailedMarker("UAC prompt declined or unavailable - update not installed.");
+                        if (silentOptions.RestartApplications && elevatedCode != SetupExitCodes.AppStillRunning)
+                            SetupForm.RestartExistingFilioIfNotRunning(silentOptions.RestartMinimized);
+                    }
+                    Environment.Exit(elevatedCode);
                     return;
                 }
                 Environment.Exit(RunSilentInstall(silentOptions));
@@ -1191,10 +1243,7 @@ namespace FilioSetup
                 SetupForm.SetAutostart(autostart, exePath);
 
                 if (opt.RestartApplications)
-                {
-                    try { Process.Start(new ProcessStartInfo(exePath) { UseShellExecute = true }); }
-                    catch { /* best-effort relaunch - install itself already succeeded */ }
-                }
+                    SetupForm.LaunchDeElevated(exePath, opt.RestartMinimized); // best-effort - install already succeeded
 
                 return SetupExitCodes.Success;
             }
@@ -1353,6 +1402,14 @@ namespace FilioSetup
                 if (opt.VerySilent) throw new Exception("/SILENT alone must not set VerySilent");
                 if (opt.Lang != "en") throw new Exception("expected default language \"en\" when /LANG is omitted");
                 if (opt.CloseApplications || opt.RestartApplications) throw new Exception("unset flags must default to false");
+            });
+
+            Check("silent install args: /RESTARTMINIMIZED parses and defaults to false", () =>
+            {
+                if (!SilentInstallOptions.Parse(new[] { "/VERYSILENT", "/RESTARTAPPLICATIONS", "/RESTARTMINIMIZED" }).RestartMinimized)
+                    throw new Exception("expected RestartMinimized=true");
+                if (SilentInstallOptions.Parse(new[] { "/VERYSILENT", "/RESTARTAPPLICATIONS" }).RestartMinimized)
+                    throw new Exception("RestartMinimized must default to false (manual Update Now restarts with the window)");
             });
 
             Check("non-silent args (e.g. GUI launch with no switches) leave Silent=false", () =>
