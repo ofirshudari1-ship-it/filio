@@ -62,6 +62,23 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // 2.9.9: לוג לכל חריגה שלא נתפסה. עד 2.9.8 לא היה אף handler גלובלי - חריגה בת'רד ה-UI או
+        // ב-Task שנזרק ונשכח הפילה את Filio בשקט (ולכן "שגיאות" בלי שום עקבות בלוג האבחון).
+        // חריגת UI נרשמת והאפליקציה ממשיכה לרוץ (כלי רקע במגש - עדיף על קריסה שקטה);
+        // חריגה קטלנית באמת (AppDomain) רק נרשמת לפני שה-runtime סוגר.
+        DispatcherUnhandledException += (_, args) =>
+        {
+            DiagnosticLogger.Error("Unhandled UI-thread exception", args.Exception);
+            args.Handled = true;
+        };
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+            DiagnosticLogger.Error("Fatal unhandled exception", args.ExceptionObject as Exception);
+        TaskScheduler.UnobservedTaskException += (_, args) =>
+        {
+            DiagnosticLogger.Warn($"Unobserved task exception: {args.Exception.GetBaseException().Message}");
+            args.SetObserved();
+        };
+
         _singleInstanceMutex = new Mutex(initiallyOwned: true, SingleInstanceMutexName, out var createdNew);
         if (!createdNew)
         {

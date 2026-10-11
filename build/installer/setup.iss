@@ -20,7 +20,7 @@
 
 #define MyAppName "Filio"
 #ifndef MyAppVersion
-  #define MyAppVersion "2.9.8"
+  #define MyAppVersion "2.9.9"
 #endif
 #define MyAppPublisher "Filio"
 #define MyAppExeName "Filio.exe"
